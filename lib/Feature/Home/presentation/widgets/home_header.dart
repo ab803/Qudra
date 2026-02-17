@@ -12,20 +12,28 @@ class HomeHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
+
+        // Welcome text
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-                'Welcome',
-                style: AppTextStyles.title
+              'Welcome',
+              style: AppTextStyles.title,
             ),
             const SizedBox(height: 4),
+
+            // User name
             Text(
               'Hello, Ahmed',
-              style: AppTextStyles.subtitle.copyWith(color: Appcolors.primaryColor),
+              style: AppTextStyles.subtitle.copyWith(
+                color: Appcolors.primaryColor,
+              ),
             ),
           ],
         ),
+
+        // Dark mode button (icon only for now)
         Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
@@ -33,7 +41,7 @@ class HomeHeader extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Appcolors.primaryColor.withOpacity(0.05),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),

@@ -5,7 +5,6 @@ import '../widgets/SplashLogo.dart';
 import '../widgets/Tagline.dart';
 import '../widgets/splashController.dart';
 
-
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
 
@@ -16,17 +15,23 @@ class SplashView extends StatefulWidget {
 class _SplashViewState extends State<SplashView>
     with TickerProviderStateMixin {
 
+  // Controller that manages animations and navigation
   late SplashController controller;
 
   @override
   void initState() {
     super.initState();
+
+    // Initialize controller and pass vsync + context
     controller = SplashController(vsync: this, context: context);
+
+    // Start animations
     controller.init();
   }
 
   @override
   void dispose() {
+    // Always dispose animation controllers to prevent memory leaks
     controller.dispose();
     super.dispose();
   }
@@ -36,6 +41,8 @@ class _SplashViewState extends State<SplashView>
     return Scaffold(
       body: Container(
         width: double.infinity,
+
+        // Background gradient (currently same color repeated)
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
@@ -47,10 +54,12 @@ class _SplashViewState extends State<SplashView>
             end: Alignment.bottomRight,
           ),
         ),
+
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
 
+            // Animated logo
             SplashLogo(
               scale: controller.logoScale,
               opacity: controller.logoOpacity,
@@ -58,6 +67,7 @@ class _SplashViewState extends State<SplashView>
 
             const SizedBox(height: 40),
 
+            // Animated tagline text
             SplashTagline(
               slide: controller.textSlide,
               opacity: controller.textOpacity,
@@ -65,6 +75,7 @@ class _SplashViewState extends State<SplashView>
 
             const SizedBox(height: 50),
 
+            // Animated loading dots
             SplashLoader(controller: controller.dotsController),
           ],
         ),

@@ -17,6 +17,8 @@ class SplashLogo extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: [
+
+        // Background glow circle
         Container(
           width: 220,
           height: 220,
@@ -26,6 +28,7 @@ class SplashLogo extends StatelessWidget {
           ),
         ),
 
+        // Logo with scale + fade animation
         ScaleTransition(
           scale: scale,
           child: FadeTransition(

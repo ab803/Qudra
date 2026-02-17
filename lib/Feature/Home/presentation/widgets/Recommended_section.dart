@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:qudra_0/core/Styles/AppTextsyles.dart';
 import '../../../../core/Styles/AppColors.dart';
 
 class RecommendedSection extends StatelessWidget {
@@ -11,21 +10,26 @@ class RecommendedSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+
+        // Section title
+        Text(
           'Recommended For You',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+          style: AppTextStyles.subtitle.copyWith(
             color: Appcolors.primaryColor,
           ),
         ),
+
         const SizedBox(height: 16),
+
+        // Horizontal list of recommended places
         SizedBox(
-          height: 240, // Increased height to prevent overflow
+          height: 240,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: 2,
-            separatorBuilder: (context, index) => const SizedBox(width: 16),
+            separatorBuilder: (context, index) =>
+            const SizedBox(width: 16),
+
             itemBuilder: (context, index) {
               return Container(
                 width: 280,
@@ -34,15 +38,18 @@ class RecommendedSection extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Appcolors.primaryColor.withOpacity(0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
                   ],
                 ),
+
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+
+                    // Image section
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
@@ -53,11 +60,10 @@ class RecommendedSection extends StatelessWidget {
                           image: const DecorationImage(
                             image: NetworkImage(
                               'https://placehold.co/600x400/png',
-                            ), // Use placeholder if asset not available
+                            ),
                             fit: BoxFit.cover,
                           ),
                         ),
-                        // If we have actual assets, we should use Image.asset
                         child: Center(
                           child: Icon(
                             Icons.image,
@@ -67,52 +73,40 @@ class RecommendedSection extends StatelessWidget {
                         ),
                       ),
                     ),
+
+                    // Text info
                     Padding(
                       padding: const EdgeInsets.all(16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Appcolors.cardOrange.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              'NEW CENTER',
-                              style: TextStyle(
-                                color: Appcolors.cardOrange,
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+
                           const SizedBox(height: 8),
-                          const Text(
+
+                          // Title
+                          Text(
                             'City Mobility Center',
-                            style: TextStyle(
+                            style: AppTextStyles.subtitle.copyWith(
+                              color: Appcolors.primaryColor,
                               fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Appcolors.textDark,
                             ),
                           ),
+
                           const SizedBox(height: 4),
+
+                          // Location row
                           Row(
-                            children: const [
-                              Icon(
+                            children: [
+                              const Icon(
                                 Icons.location_on,
                                 size: 14,
                                 color: Appcolors.secondaryColor,
                               ),
-                              SizedBox(width: 4),
+                              const SizedBox(width: 4),
                               Text(
                                 '1.2 miles away',
-                                style: TextStyle(
+                                style: AppTextStyles.body.copyWith(
                                   color: Appcolors.secondaryColor,
-                                  fontSize: 12,
                                 ),
                               ),
                             ],

@@ -1,4 +1,4 @@
 class Appicons {
-  static const String logo = 'assets/Images/logo.png';
+  static const String logo = 'assets/images/Qudra logo.png';
 
 }

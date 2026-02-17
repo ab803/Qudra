@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qudra_0/core/Styles/AppTextsyles.dart';
 
-import '../../../../core/Styles/AppColors.dart';
-
 class SplashTagline extends StatelessWidget {
 
   final Animation<Offset> slide;

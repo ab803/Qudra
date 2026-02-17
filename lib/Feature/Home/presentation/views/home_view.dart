@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../../core/Styles/AppColors.dart';
-import '../widgets/home_widgets.dart';
+import '../widgets/Category_section.dart';
+import '../widgets/QuickSection.dart';
+import '../widgets/Recommended_section.dart';
+import '../widgets/custom_searchBar.dart';
+import '../widgets/home_header.dart';
+
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});

@@ -2,12 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/Styles/AppColors.dart';
+import '../../../../core/Styles/AppTextsyles.dart';
 
 class CategorySection extends StatelessWidget {
   const CategorySection({super.key});
 
   @override
   Widget build(BuildContext context) {
+
+    // List of categories displayed horizontally
     final categories = [
       {
         'icon': Icons.accessible,
@@ -19,41 +22,42 @@ class CategorySection extends StatelessWidget {
         'label': 'Visual',
         'color': Appcolors.rateColor,
       },
-      {'icon': Icons.hearing, 'label': 'Hearing', 'color': Appcolors.cardTeal},
+      {
+        'icon': Icons.hearing,
+        'label': 'Hearing',
+        'color': Appcolors.cardTeal,
+      },
     ];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+
+        // Section title
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               'Categories',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Appcolors.primaryColor,
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text(
-                'View All',
-                style: TextStyle(color: Appcolors.cardBlue),
-              ),
+              style: AppTextStyles.title.copyWith(fontSize: 18),
             ),
           ],
         ),
+
         const SizedBox(height: 12),
+
+        // Horizontal list of category chips
         SizedBox(
           height: 50,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: categories.length,
+
+            // spacing between items
             separatorBuilder: (context, index) => const SizedBox(width: 12),
+
             itemBuilder: (context, index) {
               final category = categories[index];
+
               return Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -62,14 +66,18 @@ class CategorySection extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(25),
+
+                  // soft shadow
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.03),
+                      color: Appcolors.primaryColor.withOpacity(0.03),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
                   ],
                 ),
+
+                // Icon + label
                 child: Row(
                   children: [
                     Icon(
@@ -80,9 +88,8 @@ class CategorySection extends StatelessWidget {
                     const SizedBox(width: 8),
                     Text(
                       category['label'] as String,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: Appcolors.textDark,
+                      style: AppTextStyles.body.copyWith(
+                        color: Appcolors.primaryColor,
                       ),
                     ),
                   ],
