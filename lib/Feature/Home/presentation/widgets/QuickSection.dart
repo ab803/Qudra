@@ -83,7 +83,7 @@ class QuickAccessSection extends StatelessWidget {
 
               const Icon(
                 Icons.arrow_forward_ios,
-                color: Colors.white,
+                color: Appcolors.primaryColor,
                 size: 16,
               ),
             ],
@@ -150,9 +150,7 @@ class QuickAccessSection extends StatelessWidget {
                   Text('Learn your rights & tips', style: AppTextStyles.body),
                 ],
               ),
-
               const Spacer(),
-
               const Icon(
                 Icons.arrow_forward_ios,
                 size: 16,

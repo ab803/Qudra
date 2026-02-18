@@ -1,25 +1,52 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../Feature/Home/presentation/views/home_view.dart';
 import '../../Feature/Splash/presentation/views/splash_view.dart';
+import '../../Feature/Home/presentation/views/home_view.dart';
+import '../../Feature/bottom_nav_bar.dart';
+import '../../Feature/institution.dart';
+import '../../Feature/medical_reminders.dart';
+import '../../Feature/profile.dart';
 
 
 class AppRouter {
-
-  static final GoRouter router = GoRouter(
-    initialLocation: '/',
+  static final router = GoRouter(
+    initialLocation: '/splash',
     routes: [
+
+      /// Splash
       GoRoute(
-        path: '/',
-        name: 'splash',
+        path: '/splash',
         builder: (context, state) => const SplashView(),
       ),
 
-      GoRoute(
-        path: '/home',
-        name: 'home',
-        builder: (context, state) => const HomeView(),
-      ),
+      /// Bottom Navigation Shell
+      ShellRoute(
+        builder: (context, state, child) {
+          return MainNavView(child: child);
+        },
+        routes: [
 
+          GoRoute(
+            path: '/home',
+            builder: (context, state) => const HomeView(),
+          ),
+
+          GoRoute(
+            path: '/institution',
+            builder: (context, state) => const InstitutionView(),
+          ),
+
+          GoRoute(
+            path: '/reminders',
+            builder: (context, state) => const medicalRemindersView(),
+          ),
+
+          GoRoute(
+            path: '/profile',
+            builder: (context, state) => const ProfileView(),
+          ),
+        ],
+      ),
     ],
   );
 }
