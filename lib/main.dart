@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qudra_0/Feature/Splash/presentation/views/splash_view.dart';
 import 'package:qudra_0/core/Utilies/gorouter.dart';
 
 void main() {

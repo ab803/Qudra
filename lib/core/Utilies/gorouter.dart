@@ -3,9 +3,10 @@ import 'package:go_router/go_router.dart';
 import '../../Feature/Splash/presentation/views/splash_view.dart';
 import '../../Feature/Home/presentation/views/home_view.dart';
 import '../../Feature/bottom_nav_bar.dart';
-import '../../Feature/institution.dart';
-import '../../Feature/medical_reminders.dart';
-import '../../Feature/profile.dart';
+import '../../Feature/community/communityView.dart';
+import '../../Feature/institution/institution.dart';
+import '../../Feature/medical_reminder/medical_reminders.dart';
+import '../../Feature/profile/profile.dart';
 
 
 class AppRouter {
@@ -45,6 +46,12 @@ class AppRouter {
             path: '/profile',
             builder: (context, state) => const ProfileView(),
           ),
+
+          GoRoute(
+            path: '/community',
+            builder: (context, state) => const CommunityView(),
+          ),
+
         ],
       ),
     ],

@@ -1,6 +1,7 @@
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/symbols.dart';
 
 import '../core/Styles/AppColors.dart';
 
@@ -20,7 +21,7 @@ class _MainNavViewState extends State<MainNavView> {
   final List<String> _routes = [
     '/home',
     '/institution',
-    '/reminders',
+    '/community',
     '/profile',
   ];
 
@@ -49,12 +50,12 @@ class _MainNavViewState extends State<MainNavView> {
             activeItem: Icon(Icons.home_outlined,color: Colors.white),
           ),
           BottomBarItem(
-            inActiveItem: Icon(Icons.school_outlined),
-            activeItem: Icon(Icons.school_outlined,color: Colors.white),
+            inActiveItem: Icon(Symbols.corporate_fare),
+            activeItem: Icon(Symbols.corporate_fare,color: Colors.white),
           ),
           BottomBarItem(
-            inActiveItem: Icon(Icons.medical_services_outlined),
-            activeItem: Icon(Icons.medical_services_outlined,color: Colors.white),
+            inActiveItem: Icon(Symbols.groups),
+            activeItem: Icon(Symbols.groups,color: Colors.white),
           ),
           BottomBarItem(
             inActiveItem: Icon(Icons.person_outline),

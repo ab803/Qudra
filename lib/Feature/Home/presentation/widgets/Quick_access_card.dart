@@ -49,7 +49,7 @@ class QuickAccessCard extends StatelessWidget {
               color: Colors.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: Appcolors.primaryColor),
+            child: Icon(icon, color: Colors.white),
           ),
 
           const Spacer(),
@@ -58,7 +58,7 @@ class QuickAccessCard extends StatelessWidget {
           Text(
             title,
             style: const TextStyle(
-              color: Appcolors.primaryColor,
+              color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -70,7 +70,7 @@ class QuickAccessCard extends StatelessWidget {
           Text(
             subtitle,
             style: const TextStyle(
-              color: Appcolors.primaryColor,
+              color: Colors.white,
               fontSize: 12,
             ),
           ),

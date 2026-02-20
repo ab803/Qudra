@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="qudra_0"
+        android:label="Qudra"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
