@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:qudra_0/Feature/Home/presentation/widgets/Quick_access_card.dart';
 import '../../../../core/Styles/AppColors.dart';
 import '../../../../core/Styles/AppTextsyles.dart';
@@ -97,9 +98,9 @@ class QuickAccessSection extends StatelessWidget {
           children: [
             Expanded(
               child: QuickAccessCard(
-                title: 'Chatbot',
+                title: 'Intelligent',
                 subtitle: 'Assistant',
-                icon: Icons.smart_toy,
+                icon: Symbols.robot_2,
                 color: Appcolors.cardTeal,
               ),
             ),
