@@ -4,6 +4,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:qudra_0/Feature/Home/presentation/widgets/Quick_access_card.dart';
 import '../../../../core/Styles/AppColors.dart';
 import '../../../../core/Styles/AppTextsyles.dart';
+import 'package:go_router/go_router.dart';
 
 class QuickAccessSection extends StatelessWidget {
   const QuickAccessSection({super.key});
@@ -25,6 +26,10 @@ class QuickAccessSection extends StatelessWidget {
         const SizedBox(height: 16),
 
         // Emergency card
+
+        GestureDetector(
+        onTap: () => context.push('/emergency-call'),
+        child:
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(20),
@@ -90,21 +95,31 @@ class QuickAccessSection extends StatelessWidget {
             ],
           ),
         ),
-
+    ),
         const SizedBox(height: 16),
 
         // Two quick cards row
+
+
         Row(
           children: [
             Expanded(
-              child: QuickAccessCard(
-                title: 'Intelligent',
-                subtitle: 'Assistant',
-                icon: Symbols.robot_2,
-                color: Appcolors.cardTeal,
+              child: GestureDetector(
+                onTap: () {
+                  // GoRouter
+                  context.push('/chat'); // أو context.go('/chat') حسب اللي تحبه
+                },
+                child: QuickAccessCard(
+                  title: 'Intelligent',
+                  subtitle: 'Assistant',
+                  icon: Symbols.robot_2,
+                  color: Appcolors.cardTeal,
+                ),
               ),
             ),
+
             const SizedBox(width: 16),
+
             Expanded(
               child: QuickAccessCard(
                 title: 'Medical',
@@ -119,6 +134,9 @@ class QuickAccessSection extends StatelessWidget {
         const SizedBox(height: 16),
 
         // Accessibility card
+    GestureDetector(
+    onTap: () => context.push('/accessibility'),
+    child:
         Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
@@ -160,6 +178,7 @@ class QuickAccessSection extends StatelessWidget {
             ],
           ),
         ),
+       ),
       ],
     );
   }
