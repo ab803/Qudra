@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Styles/AppColors.dart';
 
 class ActionItem extends StatelessWidget {
   final IconData icon;
@@ -14,9 +15,9 @@ class ActionItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, size: 20, color: Colors.grey),
+        Icon(icon, size: 20, color: Appcolors.secondaryColor),
         const SizedBox(width: 6),
-        Text(label, style: const TextStyle(color: Colors.grey)),
+        Text(label, style: const TextStyle(color: Appcolors.secondaryColor)),
       ],
     );
   }

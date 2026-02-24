@@ -1,232 +1,258 @@
 import 'package:flutter/material.dart';
-
-/*
-  Qudra App Views
-  -----------------
-  - InstitutionView
-  - CommunityView
-  - ProfileView
-
-  Ready to plug into your Flutter project.
-*/
-
-// ======================================================
-// INSTITUTION VIEW
-// ======================================================
+import 'package:qudra_0/Feature/institution/widgets/dummyData.dart';
+import 'package:qudra_0/Feature/institution/widgets/institutionCard.dart';
+import 'package:qudra_0/core/Styles/AppColors.dart';
 
 class InstitutionView extends StatelessWidget {
-  const InstitutionView({super.key});
+  const InstitutionView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Support Centers'),
-        actions: const [
-          Padding(
-            padding: EdgeInsets.only(right: 12),
-            child: CircleAvatar(child: Icon(Icons.person)),
-          )
-        ],
-      ),
-      body: Column(
+      backgroundColor: Appcolors.backgroundColor, // Sourced from your existing imports
+      body: Stack(
         children: [
-          const SizedBox(height: 12),
-
-          // Search
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Search institutions, services...',
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
+          SafeArea(
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 10),
+                        _buildTopHeader(),
+                        const SizedBox(height: 24),
+                        _buildTitleAndToggle(),
+                        const SizedBox(height: 16),
+                        _buildSearchBar(),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          // Filter chips
-          SizedBox(
-            height: 40,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              children: const [
-                _FilterChip(label: 'All', selected: true),
-                _FilterChip(label: 'Mobility'),
-                _FilterChip(label: 'Vision'),
-                _FilterChip(label: 'Hearing'),
-                _FilterChip(label: 'Mental Health'),
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _StickyFilterDelegate(
+                    child: Container(
+                      color: const Color(0xFFF7F8FA),
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: _buildFilters(),
+                    ),
+                  ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16.0),
+                          child: InstitutionCard(
+                            data: dummyData[index],
+                          ),
+                        );
+                      },
+                      childCount: dummyData.length,
+                    ),
+                  ),
+                ),
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: 80), // Padding for bottom nav
+                )
               ],
             ),
           ),
-
-          const SizedBox(height: 12),
-
-          // Institutions list
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              children: const [
-                InstitutionCard(
-                  name: 'Al-Noor Center',
-                  category: 'Physical Therapy & Rehab',
-                  rating: 4.8,
-                  distance: '1.2 km away',
-                  tags: ['Ramp Access', 'Parking'],
-                ),
-                InstitutionCard(
-                  name: 'Visionary Support',
-                  category: 'Blindness & Low Vision Aid',
-                  rating: 4.9,
-                  distance: '3.5 km away',
-                  tags: ['Braille', 'Guide Dog Friendly'],
-                ),
-                InstitutionCard(
-                  name: 'Silent World Institute',
-                  category: 'Hearing Impairment & Sign Language',
-                  rating: 4.5,
-                  distance: '5.0 km away',
-                  tags: ['Sign Language', 'Interpreters'],
-                ),
-                InstitutionCard(
-                  name: 'Mindful Care',
-                  category: 'Mental Health & Counseling',
-                  rating: 4.7,
-                  distance: '2.8 km away',
-                  tags: ['Sensory Friendly'],
-                ),
-              ],
-            ),
-          )
         ],
       ),
     );
   }
-}
 
-class InstitutionCard extends StatelessWidget {
-  final String name;
-  final String category;
-  final double rating;
-  final String distance;
-  final List<String> tags;
+  Widget _buildTopHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: const BoxDecoration(
+                color: Colors.black,
+                shape: BoxShape.circle,
+              ),
+              child: const Text(
+                'Q',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Text(
+              'Qudra',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        const Icon(Icons.account_circle, size: 32, color: Color(0xFF1E232C)),
+      ],
+    );
+  }
 
-  const InstitutionCard({
-    super.key,
-    required this.name,
-    required this.category,
-    required this.rating,
-    required this.distance,
-    required this.tags,
-  });
+  Widget _buildTitleAndToggle() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          'Support Centers',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.all(4),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade200,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 4,
+                    )
+                  ],
+                ),
+                child: Row(
+                  children: const [
+                    Icon(Icons.format_list_bulleted, size: 16),
+                    SizedBox(width: 4),
+                    Text('List', style: TextStyle(fontWeight: FontWeight.w600)),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                child: Row(
+                  children: const [
+                    Icon(Icons.map_outlined, size: 16, color: Colors.grey),
+                    SizedBox(width: 4),
+                    Text('Map', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w600)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildSearchBar() {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(.05),
+            color: Colors.black.withOpacity(0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           )
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: TextField(
+        decoration: InputDecoration(
+          icon: const Icon(Icons.search, color: Colors.grey),
+          hintText: 'Search institutions, services...',
+          hintStyle: TextStyle(color: Colors.grey.shade500),
+          border: InputBorder.none,
+          suffixIcon: const Icon(Icons.tune, color: Colors.black87),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilters() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
         children: [
-          Row(
-            children: [
-              const CircleAvatar(
-                radius: 22,
-                child: Icon(Icons.accessible),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(name,
-                        style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)),
-                    Text(category, style: const TextStyle(color: Colors.grey)),
-                  ],
-                ),
-              ),
-              Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(.15),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.star, size: 14, color: Colors.green),
-                    const SizedBox(width: 4),
-                    Text(rating.toString()),
-                  ],
-                ),
-              )
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(distance, style: const TextStyle(color: Colors.grey)),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            children: tags
-                .map((e) => Chip(
-              label: Text(e),
-              backgroundColor: Colors.grey.shade100,
-            ))
-                .toList(),
-          ),
-          const SizedBox(height: 12),
-          Align(
-            alignment: Alignment.centerRight,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-              child: const Text('Subscribe'),
+          _buildFilterChip('All', isSelected: true),
+          const SizedBox(width: 10),
+          _buildFilterChip('Mobility', icon: Icons.accessible_forward, iconColor: Colors.blue),
+          const SizedBox(width: 10),
+          _buildFilterChip('Vision', icon: Icons.visibility, iconColor: Colors.orange),
+          const SizedBox(width: 10),
+          _buildFilterChip('Hearing', icon: Icons.hearing, iconColor: Colors.orange),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFilterChip(String label, {bool isSelected = false, IconData? icon, Color? iconColor}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: isSelected ? Colors.black : Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: isSelected ? null : Border.all(color: Colors.grey.shade300),
+      ),
+      child: Row(
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: 18, color: iconColor),
+            const SizedBox(width: 6),
+          ],
+          Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Colors.black87,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
             ),
-          )
+          ),
         ],
       ),
     );
   }
 }
 
-class _FilterChip extends StatelessWidget {
-  final String label;
-  final bool selected;
+// -------------------------------------------------------------
+// Helper Delegate for Sticky Headers
+// -------------------------------------------------------------
+class _StickyFilterDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
 
-  const _FilterChip({required this.label, this.selected = false});
+  _StickyFilterDelegate({required this.child});
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: ChoiceChip(
-        label: Text(label),
-        selected: selected,
-      ),
-    );
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return child;
+  }
+
+  @override
+  double get maxExtent => 50.0;
+
+  @override
+  double get minExtent => 50.0;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
+    return false;
   }
 }
-

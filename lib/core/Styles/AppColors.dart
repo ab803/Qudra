@@ -15,4 +15,5 @@ class Appcolors {
   static const Color cardPurple = Color(0xFFA855F7); // For Hearing
   static const Color textDark = Color(0xFF1F2937);
   static const Color textLight = Color(0xFF6B7280);
+
 }

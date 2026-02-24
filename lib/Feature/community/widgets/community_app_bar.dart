@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/Styles/AppColors.dart';
+import '../../../core/Styles/AppIcons.dart';
+import '../../../core/Styles/AppTextsyles.dart';
+
 class CommunityAppBar extends StatelessWidget {
   const CommunityAppBar({super.key});
 
@@ -13,30 +17,17 @@ class CommunityAppBar extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: const BoxDecoration(
-              color: Colors.black,
               shape: BoxShape.circle,
             ),
-            child: const Center(
-              child: Text('Q',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22)),
+            child: Center(
+              child: Image.asset(Appicons.logo, width: 40, height: 40),
             ),
           ),
           const SizedBox(width: 12),
-          const Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Qudra',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-              Text('Community Feed',
-                  style: TextStyle(fontSize: 12, color: Colors.grey)),
-            ],
-          ),
+           Text('Community Feed',
+                  style: AppTextStyles.title.copyWith(fontSize: 20)),
+
           const Spacer(),
-          IconButton(
-              icon: const Icon(Icons.text_fields), onPressed: () {}),
           IconButton(
               icon: const Icon(Icons.notifications_none), onPressed: () {}),
           const CircleAvatar(
