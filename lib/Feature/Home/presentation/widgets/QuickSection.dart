@@ -121,12 +121,18 @@ class QuickAccessSection extends StatelessWidget {
             const SizedBox(width: 16),
 
             Expanded(
+              child: GestureDetector(
+                onTap: () {
+                // GoRouter
+                context.push('/meds'); //
+                 },
               child: QuickAccessCard(
                 title: 'Medical',
                 subtitle: 'Reminders',
                 icon: Icons.medication,
                 color: Appcolors.cardGreen,
               ),
+            ),
             ),
           ],
         ),

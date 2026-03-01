@@ -4,17 +4,16 @@ import 'package:qudra_0/core/Styles/AppColors.dart';
 
 /// بيانات واجهة فقط – تجهّزها من الـ DB لاحقًا
 class ReminderViewData {
-  final String id;              // ID من الداتابيز
-  final String title;           // اسم الدواء
-  final String subtitle;        // جرعة + وقت (لو حابب في نفس السطر)
-  final String? timeText;       // خانة الوقت الييمين (لو موجودة)
-  final IconData icon;          // أيقونة الرمز على اليسار
-  final Color accent;           // لون الخلفية الفاتح للأيقونة
-  final Color accentBorder;     // لون إطار الأيقونة
-  final bool isEnabled;         // حالة السويتش (UI فقط)
-  final bool isDimmedTime;      // يخلي الوقت مضروب أو بلون باهت
-  final bool isElevated;        // ظلّ أعلى (زي Metformin)
-  final bool leadingBadge;      // دائرة بارزة على الحافة
+  final String id;
+  final String title;
+  final String subtitle;
+  final String? timeText;
+  final IconData icon;
+  final Color accent;
+  final Color accentBorder;
+  final bool isEnabled;
+  final bool isDimmedTime;
+  final bool isElevated;
 
   ReminderViewData({
     required this.id,
@@ -27,7 +26,6 @@ class ReminderViewData {
     this.isEnabled = false,
     this.isDimmedTime = false,
     this.isElevated = false,
-    this.leadingBadge = false,
   });
 }
 
@@ -37,7 +35,7 @@ class MedsReminderTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final card = Container(
+    return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -55,7 +53,7 @@ class MedsReminderTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // أيقونة بداخل خلفية فاتحة وحدود ملوّنة
+          // أيقونة
           Container(
             width: 42,
             height: 42,
@@ -70,6 +68,7 @@ class MedsReminderTile extends StatelessWidget {
               size: 22,
             ),
           ),
+
           const SizedBox(width: 12),
 
           // النصوص
@@ -125,12 +124,12 @@ class MedsReminderTile extends StatelessWidget {
 
           const SizedBox(width: 12),
 
-          // سويتش شكلي (UI فقط) – مش شغال دلوقتي
+          // سويتش UI فقط
           Opacity(
             opacity: data.isEnabled ? 1.0 : 0.6,
             child: Switch.adaptive(
               value: data.isEnabled,
-              onChanged: null, // UI فقط (هتوصّله لما الداتا تجهز)
+              onChanged: null, // لما تربطها بالداتا هنفعلها
               activeColor: Colors.white,
               activeTrackColor: Appcolors.primaryColor,
               inactiveThumbColor: Colors.white,
@@ -139,28 +138,6 @@ class MedsReminderTile extends StatelessWidget {
           ),
         ],
       ),
-    );
-
-    if (!data.leadingBadge) return card;
-
-    // نسخة Metformin فيها حافة دائرية بلون أورنج – نحاكيها بStack
-    return Stack(
-      children: [
-        card,
-        Positioned(
-          left: 10,
-          top: 12,
-          bottom: 12,
-          child: Container(
-            width: 8,
-            decoration: BoxDecoration(
-              color: Appcolors.cardOrange.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(99),
-              border: Border.all(color: Appcolors.cardOrange.withOpacity(0.6)),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

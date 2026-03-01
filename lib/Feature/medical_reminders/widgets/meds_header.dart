@@ -25,7 +25,7 @@ class MedsHeader extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              'Medical &\nReminders',
+              'Medical Reminders',
               style: AppTextStyles.title.copyWith(
                 fontSize: 28,
                 color: Appcolors.primaryColor,

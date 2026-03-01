@@ -8,9 +8,8 @@ import '../../Feature/bottom_nav_bar.dart';
 import '../../Feature/community/communityView.dart';
 import '../../Feature/emergency_call/presentation/views/emergency_help_view.dart';
 import '../../Feature/institution/institution.dart';
-import '../../Feature/medical_reminder/medical_reminders.dart';
 import '../../Feature/profile/profile.dart';
-
+import '../../Feature/medical_reminders/presentation/views/medical_reminders_view.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -23,11 +22,17 @@ class AppRouter {
         builder: (context, state) => const SplashView(),
       ),
 
+      /// emergency-call
       GoRoute(
         path: '/emergency-call',
         builder: (context, state) => const EmergencyHelpView(),
       ),
 
+      /// meds
+      GoRoute(
+        path: '/meds',
+        builder: (context, state) => const MedicalRemindersView(),
+      ),
 
       /// Chat Bot
       GoRoute(
@@ -59,10 +64,6 @@ class AppRouter {
             builder: (context, state) => const InstitutionView(),
           ),
 
-          GoRoute(
-            path: '/reminders',
-            builder: (context, state) => const medicalRemindersView(),
-          ),
 
           GoRoute(
             path: '/profile',

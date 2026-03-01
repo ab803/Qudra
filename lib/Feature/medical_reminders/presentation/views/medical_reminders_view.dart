@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:qudra_0/core/Styles/AppColors.dart';
 import 'package:qudra_0/core/Styles/AppTextsyles.dart';
 
-import '../widgets/meds_reminder_tile.dart';
+import '../../widgets/meds_header.dart';
+import '../../widgets/meds_progress_card.dart';
+import '../../widgets/meds_reminder_tile.dart';
+import '../../widgets/meds_section_title.dart';
+
 
 
 
@@ -46,7 +50,6 @@ class MedicalRemindersView extends StatelessWidget {
         accentBorder: Appcolors.cardOrange,
         isEnabled: false,
         isElevated: true, // لها ظلّ وحد بارز في السكرين
-        leadingBadge: true, // الدائرة اليمينية في الحافة
       ),
       ReminderViewData(
         id: 'rx_lisinopril',
@@ -82,7 +85,7 @@ class MedicalRemindersView extends StatelessWidget {
         ),
         centerTitle: false,
         titleSpacing: 0,
-        title: const SizedBox.shrink(), // الهيدر داخل البودي بنمط التصميم
+        title: const SizedBox.shrink(), //
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_none_rounded, color: Appcolors.primaryColor),
@@ -126,18 +129,8 @@ class MedicalRemindersView extends StatelessWidget {
 
                 const SizedBox(height: 12),
 
-                // Section: Emergency Contacts
-                const MedsSectionTitle(
-                  icon: Icons.emergency_outlined,
-                  label: 'Emergency Contacts',
-                  iconColor: Appcolors.EmergancyColor,
-                  labelColor: Appcolors.EmergancyColor,
-                ),
-
-                const SizedBox(height: 12),
-
                 // Contacts row
-                const MedsEmergencyContacts(),
+
               ],
             ),
 
