@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../Feature/Chat_Bot/views/chat_bot_view.dart';
 import '../../Feature/Splash/presentation/views/splash_view.dart';
@@ -8,7 +7,8 @@ import '../../Feature/bottom_nav_bar.dart';
 import '../../Feature/community/communityView.dart';
 import '../../Feature/emergency_call/presentation/views/emergency_help_view.dart';
 import '../../Feature/institution/institution.dart';
-import '../../Feature/profile/profile.dart';
+import '../../Feature/profile/views/personal_info_view.dart';
+import '../../Feature/profile/views/profile.dart';
 import '../../Feature/medical_reminders/presentation/views/medical_reminders_view.dart';
 
 class AppRouter {
@@ -39,6 +39,13 @@ class AppRouter {
         path: '/chat',
         builder: (context, state) => const ChatBotView(),
       ),
+
+      /// personal-info
+      GoRoute(
+        path: '/profile/personal-info',
+        builder: (context, state) => const PersonalInfoView(),
+      ),
+
 
       // Accessibility
       GoRoute(
