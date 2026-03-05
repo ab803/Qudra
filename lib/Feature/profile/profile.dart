@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../core/Styles/AppColors.dart';
 import 'widgets/profile_header.dart';
 import 'widgets/profile_menu_item.dart';
@@ -30,13 +31,20 @@ class ProfileView extends StatelessWidget {
                       icon: Icons.person,
                       title: "Personal Info",
                       iconBg: Colors.orange.shade100,
-                      iconColor: Colors.orange),
+                      iconColor: Colors.orange,
+                      ontap: () {
+                        context.go('');
+                      },),
 
                   ProfileMenuItem(
                       icon: Icons.collections_bookmark,
                       title: "My Subscriptions",
                       iconBg: Colors.yellow.shade100,
-                      iconColor: Colors.yellow.shade700),
+                      iconColor: Colors.yellow.shade700,
+                      ontap: () {
+                       context.go('/subscriptions');
+                     }
+                  ),
 
                   const SizedBox(height: 25),
 
@@ -49,19 +57,31 @@ class ProfileView extends StatelessWidget {
                       icon: Icons.menu_book,
                       title: "App Guidelines",
                       iconBg: Colors.teal.shade100,
-                      iconColor: Colors.teal),
+                      iconColor: Colors.teal,
+                      ontap: () {
+                        context.go('/guidelines');
+                      }
+                  ),
 
                   ProfileMenuItem(
                       icon: Icons.chat_bubble,
                       title: "Feedback",
                       iconBg: Colors.blue.shade100,
-                      iconColor: Colors.blue),
+                      iconColor: Colors.blue,
+                      ontap: () {
+                        context.go('/feedback');
+                      }
+                  ),
 
                   ProfileMenuItem(
                       icon: Icons.settings,
                       title: "Settings",
                       iconBg: Colors.grey.shade200,
-                      iconColor: Colors.grey.shade700),
+                      iconColor: Colors.grey.shade700,
+                      ontap: () {
+                      context.go('');
+                     }
+                  ),
 
                   const SizedBox(height: 30),
 

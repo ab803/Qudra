@@ -10,30 +10,24 @@ import '../../Feature/emergency_call/presentation/views/emergency_help_view.dart
 import '../../Feature/institution/institution.dart';
 import '../../Feature/medical_reminder/medical_reminders.dart';
 import '../../Feature/profile/profile.dart';
-
+import '../../Feature/profile/presentation/views/app_guidelines_view.dart';
+import '../../Feature/profile/presentation/views/my_subscriptions_view.dart';
+import '../../Feature/profile/presentation/views/feedback_view.dart';
 
 class AppRouter {
   static final router = GoRouter(
     initialLocation: '/splash',
     routes: [
-
       /// Splash
-      GoRoute(
-        path: '/splash',
-        builder: (context, state) => const SplashView(),
-      ),
+      GoRoute(path: '/splash', builder: (context, state) => const SplashView()),
 
       GoRoute(
         path: '/emergency-call',
         builder: (context, state) => const EmergencyHelpView(),
       ),
 
-
       /// Chat Bot
-      GoRoute(
-        path: '/chat',
-        builder: (context, state) => const ChatBotView(),
-      ),
+      GoRoute(path: '/chat', builder: (context, state) => const ChatBotView()),
 
       // Accessibility
       GoRoute(
@@ -41,18 +35,13 @@ class AppRouter {
         builder: (context, state) => const AccessibilityHubView(),
       ),
 
-
-  /// Bottom Navigation Shell
+      /// Bottom Navigation Shell
       ShellRoute(
         builder: (context, state, child) {
           return MainNavView(child: child);
         },
         routes: [
-
-          GoRoute(
-            path: '/home',
-            builder: (context, state) => const HomeView(),
-          ),
+          GoRoute(path: '/home', builder: (context, state) => const HomeView()),
 
           GoRoute(
             path: '/institution',
@@ -74,6 +63,20 @@ class AppRouter {
             builder: (context, state) => const CommunityView(),
           ),
 
+          GoRoute(
+            path: '/guidelines',
+            builder: (context, state) => const AppGuidelinesView(),
+          ),
+
+          GoRoute(
+            path: '/subscriptions',
+            builder: (context, state) => const MySubscriptionsView(),
+          ),
+
+          GoRoute(
+            path: '/feedback',
+            builder: (context, state) => const FeedbackView(),
+          ),
         ],
       ),
     ],

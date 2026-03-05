@@ -5,6 +5,7 @@ class ProfileMenuItem extends StatelessWidget {
   final String title;
   final Color iconBg;
   final Color iconColor;
+  final void Function()? ontap;
 
   const ProfileMenuItem({
     super.key,
@@ -12,6 +13,7 @@ class ProfileMenuItem extends StatelessWidget {
     required this.title,
     required this.iconBg,
     required this.iconColor,
+    required this.ontap,
   });
 
   @override
@@ -32,7 +34,7 @@ class ProfileMenuItem extends StatelessWidget {
             style: const TextStyle(fontWeight: FontWeight.w600)),
         trailing: const Icon(Icons.arrow_forward_ios,
             size: 16, color: Colors.grey),
-        onTap: () {},
+        onTap: ontap,
       ),
     );
   }
