@@ -8,8 +8,8 @@ import '../../Feature/bottom_nav_bar.dart';
 import '../../Feature/community/communityView.dart';
 import '../../Feature/emergency_call/presentation/views/emergency_help_view.dart';
 import '../../Feature/institution/institution.dart';
-import '../../Feature/medical_reminder/medical_reminders.dart';
-import '../../Feature/profile/profile.dart';
+import '../../Feature/medical_reminders/presentation/views/medical_reminders_view.dart';
+import '../../Feature/profile/views/profile.dart';
 
 
 class AppRouter {
@@ -61,7 +61,7 @@ class AppRouter {
 
           GoRoute(
             path: '/reminders',
-            builder: (context, state) => const medicalRemindersView(),
+            builder: (context, state) => const MedicalRemindersView(),
           ),
 
           GoRoute(
