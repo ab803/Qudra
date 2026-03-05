@@ -3,7 +3,6 @@ import 'package:qudra_0/core/Styles/AppColors.dart';
 import 'package:qudra_0/core/Styles/AppTextsyles.dart';
 import '../widgets/current_location_map.dart';
 import '../widgets/sos_hold_button.dart';
-import '../widgets/section_header.dart';
 import '../widgets/professional_services_row.dart';
 import '../widgets/personal_contacts_section.dart';
 
@@ -38,7 +37,6 @@ class EmergencyHelpView extends StatelessWidget {
         ],
       ),
       body: SafeArea(
-        // ✅ ListView أفضل من SingleChildScrollView لما الصفحة فيها sections كتير
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
           children: [
