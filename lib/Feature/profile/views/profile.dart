@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:go_router/go_router.dart';
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
 
@@ -74,14 +74,14 @@ class ProfileView extends StatelessWidget {
                 children: [
                   const Text("Account", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 15),
-                  _buildMenuItem(Icons.person, "Personal Info", Colors.orange.shade100, Colors.orange),
-                  _buildMenuItem(Icons.collections_bookmark, "My Subscriptions", Colors.yellow.shade100, Colors.yellow.shade700),
+                  _buildMenuItem(Icons.person, "Personal Info", Colors.orange.shade100, Colors.orange,  onTap: () => context.push('/profile/personal-info'),),
+                  _buildMenuItem(Icons.collections_bookmark, "My Subscriptions", Colors.yellow.shade100, Colors.yellow.shade700 ,onTap: () => context.push('/profile/my-subscriptions') ),
 
                   const SizedBox(height: 25),
                   const Text("Support & Settings", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 15),
-                  _buildMenuItem(Icons.menu_book, "App Guidelines", Colors.teal.shade100, Colors.teal),
-                  _buildMenuItem(Icons.chat_bubble, "Feedback", Colors.blue.shade100, Colors.blue),
+                  _buildMenuItem(Icons.menu_book, "App Guidelines", Colors.teal.shade100, Colors.teal ,onTap: () => context.push('/profile/APP-GUIDELINES')),
+                  _buildMenuItem(Icons.chat_bubble, "Feedback", Colors.blue.shade100, Colors.blue ,onTap: () => context.push('/profile/FEEDBACK')),
                   _buildMenuItem(Icons.settings, "Settings", Colors.grey.shade200, Colors.grey.shade700),
 
                   const SizedBox(height: 30),
@@ -123,8 +123,8 @@ class ProfileView extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuItem(IconData icon, String title, Color iconBg, Color iconColor) {
-    return Container(
+  Widget _buildMenuItem(IconData icon, String title, Color iconBg, Color iconColor, {VoidCallback? onTap}) =>
+      Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -138,7 +138,7 @@ class ProfileView extends StatelessWidget {
         ),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
         trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-        onTap: () {},
+        onTap: onTap,
       ),
     );
   }
@@ -160,4 +160,3 @@ class ProfileView extends StatelessWidget {
   }
 
 
-}

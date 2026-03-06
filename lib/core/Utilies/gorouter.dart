@@ -9,6 +9,10 @@ import '../../Feature/community/communityView.dart';
 import '../../Feature/emergency_call/presentation/views/emergency_help_view.dart';
 import '../../Feature/institution/institution.dart';
 import '../../Feature/medical_reminders/presentation/views/medical_reminders_view.dart';
+import '../../Feature/profile/presentation/views/app_guidelines_view.dart';
+import '../../Feature/profile/presentation/views/feedback_view.dart';
+import '../../Feature/profile/presentation/views/my_subscriptions_view.dart';
+import '../../Feature/profile/views/personal_info_view.dart';
 import '../../Feature/profile/views/profile.dart';
 
 
@@ -42,7 +46,28 @@ class AppRouter {
       ),
 
 
-  /// Bottom Navigation Shell
+      GoRoute(
+        path: '/profile/personal-info',
+        builder: (context, state) => const PersonalInfoView(),
+      ),
+
+
+      GoRoute(
+        path: '/profile/my-subscriptions',
+        builder: (context, state) => const MySubscriptionsView(),
+      ),
+
+      GoRoute(
+        path: '/profile/FEEDBACK',
+        builder: (context, state) => const FeedbackView(),
+      ),
+
+      GoRoute(
+        path: '/profile/APP-GUIDELINES',
+        builder: (context, state) => const AppGuidelinesView(),
+      ),
+
+      /// Bottom Navigation Shell
       ShellRoute(
         builder: (context, state, child) {
           return MainNavView(child: child);
