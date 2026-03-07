@@ -124,7 +124,7 @@ class QuickAccessSection extends StatelessWidget {
               child: GestureDetector(
                 onTap: () {
                 // GoRouter
-                context.push('/meds'); //
+                context.push('/reminders'); //
                  },
               child: QuickAccessCard(
                 title: 'Medical',

@@ -1,23 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:qudra_0/core/Styles/AppColors.dart';
-import 'package:qudra_0/core/Styles/AppTextsyles.dart';
-
 import '../../widgets/meds_header.dart';
 import '../../widgets/meds_progress_card.dart';
 import '../../widgets/meds_reminder_tile.dart';
 import '../../widgets/meds_section_title.dart';
-
-
-
-
-
 
 class MedicalRemindersView extends StatelessWidget {
   const MedicalRemindersView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // بيانات UI ثابتة للعرض فقط – وقت الربط هتملاها من الـ DB
     final reminders = [
       ReminderViewData(
         id: 'rx_aspirin',
@@ -134,7 +126,6 @@ class MedicalRemindersView extends StatelessWidget {
               ],
             ),
 
-            // Floating Add (+) — أسفل يمين بدون ناف بار
             Positioned(
               right: 16,
               bottom: 16,

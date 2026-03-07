@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:qudra_0/core/Styles/AppColors.dart';
 import 'package:qudra_0/core/Styles/AppTextsyles.dart';
-
-import '../widgets/personal_info_avatar.dart';
-import '../widgets/labeled_readonly_field.dart';
-import '../widgets/disability_profile_card.dart';
+import '../../widgets/personal_info_avatar.dart';
+import '../../widgets/labeled_readonly_field.dart';
+import '../../widgets/disability_profile_card.dart';
 
 class PersonalInfoView extends StatelessWidget {
   const PersonalInfoView({super.key});
@@ -19,7 +19,7 @@ class PersonalInfoView extends StatelessWidget {
         surfaceTintColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new, color: Appcolors.primaryColor),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => context.go('/profile'),
         ),
         centerTitle: true,
         title: Text(
@@ -37,7 +37,7 @@ class PersonalInfoView extends StatelessWidget {
             PersonalInfoAvatar(),
             SizedBox(height: 12),
 
-            // الاسم و الـ ID (UI )
+
             _NameAndId(name: 'Name', userId: '#839210'),
             SizedBox(height: 18),
 
@@ -128,7 +128,7 @@ class _SaveButton extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           elevation: 0,
         ),
-        onPressed: null, // هتتفعل لما تربط الداتا
+        onPressed: null,
         child: Text(
           'Save Changes',
           style: AppTextStyles.button.copyWith(color: Colors.white),
