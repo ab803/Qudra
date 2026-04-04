@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../core/Styles/AppColors.dart';
-import '../Home/presentation/widgets/custom_searchBar.dart';
 import 'widgets/community_app_bar.dart';
 import 'widgets/post_search_bar.dart' hide SearchBar;
 import 'widgets/filter_chips.dart';

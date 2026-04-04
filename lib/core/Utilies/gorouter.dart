@@ -1,5 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../Feature/Auth/ViewModel/auth_cubit.dart';
+import '../../Feature/Auth/forget_password/views/ForgetPasswordView.dart';
+import '../../Feature/Auth/forget_password/views/ResetPasswordView.dart';
+import '../../Feature/Auth/login/views/LoginView.dart';
+import '../../Feature/Auth/signUp/Views/SignUpView.dart';
 import '../../Feature/Chat_Bot/views/chat_bot_view.dart';
 import '../../Feature/Splash/presentation/views/splash_view.dart';
 import '../../Feature/Home/presentation/views/home_view.dart';
@@ -86,6 +92,34 @@ class AppRouter {
         pageBuilder: (context, state) => _buildPageWithAnimation(
             context, state, const MySubscriptionsView()),
       ),
+  // ✅ Correct — wrap with BlocProvider
+     GoRoute(
+      path: '/signUp',
+      pageBuilder: (context, state) => _buildPageWithAnimation(
+       context, state, const SignUpView()
+  ),
+  ),
+      GoRoute(
+        path: '/forget',
+        pageBuilder: (context, state) => _buildPageWithAnimation(
+            context, state, const ForgotPasswordView()
+        ),
+      ),
+
+      GoRoute(
+        path: '/resetPassword',
+        pageBuilder: (context, state) => _buildPageWithAnimation(
+          context,
+          state,
+          ResetPasswordView(email: state.extra as String),
+        ),
+      ),
+
+      GoRoute(
+        path: '/login',
+        pageBuilder: (context, state) => _buildPageWithAnimation(
+             context, state, const LogInView()),
+      ),
 
 
       /// Bottom Navigation Shell
@@ -122,6 +156,7 @@ class AppRouter {
             pageBuilder: (context, state) =>
                 _buildPageWithAnimation(context, state, const CommunityView()),
           ),
+
         ],
       ),
     ],
