@@ -1,71 +1,61 @@
 import 'package:flutter/material.dart';
 import 'package:qudra_0/core/Styles/AppColors.dart';
-import 'package:qudra_0/core/Styles/AppTextsyles.dart';
 
 class ChatInputBar extends StatelessWidget {
-  const ChatInputBar({super.key});
+  final TextEditingController controller;
+  final VoidCallback onSend;
+
+  const ChatInputBar({
+    super.key,
+    required this.controller,
+    required this.onSend,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+      padding: const EdgeInsets.fromLTRB(16, 8, 12, 16),
       child: Row(
         children: [
-          // صندوق الإدخال (placeholder فقط)
+          // ── Text field ─────────────────────────────────────
           Expanded(
-            child: Container(
-              height: 44,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                color: Appcolors.backgroundColor,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: Colors.grey.shade200),
-              ),
-              alignment: Alignment.centerLeft,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Type a message…',
-                      style: AppTextStyles.body.copyWith(
-                        color: Appcolors.textLight,
-                        fontSize: 13.5,
-                        height: 1.2,
-                      ),
-                    ),
-                  ),
-                  Icon(Icons.attach_file, color: Appcolors.textLight, size: 20),
-                ],
+            child: TextField(
+              controller: controller,
+              onSubmitted: (_) => onSend(),
+              textCapitalization: TextCapitalization.sentences,
+              decoration: InputDecoration(
+                hintText: 'Type a message...',
+                hintStyle: TextStyle(color: Colors.grey.shade500),
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 12),
+                filled: true,
+                fillColor: const Color(0xFFF4F5F7),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide.none,
+                ),
               ),
             ),
           ),
-          const SizedBox(width: 10),
-
-          // أزرار دائرية داخل مربعات سوداء (زي السكرين)
-          _SquareIcon(icon: Icons.mic_none_rounded),
           const SizedBox(width: 8),
-          _SquareIcon(icon: Icons.play_arrow_rounded), // send
+
+          // ── Send button ────────────────────────────────────
+          GestureDetector(
+            onTap: onSend,
+            child: Container(
+              width: 46,
+              height: 46,
+              decoration: const BoxDecoration(
+                color: Appcolors.primaryColor,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.send_rounded,
+                  color: Colors.white, size: 20),
+            ),
+          ),
         ],
       ),
-    );
-  }
-}
-
-class _SquareIcon extends StatelessWidget {
-  final IconData icon;
-  const _SquareIcon({required this.icon});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 44,
-      height: 44,
-      decoration: BoxDecoration(
-        color: Appcolors.primaryColor, // أسود
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Icon(icon, color: Colors.white, size: 22),
     );
   }
 }

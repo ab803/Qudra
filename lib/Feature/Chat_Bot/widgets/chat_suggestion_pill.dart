@@ -1,48 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:qudra_0/core/Styles/AppColors.dart';
-import 'package:qudra_0/core/Styles/AppTextsyles.dart';
 
 class ChatSuggestionPill extends StatelessWidget {
   final String label;
   final IconData icon;
-  final bool isCritical; // علشان لون خاص للطوارئ
+  final bool isCritical;
+  final VoidCallback? onTap; // ✅ wired to cubit
 
   const ChatSuggestionPill({
     super.key,
     required this.label,
     required this.icon,
     this.isCritical = false,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final bg = isCritical
-        ? Appcolors.EmergancyColor.withOpacity(0.08)
-        : Appcolors.backgroundColor;
-    final fg = isCritical ? Appcolors.EmergancyColor : Appcolors.primaryColor;
+    final bgColor = isCritical
+        ? Colors.red.shade50
+        : Colors.grey.shade100;
+    final fgColor = isCritical
+        ? Colors.red.shade700
+        : Appcolors.primaryColor;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 18, color: fg),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: AppTextStyles.body.copyWith(
-              color: fg,
-              fontWeight: FontWeight.w700,
-              fontSize: 13,
-              height: 1.0,
-            ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isCritical
+                ? Colors.red.shade200
+                : Colors.grey.shade300,
           ),
-        ],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 16, color: fgColor),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: fgColor,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

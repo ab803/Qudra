@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../ViewModel/auth_cubit.dart';
 import '../../ViewModel/auth_state.dart';
+import '../../widgets/CustomTextField.dart';
 
 
 class ResetPasswordView extends StatefulWidget {
@@ -115,25 +116,24 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                         const SizedBox(height: 32),
 
                         // ── Verification Token ─────────────────────
-                        _buildLabel('Verification Token'),
+
                         const SizedBox(height: 10),
-                        TextFormField(
+                        CustomTextField(
                           controller: _tokenController,
                           keyboardType: TextInputType.number,
                           validator: (v) {
                             if (v == null || v.isEmpty)
                               return 'Token is required';
                             return null;
-                          },
-                          decoration: _inputDecoration(
-                              hint: 'Enter token'),
+                          }, label: 'Verification Token', hint: 'enter token',
+
                         ),
                         const SizedBox(height: 24),
 
                         // ── New Password ───────────────────────────
-                        _buildLabel('New Password'),
+
                         const SizedBox(height: 10),
-                        TextFormField(
+                        CustomTextField(
                           controller: _passwordController,
                           obscureText: _obscurePassword,
                           validator: (v) {
@@ -142,22 +142,14 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                             if (v.length < 6)
                               return 'Minimum 6 characters';
                             return null;
-                          },
-                          decoration: _inputDecoration(
-                            hint: 'Enter new password',
-                            suffixIcon: _eyeIcon(
-                              obscure: _obscurePassword,
-                              onTap: () => setState(
-                                      () => _obscurePassword = !_obscurePassword),
-                            ),
-                          ),
+                          }, label: 'New password', hint: 'enter new password', keyboardType: TextInputType.visiblePassword,
                         ),
                         const SizedBox(height: 24),
 
                         // ── Confirm Password ───────────────────────
-                        _buildLabel('Confirm New Password'),
+
                         const SizedBox(height: 10),
-                        TextFormField(
+                        CustomTextField(
                           controller: _confirmController,
                           obscureText: _obscureConfirm,
                           validator: (v) {
@@ -166,15 +158,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                             if (v != _passwordController.text)
                               return 'Passwords do not match';
                             return null;
-                          },
-                          decoration: _inputDecoration(
-                            hint: 'Confirm new password',
-                            suffixIcon: _eyeIcon(
-                              obscure: _obscureConfirm,
-                              onTap: () => setState(
-                                      () => _obscureConfirm = !_obscureConfirm),
-                            ),
-                          ),
+                          }, label: 'Confirm New Password', hint: 'confirm password', keyboardType:TextInputType.visiblePassword ,
                         ),
                       ],
                     ),
@@ -226,57 +210,6 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
           ),
         ),
       ),
-    );
-  }
-
-  // ── Helpers ───────────────────────────────────────────────────
-  Widget _buildLabel(String text) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-        color: Color(0xFF111827),
-      ),
-    );
-  }
-
-  InputDecoration _inputDecoration({
-    required String hint,
-    Widget? suffixIcon,
-  }) {
-    return InputDecoration(
-      hintText: hint,
-      hintStyle: TextStyle(color: Colors.grey.shade500),
-      suffixIcon: suffixIcon,
-      contentPadding:
-      const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(28),
-        borderSide: const BorderSide(color: Colors.black, width: 1.5),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(28),
-        borderSide: const BorderSide(color: Colors.black, width: 2.0),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(28),
-        borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(28),
-        borderSide: const BorderSide(color: Colors.redAccent, width: 2.0),
-      ),
-    );
-  }
-
-  Widget _eyeIcon({required bool obscure, required VoidCallback onTap}) {
-    return IconButton(
-      icon: Icon(
-        obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-        color: Colors.black,
-      ),
-      onPressed: onTap,
     );
   }
 }
