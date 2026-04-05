@@ -36,12 +36,12 @@ class MedicalRemindersView extends StatelessWidget {
         id: 'rx_metformin',
         title: 'Metformin',
         subtitle: '500mg • 12:00 PM',
-        timeText: null, // حسب السكرين مكتوبة في السطر التاني، مش خانة وقت على اليمين
+        timeText: null,
         icon: Icons.circle_outlined,
-        accent: const Color(0xFFFFF7ED), // أورنج فاتح
+        accent: const Color(0xFFFFF7ED),
         accentBorder: Appcolors.cardOrange,
         isEnabled: false,
-        isElevated: true, // لها ظلّ وحد بارز في السكرين
+        isElevated: true,
       ),
       ReminderViewData(
         id: 'rx_lisinopril',
