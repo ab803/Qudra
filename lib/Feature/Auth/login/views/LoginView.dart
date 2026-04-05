@@ -6,7 +6,6 @@ import '../../ViewModel/auth_cubit.dart';
 import '../../ViewModel/auth_state.dart';
 import '../../widgets/AuthActionButton.dart';   // AuthButton
 import '../../widgets/CustomTextField.dart';
-import '../../widgets/QLogoWidget.dart';
 import '../../widgets/passwordField.dart';    // CustomTextField
 
 class LogInView extends StatefulWidget {
