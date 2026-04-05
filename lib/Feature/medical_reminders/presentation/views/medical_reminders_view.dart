@@ -1,162 +1,270 @@
 import 'package:flutter/material.dart';
-import 'package:qudra_0/core/Styles/AppColors.dart';
-import 'package:qudra_0/core/Styles/AppTextsyles.dart';
-
+import 'package:provider/provider.dart';
+import '../../models/reminder_model.dart';
+import '../../viewmodel/medical_reminders_view_model.dart';
 import '../../widgets/meds_header.dart';
 import '../../widgets/meds_progress_card.dart';
 import '../../widgets/meds_reminder_tile.dart';
 import '../../widgets/meds_section_title.dart';
-
-
-
+import '../../widgets/open_add_bottomsheet.dart';
 
 
 
 class MedicalRemindersView extends StatelessWidget {
   const MedicalRemindersView({super.key});
 
+  String _formatTimeForUi(BuildContext context, String hhmm) {
+    final parts = hhmm.split(':');
+    if (parts.length != 2) return hhmm;
+
+    final tod = TimeOfDay(
+      hour: int.parse(parts[0]),
+      minute: int.parse(parts[1]),
+    );
+    return MaterialLocalizations.of(context).formatTimeOfDay(tod);
+  }
+
+  ReminderViewData _toViewData(
+      BuildContext context,
+      MedicalRemindersViewModel vm,
+      ReminderModel m,
+      ) {
+    return ReminderViewData(
+      id: m.id,
+      title: m.title,
+      subtitle: m.subtitle,
+      timeText: (m.time == null || m.time!.isEmpty)
+          ? null
+          : _formatTimeForUi(context, m.time!),
+      isEnabled: m.isEnabled,
+      statusLabel: vm.getStatusLabelForReminder(m.id),
+    );
+  }
+
+  String _buildProgressFooter(
+      BuildContext context,
+      MedicalRemindersViewModel vm,
+      ) {
+    final int missed = vm.missedTodayCount;
+    final String? nextRaw = vm.nextReminderTime;
+    final String? nextFormatted =
+    nextRaw == null ? null : _formatTimeForUi(context, nextRaw);
+
+    if (missed > 0 && nextFormatted != null) {
+      return '$missed missed • Next at $nextFormatted';
+    }
+
+    if (missed > 0) {
+      return '$missed missed';
+    }
+
+    if (nextFormatted != null) {
+      return 'Next at $nextFormatted';
+    }
+
+    if (vm.dueTodayCount == 0) {
+      return 'No doses scheduled';
+    }
+
+    if (vm.takenTodayCount >= vm.dueTodayCount) {
+      return 'All doses completed';
+    }
+
+    return 'No upcoming doses';
+  }
+
+  Future<void> _confirmDelete(
+      BuildContext context,
+      String id,
+      String title,
+      ) async {
+    final vm = context.read<MedicalRemindersViewModel>();
+
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Reminder?'),
+        content: Text('Delete \"$title\"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text(
+              'Delete',
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (ok == true) {
+      await vm.deleteReminder(id);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // بيانات UI ثابتة للعرض فقط – وقت الربط هتملاها من الـ DB
-    final reminders = [
-      ReminderViewData(
-        id: 'rx_aspirin',
-        title: 'Aspirin',
-        subtitle: '100mg',
-        timeText: '8:00 AM',
-        icon: Icons.medication_liquid_outlined,
-        accent: const Color(0xFFD1FAE5), // أخضر فاتح
-        accentBorder: Appcolors.cardGreen,
-        isEnabled: true,
-        isDimmedTime: true, // في السكرين الوقت معمول strike-through
-      ),
-      ReminderViewData(
-        id: 'rx_eye_drops',
-        title: 'Eye Drops',
-        subtitle: '2 drops',
-        timeText: '9:30 AM',
-        icon: Icons.water_drop_outlined,
-        accent: const Color(0xFFE0F2FE), // أزرق فاتح
-        accentBorder: Appcolors.cardBlue,
-        isEnabled: true,
-      ),
-      ReminderViewData(
-        id: 'rx_metformin',
-        title: 'Metformin',
-        subtitle: '500mg • 12:00 PM',
-        timeText: null,
-        icon: Icons.circle_outlined,
-        accent: const Color(0xFFFFF7ED),
-        accentBorder: Appcolors.cardOrange,
-        isEnabled: false,
-        isElevated: true,
-      ),
-      ReminderViewData(
-        id: 'rx_lisinopril',
-        title: 'Lisinopril',
-        subtitle: '10mg • 6:00 PM',
-        timeText: null,
-        icon: Icons.favorite_border,
-        accent: const Color(0xFFF3E8FF), // بنفسجي فاتح
-        accentBorder: Appcolors.cardPurple,
-        isEnabled: false,
-      ),
-      ReminderViewData(
-        id: 'rx_insulin',
-        title: 'Insulin',
-        subtitle: '20 Units • 9:00 PM',
-        timeText: null,
-        icon: Icons.science_outlined,
-        accent: const Color(0xFFE0F2F1), // teal فاتح
-        accentBorder: Appcolors.cardTeal,
-        isEnabled: false,
-      ),
-    ];
+    final vm = context.watch<MedicalRemindersViewModel>();
+    final items = vm.reminders.map((m) => _toViewData(context, vm, m)).toList();
 
     return Scaffold(
-      backgroundColor: Appcolors.backgroundColor,
+      backgroundColor: const Color(0xFFF7F7F7),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         surfaceTintColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Appcolors.primaryColor),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87),
           onPressed: () => Navigator.of(context).pop(),
         ),
         centerTitle: false,
         titleSpacing: 0,
-        title: const SizedBox.shrink(), //
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none_rounded, color: Appcolors.primaryColor),
-            onPressed: () {},
-          ),
-        ],
+        title: const SizedBox.shrink(),
       ),
       body: SafeArea(
-        child: Stack(
+        child: vm.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : ListView(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 90),
           children: [
-            ListView(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 90), // مسافة لزر +
-              children: [
-                // Header
-                const MedsHeader(),
-
-                const SizedBox(height: 14),
-
-                // Progress Card
-                const MedsProgressCard(
-                  taken: 2,
-                  total: 5,
-                  caption: 'Medicines Taken',
-                ),
-
-                const SizedBox(height: 18),
-
-                // Section: Daily Reminders
-                const MedsSectionTitle(
-                  icon: Icons.wb_sunny_outlined,
-                  label: 'Daily Reminders',
-                ),
-
-                const SizedBox(height: 12),
-
-                // Reminder items
-                ...reminders.map((r) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: MedsReminderTile(data: r),
-                )),
-
-                const SizedBox(height: 12),
-
-                // Contacts row
-
-              ],
+            const MedsHeader(),
+            const SizedBox(height: 14),
+            MedsProgressCard(
+              taken: vm.takenTodayCount,
+              total: vm.dueTodayCount,
+              caption: 'Doses completed',
+              footerText: _buildProgressFooter(context, vm),
+              missedCount: vm.missedTodayCount,
             ),
-
-            // Floating Add (+) — أسفل يمين بدون ناف بار
-            Positioned(
-              right: 16,
-              bottom: 16,
-              child: Container(
-                width: 58,
-                height: 58,
-                decoration: BoxDecoration(
-                  color: Appcolors.primaryColor,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.12),
-                      blurRadius: 16,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: const Icon(Icons.add, color: Colors.white, size: 28),
+            if (vm.errorMessage != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                vm.errorMessage!,
+                style: const TextStyle(color: Colors.red),
               ),
+            ],
+            const SizedBox(height: 18),
+            const MedsSectionTitle(
+              icon: Icons.wb_sunny_outlined,
+              label: 'Daily Reminders',
             ),
+            const SizedBox(height: 12),
+            if (items.isEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 24),
+                child: Center(
+                  child: Text(
+                    'No reminders yet. Tap + to add one.',
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ),
+              )
+            else ...[
+              const _SwipeDirectionLabels(),
+              ...List.generate(
+                items.length,
+                    (index) {
+                  final r = items[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: MedsReminderTile(
+                      data: r,
+                      showSwipeHint: index == 0,
+                      onToggle: (v) => vm.toggleEnabled(r.id, v),
+                      onLongPress: () =>
+                          _confirmDelete(context, r.id, r.title),
+                      onMarkTaken: () => vm.markTaken(r.id),
+                      onSkip: () => vm.skipDose(r.id),
+                    ),
+                  );
+                },
+              ),
+            ],
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.black87,
+        onPressed: () async {
+          final result = await openAddBottomSheet(context);
+          if (result != null && context.mounted) {
+            await context.read<MedicalRemindersViewModel>().addReminder(result);
+          }
+        },
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+    );
+  }
+}
+
+class _SwipeDirectionLabels extends StatelessWidget {
+  const _SwipeDirectionLabels();
+
+  @override
+  Widget build(BuildContext context) {
+    final Color labelColor = Colors.grey.shade500;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.arrow_forward_ios_rounded,
+                size: 12,
+                color: labelColor,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                'Taken',
+                style: TextStyle(
+                  color: labelColor,
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600,
+                  height: 1.0,
+                ),
+              ),
+            ],
+          ),
+          const Spacer(),
+          Text(
+            'Swipe',
+            style: TextStyle(
+              color: labelColor,
+              fontSize: 11.5,
+              fontWeight: FontWeight.w600,
+              height: 1.0,
+            ),
+          ),
+          const Spacer(),
+          Row(
+            children: [
+              Text(
+                'Skip',
+                style: TextStyle(
+                  color: labelColor,
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600,
+                  height: 1.0,
+                ),
+              ),
+              const SizedBox(width: 4),
+              Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 12,
+                color: labelColor,
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

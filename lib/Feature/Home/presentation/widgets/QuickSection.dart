@@ -28,7 +28,7 @@ class QuickAccessSection extends StatelessWidget {
         // Emergency card
 
         GestureDetector(
-        onTap: () => context.push('/emergency-call'),
+        onTap: () => context.push('/emergency-entry'),
         child:
         Container(
           width: double.infinity,
