@@ -6,7 +6,8 @@ import '../../Feature/Home/presentation/views/home_view.dart';
 import '../../Feature/accessibility/views/accessibility_hub_view.dart';
 import '../../Feature/bottom_nav_bar.dart';
 import '../../Feature/community/communityView.dart';
-import '../../Feature/emergency_call/presentation/views/emergency_help_view.dart';
+import '../../Feature/emergency_assist/presentation/emergency_entry_view.dart';
+import '../../Feature/emergency_assist/presentation/emergency_main_entry.dart';
 import '../../Feature/institution/institution.dart';
 import '../../Feature/medical_reminder/medical_reminders.dart';
 import '../../Feature/profile/profile.dart';
@@ -24,10 +25,11 @@ class AppRouter {
       ),
 
       GoRoute(
-        path: '/emergency-call',
-        builder: (context, state) => const EmergencyHelpView(),
+        path: '/emergency-entry',
+        builder: (context, state) => EmergencyEntryView(
+          mainScreenBuilder: (_) => const EmergencyMainEntry(),
+        ),
       ),
-
 
       /// Chat Bot
       GoRoute(

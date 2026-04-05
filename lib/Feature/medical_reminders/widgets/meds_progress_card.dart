@@ -6,18 +6,34 @@ class MedsProgressCard extends StatelessWidget {
   final int taken;
   final int total;
   final String caption;
+  final String footerText;
+  final int missedCount;
 
   const MedsProgressCard({
     super.key,
     required this.taken,
     required this.total,
     required this.caption,
+    required this.footerText,
+    required this.missedCount,
   });
 
   @override
   Widget build(BuildContext context) {
+    final double progress =
+    total <= 0 ? 0.0 : (taken / total).clamp(0.0, 1.0).toDouble();
+
+    final bool isComplete = total > 0 && taken >= total;
+    final bool hasMissed = missedCount > 0;
+
+    final IconData centerIcon = isComplete
+        ? Icons.check_rounded
+        : hasMissed
+        ? Icons.warning_amber_rounded
+        : Icons.access_time_rounded;
+
     return Container(
-      height: 96,
+      height: 116,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: Appcolors.primaryColor,
@@ -25,15 +41,16 @@ class MedsProgressCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // النص اليساري
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(10),
@@ -74,18 +91,54 @@ class MedsProgressCard extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 8),
+                Text(
+                  footerText,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTextStyles.body.copyWith(
+                    color: Colors.white.withOpacity(0.92),
+                    fontSize: 12.5,
+                    height: 1.1,
+                  ),
+                ),
               ],
             ),
           ),
-          // أيقونة صح دائرية يمين
-          Container(
-            width: 46,
-            height: 46,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.12),
-              shape: BoxShape.circle,
+          const SizedBox(width: 12),
+          SizedBox(
+            width: 58,
+            height: 58,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                SizedBox(
+                  width: 58,
+                  height: 58,
+                  child: CircularProgressIndicator(
+                    value: progress,
+                    strokeWidth: 5,
+                    backgroundColor: Colors.white.withOpacity(0.16),
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                      Colors.greenAccent,
+                    ),
+                  ),
+                ),
+                Container(
+                  width: 42,
+                  height: 42,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    centerIcon,
+                    color: Colors.greenAccent,
+                    size: 22,
+                  ),
+                ),
+              ],
             ),
-            child: const Icon(Icons.check, color: Colors.white, size: 22),
           ),
         ],
       ),
