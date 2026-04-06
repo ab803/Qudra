@@ -28,15 +28,24 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+
+  google_generative_ai: ^0.4.7
+  dio: ^5.9.2
+  flutter_bloc: ^9.1.1
+  get_it: ^9.2.1
+  supabase_flutter: ^2.12.0
+  supabase: ^2.10.2
+
   flutter_overlay_window: ^0.5.0
   audioplayers: ^5.2.0
   share_plus: ^10.0.2
   url_launcher: ^6.3.0
   geolocator: ^11.1.0
   shared_preferences: ^2.2.3
-  supabase_flutter: ^2.5.6
+
 
   sqflite: ^2.3.0
+
   material_symbols_icons: ^4.2906.0
   animated_notch_bottom_bar: ^1.0.4
   go_router: ^17.1.0
@@ -110,3 +119,4 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+

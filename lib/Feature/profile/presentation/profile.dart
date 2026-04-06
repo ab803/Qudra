@@ -15,12 +15,19 @@ class ProfileView extends StatelessWidget {
       backgroundColor: const Color(0xFFF8F9FA),
       body: BlocBuilder<AuthCubit, AuthState>(
         builder: (context, state) {
-          // ── Pull real user data from state ──────────────────
-          final user = state is LoginSuccess
-              ? state.user
-              : null;
+          // ✅ خُد المستخدم من currentUser أولًا
+          // ولو لسه LoginSuccess موجودة استخدمها كـ fallback
+          if (state is AuthRestoring) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-          final fullName       = user?.fullName       ?? 'Unknown';
+          final authCubit = context.read<AuthCubit>();
+          final user =
+              authCubit.currentUser ?? (state is LoginSuccess ? state.user : null);
+
+          final fullName = user?.fullName ?? 'Unknown';
           final disabilityType = user?.disabilityType ?? 'Unknown';
 
           return SingleChildScrollView(
@@ -33,7 +40,7 @@ class ProfileView extends StatelessWidget {
                   decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
-                      bottomLeft:  Radius.circular(40),
+                      bottomLeft: Radius.circular(40),
                       bottomRight: Radius.circular(40),
                     ),
                   ),
@@ -48,7 +55,6 @@ class ProfileView extends StatelessWidget {
                             child: CircleAvatar(
                               radius: 58,
                               backgroundColor: Colors.grey.shade200,
-                              // ✅ Show first letter of name as fallback avatar
                               child: Text(
                                 fullName.isNotEmpty
                                     ? fullName[0].toUpperCase()
@@ -67,14 +73,16 @@ class ProfileView extends StatelessWidget {
                               color: Colors.orange,
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(Icons.visibility,
-                                color: Colors.white, size: 20),
+                            child: const Icon(
+                              Icons.visibility,
+                              color: Colors.white,
+                              size: 20,
+                            ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 16),
 
-                      // ✅ Real name from cubit
                       Text(
                         fullName,
                         style: const TextStyle(
@@ -83,7 +91,6 @@ class ProfileView extends StatelessWidget {
                         ),
                       ),
 
-                      // ✅ Real disability type from cubit
                       Text(
                         disabilityType,
                         style: const TextStyle(
@@ -104,56 +111,58 @@ class ProfileView extends StatelessWidget {
                       const Text(
                         "Account",
                         style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 15),
                       ProfileMenuItem(
-                        icon:      Icons.person,
-                        title:     "Personal Info",
+                        icon: Icons.person,
+                        title: "Personal Info",
                         iconColor: Colors.orange,
-                        iconBg:    Colors.orange.shade100,
-                        ontap:     () => context.go('/personal'),
+                        iconBg: Colors.orange.shade100,
+                        ontap: () => context.go('/personal'),
                       ),
                       ProfileMenuItem(
-                        icon:      Icons.collections_bookmark,
-                        title:     "My Subscriptions",
+                        icon: Icons.collections_bookmark,
+                        title: "My Subscriptions",
                         iconColor: Colors.orange,
-                        iconBg:    Colors.orange.shade100,
-                        ontap:     () => context.go('/MySubscriptions'),
+                        iconBg: Colors.orange.shade100,
+                        ontap: () => context.go('/MySubscriptions'),
                       ),
-
                       const SizedBox(height: 25),
                       const Text(
                         "Support",
                         style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 15),
                       ProfileMenuItem(
-                        icon:      Icons.info_outline,
-                        title:     "App Guidelines",
+                        icon: Icons.info_outline,
+                        title: "App Guidelines",
                         iconColor: Colors.teal.shade100,
-                        iconBg:    Colors.teal,
-                        ontap:     () => context.go('/AppGuidelines'),
+                        iconBg: Colors.teal,
+                        ontap: () => context.go('/AppGuidelines'),
                       ),
                       ProfileMenuItem(
-                        icon:      Icons.chat_bubble,
-                        title:     "Feedback",
+                        icon: Icons.chat_bubble,
+                        title: "Feedback",
                         iconColor: Colors.blue.shade100,
-                        iconBg:    Colors.blue,
-                        ontap:     () => context.go('/Feedback'),
+                        iconBg: Colors.blue,
+                        ontap: () => context.go('/Feedback'),
                       ),
-
                       const SizedBox(height: 30),
                       const ProfileLogoutButton(),
-
                       const SizedBox(height: 30),
                       const Center(
                         child: Text(
                           "«With you to discover your ability»",
                           style: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              color: Colors.grey),
+                            fontStyle: FontStyle.italic,
+                            color: Colors.grey,
+                          ),
                         ),
                       ),
                     ],

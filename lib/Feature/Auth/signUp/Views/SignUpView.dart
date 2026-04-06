@@ -94,11 +94,12 @@
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text("problem : it is a problem in registration "),
+                content: Text(state.errorMessage),
                 backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
               ),
             );
-            print(state.errorMessage);
+            debugPrint('SignUp Error: ${state.errorMessage}');
           }
         },
         builder: (context, state) {

@@ -74,7 +74,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
           elevation: 0,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () => context.go('/forgotPassword'),
+            onPressed: () => context.go('/forget'),
           ),
           title: const Text(
             'Reset Password',

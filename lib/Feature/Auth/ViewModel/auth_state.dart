@@ -5,6 +5,7 @@ import '../../../core/Models/people_with_disabilityModel.dart';
 abstract class AuthState {}
 
 class AuthInitial extends AuthState {}
+class AuthRestoring extends AuthState {}
 
 class AuthLoading extends AuthState {}
 
