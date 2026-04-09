@@ -1,15 +1,43 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:qudra_0/core/Styles/AppColors.dart';
 import 'package:qudra_0/core/Styles/AppTextsyles.dart';
 
-class ChatTypingIndicator extends StatelessWidget {
+class ChatTypingIndicator extends StatefulWidget {
   final String time;
-  const ChatTypingIndicator({super.key, required this.time});
+
+  const ChatTypingIndicator({
+    super.key,
+    required this.time,
+  });
+
+  @override
+  State<ChatTypingIndicator> createState() => _ChatTypingIndicatorState();
+}
+
+class _ChatTypingIndicatorState extends State<ChatTypingIndicator>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start, // بوت على الشمال
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsetsDirectional.only(start: 52, bottom: 6),
@@ -28,7 +56,13 @@ class ChatTypingIndicator extends StatelessWidget {
             CircleAvatar(
               radius: 18,
               backgroundColor: Appcolors.cardTeal,
-              child: const Text('AI', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              child: const Text(
+                'AI',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             const SizedBox(width: 10),
             Container(
@@ -53,11 +87,11 @@ class ChatTypingIndicator extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _dot(),
+                  _animatedDot(0),
                   const SizedBox(width: 4),
-                  _dot(),
+                  _animatedDot(1),
                   const SizedBox(width: 4),
-                  _dot(),
+                  _animatedDot(2),
                 ],
               ),
             ),
@@ -66,7 +100,7 @@ class ChatTypingIndicator extends StatelessWidget {
         Padding(
           padding: const EdgeInsetsDirectional.only(start: 52, top: 6),
           child: Text(
-            time,
+            widget.time,
             style: AppTextStyles.body.copyWith(
               fontSize: 11,
               color: Appcolors.secondaryColor,
@@ -78,12 +112,40 @@ class ChatTypingIndicator extends StatelessWidget {
     );
   }
 
-  Widget _dot() => Container(
-    width: 6,
-    height: 6,
-    decoration: BoxDecoration(
-      color: Appcolors.textLight,
-      borderRadius: BorderRadius.circular(3),
-    ),
-  );
+  Widget _animatedDot(int index) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        // فرق بسيط بين كل نقطة والتانية
+        final phaseShift = index * 0.8;
+
+        // قيمة متغيرة بين 0 و 1
+        final wave = math.sin((_controller.value * 2 * math.pi) - phaseShift);
+        final progress = wave.abs();
+
+        final opacity = 0.35 + (progress * 0.65);
+        final translateY = -4.0 * progress;
+        final scale = 0.85 + (progress * 0.25);
+
+        return Opacity(
+          opacity: opacity,
+          child: Transform.translate(
+            offset: Offset(0, translateY),
+            child: Transform.scale(
+              scale: scale,
+              child: child,
+            ),
+          ),
+        );
+      },
+      child: Container(
+        width: 6,
+        height: 6,
+        decoration: BoxDecoration(
+          color: Appcolors.textLight,
+          borderRadius: BorderRadius.circular(3),
+        ),
+      ),
+    );
+  }
 }

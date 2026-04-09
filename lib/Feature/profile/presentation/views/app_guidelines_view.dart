@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/Styles/AppColors.dart';
 import '../../../../core/Styles/AppTextsyles.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:go_router/go_router.dart';
 
 class AppGuidelinesView extends StatelessWidget {

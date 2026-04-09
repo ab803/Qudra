@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:qudra_0/core/Styles/AppColors.dart';
 import '../widgets/Loader.dart';
 import '../widgets/SplashLogo.dart';
@@ -19,15 +20,19 @@ class _SplashViewState extends State<SplashView>
   late SplashController controller;
 
   @override
+
   void initState() {
     super.initState();
 
-    // Initialize controller and pass vsync + context
     controller = SplashController(vsync: this, context: context);
-
-    // Start animations
     controller.init();
+
+    Future.delayed(const Duration(seconds: 3), () {
+      context.go('/login');
+    });
   }
+
+
 
   @override
   void dispose() {

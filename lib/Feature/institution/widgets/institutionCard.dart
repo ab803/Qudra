@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/Models/InstitutionData.dart';
-
+import '../institution.dart';
 
 
 class InstitutionCard extends StatelessWidget {
