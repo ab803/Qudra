@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../core/Styles/AppColors.dart';
-import '../models/community_post_model.dart';
 import '../services/community_post_service.dart';
+import '../../../core/Styles/AppColors.dart';
 import '../viewmodel/community_viewmodel.dart';
 import '../widgets/comments_bottom_sheet.dart';
 import '../widgets/community_app_bar.dart';
@@ -10,6 +9,8 @@ import '../widgets/edit_post_bottom_sheet.dart';
 import '../widgets/filter_chips.dart';
 import '../widgets/post_search_bar.dart';
 import '../widgets/user_post_card.dart';
+import '../models/community_post_model.dart';
+
 
 class CommunityView extends StatefulWidget {
   const CommunityView({super.key});
@@ -159,7 +160,6 @@ class _CommunityViewState extends State<CommunityView> {
     }
   }
 
-
   Future<void> _openPostOptions(CommunityPostModel post) async {
     final action = await showModalBottomSheet<String>(
       context: context,
@@ -221,7 +221,14 @@ class _CommunityViewState extends State<CommunityView> {
               children: [
                 const CommunityAppBar(),
                 const SizedBox(height: 8),
-                const PostSearchBar(),
+
+                // ✅ Search bar is now wired to the view model.
+                PostSearchBar(
+                  onChanged: (value) {
+                    _viewModel.updateSearchQuery(value);
+                  },
+                ),
+
                 const SizedBox(height: 4),
                 FilterChips(
                   selectedTab: _viewModel.selectedTab,
@@ -253,8 +260,7 @@ class _CommunityViewState extends State<CommunityView> {
       );
     }
 
-    if (_viewModel.errorMessage != null &&
-        _viewModel.displayedPosts.isEmpty) {
+    if (_viewModel.errorMessage != null && _viewModel.displayedPosts.isEmpty) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -301,10 +307,8 @@ class _CommunityViewState extends State<CommunityView> {
         itemCount: _viewModel.displayedPosts.length,
         itemBuilder: (context, index) {
           final post = _viewModel.displayedPosts[index];
-
           final subtitle =
               '${post.disabilityType} • ${_viewModel.formatTimeAgo(post.createdAt)}';
-
           final isOwner = _viewModel.isCurrentUserPost(post);
 
           return UserPostCard(

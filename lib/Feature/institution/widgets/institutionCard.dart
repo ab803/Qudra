@@ -1,12 +1,34 @@
 import 'package:flutter/material.dart';
-import '../../../core/Models/InstitutionData.dart';
-import '../institution.dart';
-
+import 'package:url_launcher/url_launcher.dart';
+import '../../feedback/widgets/institution_rating_summary.dart';
+import '../models/institution_model.dart';
 
 class InstitutionCard extends StatelessWidget {
-  final InstitutionData data;
+  final InstitutionModel institution;
+  final VoidCallback onViewDetails;
 
-  const InstitutionCard({Key? key, required this.data}) : super(key: key);
+  const InstitutionCard({
+    super.key,
+    required this.institution,
+    required this.onViewDetails,
+  });
+
+  // This method opens the institution location link in an external maps app.
+  Future<void> _openLocationLink(BuildContext context) async {
+    final uri = Uri.parse(institution.location);
+    final didLaunch = await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    );
+
+    if (!didLaunch && context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Unable to open the location link.'),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,24 +41,28 @@ class InstitutionCard extends StatelessWidget {
             color: Colors.black.withOpacity(0.04),
             blurRadius: 15,
             offset: const Offset(0, 5),
-          )
+          ),
         ],
       ),
       padding: const EdgeInsets.all(20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Row
+          // Header row
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: data.iconBgColor,
+                  color: Colors.black.withOpacity(0.06),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(data.icon, color: data.iconColor, size: 24),
+                child: const Icon(
+                  Icons.business,
+                  color: Colors.black,
+                  size: 24,
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -44,7 +70,7 @@ class InstitutionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      data.title,
+                      institution.name,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -53,7 +79,7 @@ class InstitutionCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      data.category,
+                      institution.institutionType,
                       style: TextStyle(
                         fontSize: 13,
                         color: Colors.grey.shade600,
@@ -62,102 +88,93 @@ class InstitutionCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.green.shade50,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.star, size: 14, color: Colors.green),
-                        const SizedBox(width: 4),
-                        Text(
-                          data.rating.toString(),
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    '${data.distance} away',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.shade500,
-                    ),
-                  ),
-                ],
-              )
             ],
           ),
-
           const SizedBox(height: 16),
 
-          // Description
-          Text(
-            data.description,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade800,
-              height: 1.4,
+          // Address / location
+          if (institution.address != null && institution.address!.isNotEmpty)
+            Text(
+              institution.address!,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey.shade800,
+                height: 1.4,
+              ),
+            ),
+          const SizedBox(height: 3),
+
+          // This block renders a lightweight location action to keep the card compact.
+          InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () => _openLocationLink(context),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 2),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.location_on_outlined,
+                    size: 16,
+                    color: Colors.blueAccent,
+                  ),
+                  const SizedBox(width: 6),
+                  const Text(
+                    'Open in Maps',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Icon(
+                    Icons.open_in_new_rounded,
+                    size: 15,
+                    color: Colors.grey.shade600,
+                  ),
+                ],
+              ),
             ),
           ),
+          const SizedBox(height: 14),
 
-          const SizedBox(height: 16),
-
-          // Footer (Tags & Button)
+          // Footer row: rating summary on the left and details button on the right.
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
-                child: Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: data.tags.map((tag) => Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      tag,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade700,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  )).toList(),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: InstitutionRatingSummary(
+                    institutionId: institution.id,
+                  ),
                 ),
               ),
               const SizedBox(width: 12),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: onViewDetails,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 12,
+                  ),
                   elevation: 0,
                 ),
                 child: const Text(
-                  'Subscribe',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  'View Details',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],
-          )
+          ),
         ],
       ),
     );

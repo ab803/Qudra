@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../../core/Styles/AppColors.dart';
-import '../../../../core/Styles/AppTextsyles.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/Styles/AppTextsyles.dart';
+import '../../services/feedback_service.dart';
+import '../../../../core/Styles/AppColors.dart';
+
 
 class FeedbackView extends StatefulWidget {
   const FeedbackView({super.key});
@@ -11,8 +13,78 @@ class FeedbackView extends StatefulWidget {
 }
 
 class _FeedbackViewState extends State<FeedbackView> {
+  final FeedbackService _feedbackService = FeedbackService();
+  final TextEditingController _commentController = TextEditingController();
+
   int _selectedRating = 0;
   final List<String> _selectedTags = [];
+  bool _isSubmitting = false;
+
+  // This method submits the app feedback to Supabase.
+  Future<void> _submitFeedback() async {
+    if (_selectedRating == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select a rating first.'),
+        ),
+      );
+      return;
+    }
+
+    if (_commentController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please write your feedback comment.'),
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isSubmitting = true;
+    });
+
+    try {
+      await _feedbackService.submitAppFeedback(
+        rating: _selectedRating,
+        comment: _commentController.text.trim(),
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Feedback submitted successfully.'),
+        ),
+      );
+
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go('/profile');
+      }
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString()),
+        ),
+      );
+    } finally {
+      if (!mounted) return;
+
+      setState(() {
+        _isSubmitting = false;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _commentController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +95,17 @@ class _FeedbackViewState extends State<FeedbackView> {
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Appcolors.primaryColor),
-          onPressed: () => context.go('/profile'),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Appcolors.primaryColor,
+          ),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/profile');
+            }
+          },
         ),
         title: Text(
           'Feedback',
@@ -113,10 +194,12 @@ class _FeedbackViewState extends State<FeedbackView> {
                       ),
                     ),
                     child: TextField(
+                      controller: _commentController,
+                      enabled: !_isSubmitting,
                       maxLines: 5,
                       decoration: InputDecoration(
                         hintText:
-                            'Tell us more about your experience...\nWhat did you like? What can we\nimprove?',
+                        'Tell us more about your experience...\nWhat did you like? What can we\nimprove?',
                         hintStyle: AppTextStyles.body.copyWith(
                           color: const Color(0xFF9CA3AF),
                           height: 1.5,
@@ -146,7 +229,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: _isSubmitting ? null : _submitFeedback,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         padding: const EdgeInsets.symmetric(vertical: 18),
@@ -155,7 +238,16 @@ class _FeedbackViewState extends State<FeedbackView> {
                         ),
                         elevation: 0,
                       ),
-                      child: Row(
+                      child: _isSubmitting
+                          ? const SizedBox(
+                        width: 22,
+                        height: 22,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.3,
+                          color: Colors.white,
+                        ),
+                      )
+                          : Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
@@ -166,7 +258,11 @@ class _FeedbackViewState extends State<FeedbackView> {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          const Icon(Icons.send, color: Colors.white, size: 18),
+                          const Icon(
+                            Icons.send,
+                            color: Colors.white,
+                            size: 18,
+                          ),
                         ],
                       ),
                     ),
@@ -211,9 +307,12 @@ class _FeedbackViewState extends State<FeedbackView> {
   }
 
   Widget _buildStarRating(int rating) {
-    bool isSelected = _selectedRating >= rating;
+    final isSelected = _selectedRating >= rating;
+
     return GestureDetector(
-      onTap: () {
+      onTap: _isSubmitting
+          ? null
+          : () {
         setState(() {
           _selectedRating = rating;
         });
@@ -240,9 +339,12 @@ class _FeedbackViewState extends State<FeedbackView> {
   }
 
   Widget _buildTagChip(String label) {
-    bool isSelected = _selectedTags.contains(label);
+    final isSelected = _selectedTags.contains(label);
+
     return GestureDetector(
-      onTap: () {
+      onTap: _isSubmitting
+          ? null
+          : () {
         setState(() {
           if (isSelected) {
             _selectedTags.remove(label);
@@ -269,3 +371,4 @@ class _FeedbackViewState extends State<FeedbackView> {
     );
   }
 }
+

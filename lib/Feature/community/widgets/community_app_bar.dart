@@ -32,10 +32,6 @@ class CommunityAppBar extends StatelessWidget {
               style: AppTextStyles.title.copyWith(fontSize: 20),
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.notifications_none),
-            onPressed: () {},
-          ),
         ],
       ),
     );

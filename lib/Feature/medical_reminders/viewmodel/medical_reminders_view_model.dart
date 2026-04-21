@@ -27,10 +27,6 @@ class MedicalRemindersViewModel extends ChangeNotifier {
 
   int get totalCount => _reminders.length;
 
-  // ---------------------------
-  // Progress Metrics
-  // ---------------------------
-
   int get dueTodayCount => _reminders.where(_isDueToday).length;
 
   int get takenTodayCount => _reminders.where((r) {
@@ -54,12 +50,14 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     final upcoming = _reminders
         .where((r) {
       if (!_isDueToday(r)) return false;
+
       final status = getTodayStatusForReminder(r.id);
       if (status == ReminderDoseStatus.taken ||
           status == ReminderDoseStatus.skipped ||
           status == ReminderDoseStatus.missed) {
         return false;
       }
+
       final dt = DateTimeHelpers.scheduledDateTimeToday(r.time);
       return dt != null && dt.isAfter(now);
     })
@@ -73,10 +71,6 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     if (upcoming.isEmpty) return null;
     return upcoming.first.time;
   }
-
-  // ---------------------------
-  // LOAD
-  // ---------------------------
 
   Future<void> loadReminders() async {
     _isLoading = true;
@@ -99,13 +93,17 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     _todayLogs = await _logService.getLogsByDate(DateTimeHelpers.todayKey());
   }
 
-  // ---------------------------
-  // ADD
-  // ---------------------------
-
   Future<void> addReminder(ReminderModel reminder) async {
     _errorMessage = null;
     notifyListeners();
+
+    // ✅ Updated:
+    // Enforce required valid time even if someone bypasses the add sheet UI.
+    if (!TimeFormatValidator.isValidHHmm(reminder.time)) {
+      _errorMessage = 'Please choose a valid reminder time';
+      notifyListeners();
+      return;
+    }
 
     try {
       await _service.createReminder(reminder);
@@ -121,10 +119,6 @@ class MedicalRemindersViewModel extends ChangeNotifier {
 
     await LocalNotificationService.instance.scheduleReminder(reminder);
   }
-
-  // ---------------------------
-  // DELETE
-  // ---------------------------
 
   Future<void> deleteReminder(String id) async {
     _errorMessage = null;
@@ -150,10 +144,6 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     await LocalNotificationService.instance.cancelReminder(id);
   }
 
-  // ---------------------------
-  // TOGGLE ENABLED
-  // ---------------------------
-
   Future<void> toggleEnabled(String id, bool enabled) async {
     _errorMessage = null;
 
@@ -161,7 +151,6 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     if (index == -1) return;
 
     final old = _reminders[index];
-
     _reminders[index] = old.copyWith(isEnabled: enabled);
     notifyListeners();
 
@@ -178,17 +167,12 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     if (!enabled) {
       await LocalNotificationService.instance.cancelReminder(id);
     } else {
-      await LocalNotificationService.instance.scheduleReminder(
-        old.copyWith(isEnabled: true),
-      );
+      await LocalNotificationService.instance
+          .scheduleReminder(old.copyWith(isEnabled: true));
     }
 
     notifyListeners();
   }
-
-  // ---------------------------
-  // ACTIONS: Taken / Skip
-  // ---------------------------
 
   Future<void> markTaken(String reminderId) async {
     final reminder = _findReminder(reminderId);
@@ -198,7 +182,7 @@ class MedicalRemindersViewModel extends ChangeNotifier {
       id: DateTimeHelpers.generateLogId(reminderId),
       reminderId: reminderId,
       date: DateTimeHelpers.todayKey(),
-      scheduledTime: reminder.time!,
+      scheduledTime: reminder.time,
       status: ReminderDoseStatus.taken.value,
       takenAt: DateTime.now().toIso8601String(),
     );
@@ -221,7 +205,7 @@ class MedicalRemindersViewModel extends ChangeNotifier {
       date: DateTimeHelpers.todayKey(),
       reminderId: reminderId,
       id: DateTimeHelpers.generateLogId(reminderId),
-      scheduledTime: reminder.time!,
+      scheduledTime: reminder.time,
       status: ReminderDoseStatus.skipped.value,
       takenAt: null,
     );
@@ -236,16 +220,11 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     }
   }
 
-  // ---------------------------
-  // STATUS HELPERS
-  // ---------------------------
-
   ReminderDoseStatus? getTodayStatusForReminder(String reminderId) {
     final reminder = _findReminder(reminderId);
     if (reminder == null || !_isDueToday(reminder)) return null;
 
     final log = _findTodayLogForReminder(reminderId);
-
     if (log != null) {
       return ReminderDoseStatusX.fromValue(log.status);
     }
@@ -262,6 +241,7 @@ class MedicalRemindersViewModel extends ChangeNotifier {
 
   String? getStatusLabelForReminder(String reminderId) {
     final status = getTodayStatusForReminder(reminderId);
+
     switch (status) {
       case ReminderDoseStatus.taken:
         return 'Taken today';
@@ -274,9 +254,6 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     }
   }
 
-  // ---------------------------
-  // INTERNAL HELPERS
-  // ---------------------------
   ReminderLogModel? _findTodayLogForReminder(String reminderId) {
     try {
       return _todayLogs.firstWhere((l) => l.reminderId == reminderId);
@@ -284,7 +261,6 @@ class MedicalRemindersViewModel extends ChangeNotifier {
       return null;
     }
   }
-
 
   ReminderModel? _findReminder(String id) {
     try {
@@ -295,10 +271,8 @@ class MedicalRemindersViewModel extends ChangeNotifier {
   }
 
   bool _isDueToday(ReminderModel reminder) {
-    return reminder.isEnabled && TimeFormatValidator.isValidHHmm(reminder.time) ;
+    return reminder.isEnabled && TimeFormatValidator.isValidHHmm(reminder.time);
   }
-
-
 
   Future<void> _syncAutoMissedLogs() async {
     final now = DateTime.now();
@@ -308,7 +282,6 @@ class MedicalRemindersViewModel extends ChangeNotifier {
       if (!_isDueToday(reminder)) continue;
 
       final existing = _findTodayLogForReminder(reminder.id);
-
       if (existing != null) continue;
 
       final scheduled = DateTimeHelpers.scheduledDateTimeToday(reminder.time);
@@ -319,7 +292,7 @@ class MedicalRemindersViewModel extends ChangeNotifier {
           id: DateTimeHelpers.generateLogId(reminder.id),
           reminderId: reminder.id,
           date: DateTimeHelpers.todayKey(),
-          scheduledTime: reminder.time!,
+          scheduledTime: reminder.time,
           status: ReminderDoseStatus.missed.value,
           takenAt: null,
         );

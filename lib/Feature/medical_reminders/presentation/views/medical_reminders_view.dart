@@ -8,8 +8,6 @@ import '../../widgets/meds_reminder_tile.dart';
 import '../../widgets/meds_section_title.dart';
 import '../../widgets/open_add_bottomsheet.dart';
 
-
-
 class MedicalRemindersView extends StatelessWidget {
   const MedicalRemindersView({super.key});
 
@@ -21,6 +19,7 @@ class MedicalRemindersView extends StatelessWidget {
       hour: int.parse(parts[0]),
       minute: int.parse(parts[1]),
     );
+
     return MaterialLocalizations.of(context).formatTimeOfDay(tod);
   }
 
@@ -29,13 +28,14 @@ class MedicalRemindersView extends StatelessWidget {
       MedicalRemindersViewModel vm,
       ReminderModel m,
       ) {
+    final String? normalizedTime =
+    m.time.trim().isEmpty ? null : _formatTimeForUi(context, m.time);
+
     return ReminderViewData(
       id: m.id,
       title: m.title,
       subtitle: m.subtitle,
-      timeText: (m.time == null || m.time!.isEmpty)
-          ? null
-          : _formatTimeForUi(context, m.time!),
+      timeText: normalizedTime,
       isEnabled: m.isEnabled,
       statusLabel: vm.getStatusLabelForReminder(m.id),
     );
@@ -53,23 +53,18 @@ class MedicalRemindersView extends StatelessWidget {
     if (missed > 0 && nextFormatted != null) {
       return '$missed missed • Next at $nextFormatted';
     }
-
     if (missed > 0) {
       return '$missed missed';
     }
-
     if (nextFormatted != null) {
       return 'Next at $nextFormatted';
     }
-
     if (vm.dueTodayCount == 0) {
       return 'No doses scheduled';
     }
-
     if (vm.takenTodayCount >= vm.dueTodayCount) {
       return 'All doses completed';
     }
-
     return 'No upcoming doses';
   }
 
@@ -84,7 +79,7 @@ class MedicalRemindersView extends StatelessWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Delete Reminder?'),
-        content: Text('Delete \"$title\"?'),
+        content: Text('Delete "$title"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),

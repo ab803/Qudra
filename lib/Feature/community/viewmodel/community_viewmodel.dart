@@ -23,14 +23,18 @@ class CommunityViewModel extends ChangeNotifier {
   final Set<String> _deletingPostIds = {};
   final Set<String> _updatingCommentIds = {};
   final Set<String> _deletingCommentIds = {};
-
   final Map<String, List<CommunityCommentModel>> _commentsByPostId = {};
 
   List<CommunityPostModel> allPosts = [];
   List<CommunityPostModel> myPosts = [];
 
+  // ✅ Search query used to filter displayed posts.
+  String _searchQuery = '';
+
+  // ✅ The displayed posts are now filtered based on the current tab + search query.
   List<CommunityPostModel> get displayedPosts {
-    return selectedTab == 'my' ? myPosts : allPosts;
+    final source = selectedTab == 'my' ? myPosts : allPosts;
+    return _applySearch(source);
   }
 
   bool isLikeLoading(String postId) {
@@ -69,14 +73,33 @@ class CommunityViewModel extends ChangeNotifier {
     return _commentsByPostId[postId] ?? [];
   }
 
+  // ✅ Update search text and refresh UI.
+  void updateSearchQuery(String value) {
+    _searchQuery = value.trim().toLowerCase();
+    notifyListeners();
+  }
+
+  // ✅ Apply search on content, author name, and disability type.
+  List<CommunityPostModel> _applySearch(List<CommunityPostModel> posts) {
+    if (_searchQuery.isEmpty) return posts;
+
+    return posts.where((post) {
+      final content = post.content.toLowerCase();
+      final authorName = post.authorName.toLowerCase();
+      final disabilityType = post.disabilityType.toLowerCase();
+
+      return content.contains(_searchQuery) ||
+          authorName.contains(_searchQuery) ||
+          disabilityType.contains(_searchQuery);
+    }).toList();
+  }
+
   Future<void> _reloadPosts() async {
     currentUserId = await _postService.fetchCurrentUserId();
-
     final results = await Future.wait([
       _postService.fetchAllPosts(),
       _postService.fetchMyPosts(),
     ]);
-
     allPosts = results[0];
     myPosts = results[1];
   }
@@ -163,7 +186,6 @@ class CommunityViewModel extends ChangeNotifier {
         postId: postId,
         content: content,
       );
-
       _updatePostContentLocally(postId, content.trim());
       return true;
     } catch (e) {
@@ -184,11 +206,9 @@ class CommunityViewModel extends ChangeNotifier {
 
     try {
       await _postService.deletePost(postId);
-
       allPosts = allPosts.where((post) => post.id != postId).toList();
       myPosts = myPosts.where((post) => post.id != postId).toList();
       _commentsByPostId.remove(postId);
-
       return true;
     } catch (e) {
       errorMessage = e.toString();
@@ -255,12 +275,9 @@ class CommunityViewModel extends ChangeNotifier {
         postId: postId,
         content: content,
       );
-
       final existingComments = _commentsByPostId[postId] ?? [];
       _commentsByPostId[postId] = [...existingComments, newComment];
-
       _incrementCommentsCount(postId);
-
       return true;
     } catch (e) {
       errorMessage = e.toString();
@@ -287,13 +304,11 @@ class CommunityViewModel extends ChangeNotifier {
         commentId: commentId,
         content: content,
       );
-
       _updateCommentContentLocally(
         postId: postId,
         commentId: commentId,
         newContent: content.trim(),
       );
-
       return true;
     } catch (e) {
       errorMessage = e.toString();
@@ -316,14 +331,11 @@ class CommunityViewModel extends ChangeNotifier {
 
     try {
       await _commentService.deleteComment(commentId);
-
       final existingComments = _commentsByPostId[postId] ?? [];
       _commentsByPostId[postId] = existingComments
           .where((comment) => comment.id != commentId)
           .toList();
-
       _decrementCommentsCount(postId);
-
       return true;
     } catch (e) {
       errorMessage = e.toString();
@@ -337,11 +349,8 @@ class CommunityViewModel extends ChangeNotifier {
   void _updateLikeState(String postId, bool isLikedNow) {
     allPosts = allPosts.map((post) {
       if (post.id != postId) return post;
-
-      final newLikesCount = isLikedNow
-          ? post.likesCount + 1
-          : (post.likesCount > 0 ? post.likesCount - 1 : 0);
-
+      final newLikesCount =
+      isLikedNow ? post.likesCount + 1 : (post.likesCount > 0 ? post.likesCount - 1 : 0);
       return post.copyWith(
         isLikedByCurrentUser: isLikedNow,
         likesCount: newLikesCount,
@@ -350,11 +359,8 @@ class CommunityViewModel extends ChangeNotifier {
 
     myPosts = myPosts.map((post) {
       if (post.id != postId) return post;
-
-      final newLikesCount = isLikedNow
-          ? post.likesCount + 1
-          : (post.likesCount > 0 ? post.likesCount - 1 : 0);
-
+      final newLikesCount =
+      isLikedNow ? post.likesCount + 1 : (post.likesCount > 0 ? post.likesCount - 1 : 0);
       return post.copyWith(
         isLikedByCurrentUser: isLikedNow,
         likesCount: newLikesCount,
@@ -365,7 +371,6 @@ class CommunityViewModel extends ChangeNotifier {
   void _incrementCommentsCount(String postId) {
     allPosts = allPosts.map((post) {
       if (post.id != postId) return post;
-
       return post.copyWith(
         commentsCount: post.commentsCount + 1,
       );
@@ -373,7 +378,6 @@ class CommunityViewModel extends ChangeNotifier {
 
     myPosts = myPosts.map((post) {
       if (post.id != postId) return post;
-
       return post.copyWith(
         commentsCount: post.commentsCount + 1,
       );
@@ -383,9 +387,7 @@ class CommunityViewModel extends ChangeNotifier {
   void _decrementCommentsCount(String postId) {
     allPosts = allPosts.map((post) {
       if (post.id != postId) return post;
-
       final newCount = post.commentsCount > 0 ? post.commentsCount - 1 : 0;
-
       return post.copyWith(
         commentsCount: newCount,
       );
@@ -393,9 +395,7 @@ class CommunityViewModel extends ChangeNotifier {
 
     myPosts = myPosts.map((post) {
       if (post.id != postId) return post;
-
       final newCount = post.commentsCount > 0 ? post.commentsCount - 1 : 0;
-
       return post.copyWith(
         commentsCount: newCount,
       );
@@ -420,10 +420,8 @@ class CommunityViewModel extends ChangeNotifier {
     required String newContent,
   }) {
     final existingComments = _commentsByPostId[postId] ?? [];
-
     _commentsByPostId[postId] = existingComments.map((comment) {
       if (comment.id != commentId) return comment;
-
       return comment.copyWith(content: newContent);
     }).toList();
   }

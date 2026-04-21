@@ -2,14 +2,14 @@ class ReminderModel {
   final String id;
   final String title;
   final String subtitle;
-  final String? time;
+  final String time;
   final bool isEnabled;
 
   const ReminderModel({
     required this.id,
     required this.title,
     required this.subtitle,
-    this.time,
+    required this.time,
     required this.isEnabled,
   });
 
@@ -44,7 +44,7 @@ class ReminderModel {
       id: map['id'] as String,
       title: map['title'] as String,
       subtitle: map['subtitle'] as String,
-      time: map['time'] as String?,
+      time: (map['time'] as String?) ?? '',
       isEnabled: (map['isEnabled'] as int) == 1,
     );
   }
