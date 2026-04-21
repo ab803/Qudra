@@ -215,18 +215,7 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
           ),
         ],
       ),
-      actions: [
-        // ✅ Clear chat button
-        IconButton(
-          icon: const Icon(Icons.refresh, color: Appcolors.primaryColor),
-          tooltip: 'Clear chat',
-          onPressed: () => context.read<ChatCubit>().clearChat(),
-        ),
-        IconButton(
-          icon: const Icon(Icons.info_outline, color: Appcolors.primaryColor),
-          onPressed: () {},
-        ),
-      ],
+
     );
   }
 }

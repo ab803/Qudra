@@ -105,14 +105,8 @@
                           height: 1.5),
                     ),
                     const SizedBox(height: 32),
-                    const Text(
-                      'Email Address',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF111827)),
-                    ),
-                    const SizedBox(height: 12),
+
+
                     CustomTextField(
                         controller:_emailController,
                         label:'Email Address',hint:'name@example.com',

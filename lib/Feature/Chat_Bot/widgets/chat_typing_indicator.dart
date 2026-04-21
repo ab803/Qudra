@@ -27,8 +27,8 @@ class ChatTypingIndicator extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 18,
-              backgroundColor: Appcolors.cardTeal,
-              child: const Text('AI', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              backgroundColor: Appcolors.primaryColor,
+              child: const Text("Q", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
             const SizedBox(width: 10),
             Container(
