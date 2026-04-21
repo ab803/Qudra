@@ -10,6 +10,7 @@ import '../../Feature/Auth/signUp/Views/SignUpView.dart';
 import '../../Feature/Chat_Bot/views/chat_bot_view.dart';
 import '../../Feature/Splash/presentation/views/splash_view.dart';
 import '../../Feature/Home/presentation/views/home_view.dart';
+import '../../Feature/accessibility/viewModel/tips_rights_cubit.dart';
 import '../../Feature/accessibility/views/accessibility_hub_view.dart';
 import '../../Feature/bottom_nav_bar.dart';
 import '../../Feature/community/presentation/community_view.dart';
@@ -119,7 +120,10 @@ class AppRouter {
       ),
       GoRoute(
         path: '/accessibility',
-        builder: (context, state) => const AccessibilityHubView(),
+        builder: (context, state) => BlocProvider<RightstipsCubit>(
+          create: (_) => getIt<RightstipsCubit>(),
+          child: const AccessibilityHubView(),
+        ),
       ),
 
 

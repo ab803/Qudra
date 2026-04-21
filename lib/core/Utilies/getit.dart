@@ -15,6 +15,11 @@ import '../../Feature/booking/viewmodel/booking_cubit.dart';
 import '../../Feature/booking/services/user_bookings_service.dart';
 import '../../Feature/booking/viewmodel/user_bookings_cubit.dart';
 
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../Services/supabase/tips&rightsService.dart';
+import '../../Feature/accessibility/repo/rights&tipsRepo.dart';
+import '../../Feature/accessibility/viewModel/tips_rights_cubit.dart';
+
 final GetIt getIt = GetIt.instance;
 
 void setupLocator() {
@@ -69,5 +74,18 @@ void setupLocator() {
   );
   getIt.registerFactory<UserBookingsCubit>(
         () => UserBookingsCubit(getIt<UserBookingsService>()),
+  );
+
+  // Accessibility feature
+  getIt.registerLazySingleton<RightstipsService>(
+        () => RightstipsService(Supabase.instance.client),
+  );
+
+  getIt.registerLazySingleton<RightstipsRepository>(
+        () => RightstipsRepository(getIt<RightstipsService>()),
+  );
+
+  getIt.registerFactory<RightstipsCubit>(
+        () => RightstipsCubit(getIt<RightstipsRepository>()),
   );
 }
