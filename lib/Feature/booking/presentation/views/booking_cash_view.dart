@@ -57,7 +57,6 @@ class BookingCashView extends StatelessWidget {
         // If no booking id exists, show the error locally instead of crashing the route.
         if (state is BookingFailed) {
           final bookingId = state.booking?.id;
-
           if (bookingId != null) {
             context.pushReplacement(
               '/booking/result',
@@ -84,18 +83,13 @@ class BookingCashView extends StatelessWidget {
         }
       },
       builder: (context, state) {
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
         final isLoading = state is BookingLoading;
 
         return Scaffold(
-          backgroundColor: const Color(0xFFF7F8FA),
           appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            title: const Text(
-              'Cash at Institution',
-              style: TextStyle(color: Colors.black),
-            ),
-            iconTheme: const IconThemeData(color: Colors.black),
+            title: const Text('Cash at Institution'),
           ),
           body: SafeArea(
             child: SingleChildScrollView(
@@ -118,13 +112,15 @@ class BookingCashView extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: theme.cardColor,
                       borderRadius: BorderRadius.circular(22),
+                      border: Border.all(
+                        color: theme.dividerColor,
+                      ),
                     ),
                     child: Text(
                       'Your booking will be confirmed immediately, and payment will be collected at the institution.',
-                      style: TextStyle(
-                        color: Colors.grey.shade700,
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         height: 1.5,
                         fontSize: 15,
                       ),
@@ -137,26 +133,25 @@ class BookingCashView extends StatelessWidget {
                     width: double.infinity,
                     height: 56,
                     child: ElevatedButton(
-                      onPressed: isLoading ? null : () => _confirmCashBooking(context),
+                      onPressed:
+                      isLoading ? null : () => _confirmCashBooking(context),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18),
                         ),
                       ),
                       child: isLoading
-                          ? const SizedBox(
+                          ? SizedBox(
                         width: 22,
                         height: 22,
                         child: CircularProgressIndicator(
-                          color: Colors.white,
+                          color: colorScheme.onPrimary,
                           strokeWidth: 2.4,
                         ),
                       )
-                          : const Text(
+                          : Text(
                         'Confirm Booking',
-                        style: TextStyle(
+                        style: theme.textTheme.labelLarge?.copyWith(
                           fontWeight: FontWeight.w800,
                           fontSize: 17,
                         ),

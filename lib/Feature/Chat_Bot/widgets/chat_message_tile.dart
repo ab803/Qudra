@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qudra_0/core/Styles/AppColors.dart';
-import 'package:qudra_0/core/Styles/AppTextsyles.dart';
 
 class ChatMessageTile extends StatelessWidget {
   final bool isUser;
@@ -18,19 +16,22 @@ class ChatMessageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bubbleColor = isUser ? Appcolors.primaryColor : Colors.white;
-    final textColor   = isUser ? Colors.white : Appcolors.textDark;
-    final borderColor = isUser ? Colors.transparent : Colors.grey.shade200;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final bubbleColor = isUser ? colorScheme.primary : theme.cardColor;
+    final textColor = isUser ? colorScheme.onPrimary : colorScheme.onSurface;
+    final borderColor = isUser ? Colors.transparent : theme.dividerColor;
     final shadow = isUser
         ? const <BoxShadow>[]
         : [
       BoxShadow(
-        color: Colors.black.withOpacity(0.04),
+        color: theme.shadowColor.withOpacity(
+          theme.brightness == Brightness.dark ? 0.08 : 0.04,
+        ),
         blurRadius: 8,
         offset: const Offset(0, 4),
       ),
     ];
-
     final radius = isUser
         ? const BorderRadius.only(
       topLeft: Radius.circular(18),
@@ -48,15 +49,22 @@ class ChatMessageTile extends StatelessWidget {
     // أفاتار بسيط بدون صور خارجية
     final avatar = CircleAvatar(
       radius: 18,
-      backgroundColor: isUser ? Colors.orange.shade200 : Appcolors.cardTeal,
+      backgroundColor: isUser
+          ? colorScheme.primary
+          : colorScheme.primary.withOpacity(
+        theme.brightness == Brightness.dark ? 0.20 : 0.12,
+      ),
       child: Text(
         isUser ? 'U' : 'AI',
-        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          color: isUser ? colorScheme.onPrimary : colorScheme.primary,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
 
     final alignment = isUser ? MainAxisAlignment.end : MainAxisAlignment.start;
-    final cross     = isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start;
+    final cross = isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start;
 
     return Column(
       crossAxisAlignment: cross,
@@ -70,8 +78,8 @@ class ChatMessageTile extends StatelessWidget {
           ),
           child: Text(
             name,
-            style: AppTextStyles.body.copyWith(
-              color: Appcolors.secondaryColor,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurface.withOpacity(0.65),
               fontSize: 12,
               fontWeight: FontWeight.w600,
             ),
@@ -105,7 +113,7 @@ class ChatMessageTile extends StatelessWidget {
                       ),
                       child: Text(
                         text,
-                        style: AppTextStyles.body.copyWith(
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           color: textColor,
                           fontSize: 14,
                           height: 1.25,
@@ -116,7 +124,6 @@ class ChatMessageTile extends StatelessWidget {
                 },
               ),
             ),
-
             if (isUser) ...[
               const SizedBox(width: 10),
               avatar,
@@ -133,9 +140,9 @@ class ChatMessageTile extends StatelessWidget {
           ),
           child: Text(
             time,
-            style: AppTextStyles.body.copyWith(
+            style: theme.textTheme.bodySmall?.copyWith(
               fontSize: 11,
-              color: Appcolors.secondaryColor,
+              color: colorScheme.onSurface.withOpacity(0.6),
               height: 1.0,
             ),
           ),

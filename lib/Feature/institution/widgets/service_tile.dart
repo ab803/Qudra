@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../models/service_model.dart';
 
 // This widget renders a service card inside institution details and exposes a booking action.
@@ -21,16 +20,21 @@ class ServiceTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: theme.dividerColor),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: theme.shadowColor.withOpacity(
+              theme.brightness == Brightness.dark ? 0.08 : 0.04,
+            ),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -42,18 +46,17 @@ class ServiceTile extends StatelessWidget {
           // This block renders the service name and category.
           Text(
             service.name,
-            style: const TextStyle(
+            style: theme.textTheme.titleMedium?.copyWith(
               fontSize: 18,
               fontWeight: FontWeight.w800,
-              color: Colors.black,
             ),
           ),
           const SizedBox(height: 6),
           Text(
             service.category,
-            style: TextStyle(
+            style: theme.textTheme.bodyMedium?.copyWith(
               fontSize: 13,
-              color: Colors.grey.shade700,
+              color: theme.colorScheme.onSurface.withOpacity(0.72),
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -64,8 +67,8 @@ class ServiceTile extends StatelessWidget {
               service.description!.trim().isNotEmpty) ...[
             Text(
               service.description!.trim(),
-              style: TextStyle(
-                color: Colors.grey.shade700,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface.withOpacity(0.72),
                 height: 1.5,
               ),
             ),
@@ -95,15 +98,13 @@ class ServiceTile extends StatelessWidget {
             child: ElevatedButton(
               onPressed: onBookNow,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
               ),
-              child: const Text(
+              child: Text(
                 'Book Now',
-                style: TextStyle(
+                style: theme.textTheme.labelLarge?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -129,22 +130,31 @@ class _TagChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     Color bgColor;
     Color textColor;
     Border? border;
 
     if (dark) {
-      bgColor = Colors.black;
-      textColor = Colors.white;
+      bgColor = colorScheme.primary;
+      textColor = colorScheme.onPrimary;
       border = null;
     } else if (light) {
-      bgColor = Colors.grey.shade100;
-      textColor = Colors.grey.shade800;
-      border = Border.all(color: Colors.grey.shade300);
+      bgColor = colorScheme.primary.withOpacity(
+        theme.brightness == Brightness.dark ? 0.16 : 0.08,
+      );
+      textColor = colorScheme.primary;
+      border = Border.all(
+        color: colorScheme.primary.withOpacity(0.18),
+      );
     } else {
-      bgColor = const Color(0xFFF5F5F5);
-      textColor = Colors.black87;
-      border = Border.all(color: Colors.black.withOpacity(0.05));
+      bgColor = colorScheme.onSurface.withOpacity(
+        theme.brightness == Brightness.dark ? 0.10 : 0.05,
+      );
+      textColor = colorScheme.onSurface.withOpacity(0.85);
+      border = Border.all(color: theme.dividerColor);
     }
 
     return Container(
@@ -156,7 +166,7 @@ class _TagChip extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: TextStyle(
+        style: theme.textTheme.bodySmall?.copyWith(
           fontSize: 11.5,
           fontWeight: FontWeight.w600,
           color: textColor,

@@ -29,9 +29,7 @@ class _BookingProcessingViewState extends State<BookingProcessingView>
   @override
   void initState() {
     super.initState();
-
     WidgetsBinding.instance.addObserver(this);
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<BookingCubit>().waitForFinalBookingStatus(widget.bookingId);
     });
@@ -53,7 +51,6 @@ class _BookingProcessingViewState extends State<BookingProcessingView>
         !_hasNavigated &&
         !_handledCheckoutReturn) {
       _handledCheckoutReturn = true;
-
       context
           .read<BookingCubit>()
           .resolveCheckoutReturnAfterExternalCheckout(widget.bookingId);
@@ -62,9 +59,7 @@ class _BookingProcessingViewState extends State<BookingProcessingView>
 
   void _goToResult() {
     if (_hasNavigated || !mounted) return;
-
     _hasNavigated = true;
-
     context.go(
       '/booking/result',
       extra: {
@@ -75,6 +70,9 @@ class _BookingProcessingViewState extends State<BookingProcessingView>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return BlocListener<BookingCubit, BookingState>(
       listener: (context, state) {
         if (state is BookingConfirmed ||
@@ -85,20 +83,13 @@ class _BookingProcessingViewState extends State<BookingProcessingView>
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF7F8FA),
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0,
-          title: const Text(
-            'Processing',
-            style: TextStyle(color: Colors.black),
-          ),
-          iconTheme: const IconThemeData(color: Colors.black),
+          title: const Text('Processing'),
         ),
-        body: const SafeArea(
+        body: SafeArea(
           child: Center(
             child: Padding(
-              padding: EdgeInsets.all(24),
+              padding: const EdgeInsets.all(24),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -106,27 +97,23 @@ class _BookingProcessingViewState extends State<BookingProcessingView>
                     width: 54,
                     height: 54,
                     child: CircularProgressIndicator(
-                      color: Colors.black,
+                      color: colorScheme.primary,
                       strokeWidth: 3,
                     ),
                   ),
-                  SizedBox(height: 24),
+                  const SizedBox(height: 24),
                   Text(
                     'Checking payment result...',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 24,
+                    style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w900,
-                      color: Colors.black,
                     ),
                   ),
-                  SizedBox(height: 14),
+                  const SizedBox(height: 14),
                   Text(
                     'Please wait while we verify your booking with Paymob and refresh the final booking status.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey,
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       height: 1.5,
                     ),
                   ),

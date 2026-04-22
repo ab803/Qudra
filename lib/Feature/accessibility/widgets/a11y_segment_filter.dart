@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:qudra_0/core/Styles/AppColors.dart';
-import 'package:qudra_0/core/Styles/AppTextsyles.dart';
+
+import '../../../core/Styles/AppColors.dart';
+
 
 class A11ySegmentFilter extends StatelessWidget {
   const A11ySegmentFilter({super.key});
@@ -39,6 +40,7 @@ class _SegmentPill extends StatelessWidget {
   final IconData icon;
   final bool selected;
   final Color color;
+
   const _SegmentPill({
     required this.label,
     required this.icon,
@@ -48,9 +50,15 @@ class _SegmentPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = selected ? Colors.white : Appcolors.backgroundColor;
-    final border = selected ? color.withOpacity(0.35) : Colors.grey.shade200;
-    final fg = selected ? Appcolors.primaryColor : Appcolors.primaryColor;
+    final theme = Theme.of(context);
+    final onSurface = theme.colorScheme.onSurface;
+
+    final bg = selected
+        ? color.withOpacity(theme.brightness == Brightness.dark ? 0.18 : 0.10)
+        : theme.cardColor;
+    final border =
+    selected ? color.withOpacity(0.40) : theme.dividerColor;
+    final fg = selected ? color : onSurface.withOpacity(0.72);
 
     return Expanded(
       child: Container(
@@ -63,11 +71,15 @@ class _SegmentPill extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 18, color: selected ? color : Appcolors.textLight),
+            Icon(
+              icon,
+              size: 18,
+              color: fg,
+            ),
             const SizedBox(width: 8),
             Text(
               label,
-              style: AppTextStyles.body.copyWith(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w700,
                 fontSize: 13,
                 color: fg,

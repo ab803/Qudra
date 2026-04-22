@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import '../../../../core/Styles/AppColors.dart';
 import '../../../../core/Styles/AppTextsyles.dart';
 
@@ -9,6 +8,7 @@ class CategorySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
 
     // List of categories displayed horizontally
     final categories = [
@@ -32,17 +32,18 @@ class CategorySection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
         // Section title
         Row(
           children: [
             Text(
               'Categories',
-              style: AppTextStyles.title.copyWith(fontSize: 18),
+              style: AppTextStyles.title.copyWith(
+                fontSize: 18,
+                color: theme.textTheme.titleLarge?.color,
+              ),
             ),
           ],
         ),
-
         const SizedBox(height: 12),
 
         // Horizontal list of category chips
@@ -54,7 +55,6 @@ class CategorySection extends StatelessWidget {
 
             // spacing between items
             separatorBuilder: (context, index) => const SizedBox(width: 12),
-
             itemBuilder: (context, index) {
               final category = categories[index];
 
@@ -64,13 +64,15 @@ class CategorySection extends StatelessWidget {
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: theme.cardColor,
                   borderRadius: BorderRadius.circular(25),
 
                   // soft shadow
                   boxShadow: [
                     BoxShadow(
-                      color: Appcolors.primaryColor.withOpacity(0.03),
+                      color: Colors.black.withOpacity(
+                        theme.brightness == Brightness.dark ? 0.14 : 0.03,
+                      ),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -89,7 +91,7 @@ class CategorySection extends StatelessWidget {
                     Text(
                       category['label'] as String,
                       style: AppTextStyles.body.copyWith(
-                        color: Appcolors.primaryColor,
+                        color: theme.textTheme.bodyLarge?.color,
                       ),
                     ),
                   ],

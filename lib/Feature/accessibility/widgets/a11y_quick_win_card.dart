@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qudra_0/core/Styles/AppColors.dart';
-import 'package:qudra_0/core/Styles/AppTextsyles.dart';
 
 class A11yQuickWinCard extends StatelessWidget {
   final IconData icon;
@@ -16,13 +14,16 @@ class A11yQuickWinCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Container(
       height: 88,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Row(
         children: [
@@ -30,10 +31,16 @@ class A11yQuickWinCard extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: Appcolors.backgroundColor,
+              color: colorScheme.primary.withOpacity(
+                theme.brightness == Brightness.dark ? 0.16 : 0.10,
+              ),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: Appcolors.primaryColor, size: 22),
+            child: Icon(
+              icon,
+              color: colorScheme.primary,
+              size: 22,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -45,8 +52,8 @@ class A11yQuickWinCard extends StatelessWidget {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.body.copyWith(
-                    color: Appcolors.primaryColor,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.primary,
                     fontWeight: FontWeight.w800,
                     fontSize: 13.5,
                     height: 1.0,
@@ -57,8 +64,8 @@ class A11yQuickWinCard extends StatelessWidget {
                   subtitle,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.body.copyWith(
-                    color: Appcolors.secondaryColor,
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurface.withOpacity(0.7),
                     fontSize: 12.5,
                     height: 1.2,
                   ),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../services/community_post_service.dart';
-import '../../../core/Styles/AppColors.dart';
 import '../viewmodel/community_viewmodel.dart';
 import '../widgets/comments_bottom_sheet.dart';
 import '../widgets/community_app_bar.dart';
@@ -10,7 +9,6 @@ import '../widgets/filter_chips.dart';
 import '../widgets/post_search_bar.dart';
 import '../widgets/user_post_card.dart';
 import '../models/community_post_model.dart';
-
 
 class CommunityView extends StatefulWidget {
   const CommunityView({super.key});
@@ -36,10 +34,13 @@ class _CommunityViewState extends State<CommunityView> {
   }
 
   Future<void> _openCreatePostSheet() async {
+    final theme = Theme.of(context);
+
     final created = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Appcolors.backgroundColor,
+      backgroundColor:
+      theme.bottomSheetTheme.backgroundColor ?? theme.scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(24),
@@ -53,7 +54,6 @@ class _CommunityViewState extends State<CommunityView> {
     );
 
     if (!mounted) return;
-
     if (created == true) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -64,10 +64,13 @@ class _CommunityViewState extends State<CommunityView> {
   }
 
   Future<void> _openCommentsSheet(CommunityPostModel post) async {
+    final theme = Theme.of(context);
+
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Appcolors.backgroundColor,
+      backgroundColor:
+      theme.bottomSheetTheme.backgroundColor ?? theme.scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(24),
@@ -83,10 +86,13 @@ class _CommunityViewState extends State<CommunityView> {
   }
 
   Future<void> _openEditPostSheet(CommunityPostModel post) async {
+    final theme = Theme.of(context);
+
     final updated = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Appcolors.backgroundColor,
+      backgroundColor:
+      theme.bottomSheetTheme.backgroundColor ?? theme.scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(24),
@@ -101,7 +107,6 @@ class _CommunityViewState extends State<CommunityView> {
     );
 
     if (!mounted) return;
-
     if (updated == true) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -112,6 +117,9 @@ class _CommunityViewState extends State<CommunityView> {
   }
 
   Future<void> _confirmDeletePost(CommunityPostModel post) async {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     final confirm = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
@@ -127,9 +135,9 @@ class _CommunityViewState extends State<CommunityView> {
             ),
             TextButton(
               onPressed: () => Navigator.pop(dialogContext, true),
-              child: const Text(
+              child: Text(
                 'Delete',
-                style: TextStyle(color: Colors.red),
+                style: TextStyle(color: colorScheme.error),
               ),
             ),
           ],
@@ -138,9 +146,7 @@ class _CommunityViewState extends State<CommunityView> {
     );
 
     if (confirm != true) return;
-
     final success = await _viewModel.deletePost(post.id);
-
     if (!mounted) return;
 
     if (success) {
@@ -161,9 +167,13 @@ class _CommunityViewState extends State<CommunityView> {
   }
 
   Future<void> _openPostOptions(CommunityPostModel post) async {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     final action = await showModalBottomSheet<String>(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor:
+      theme.bottomSheetTheme.backgroundColor ?? theme.cardColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(20),
@@ -181,13 +191,13 @@ class _CommunityViewState extends State<CommunityView> {
                 },
               ),
               ListTile(
-                leading: const Icon(
+                leading: Icon(
                   Icons.delete_outline,
-                  color: Colors.red,
+                  color: colorScheme.error,
                 ),
-                title: const Text(
+                title: Text(
                   'Delete Post',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: colorScheme.error),
                 ),
                 onTap: () {
                   Navigator.pop(sheetContext, 'delete');
@@ -200,7 +210,6 @@ class _CommunityViewState extends State<CommunityView> {
     );
 
     if (!mounted) return;
-
     if (action == 'edit') {
       await _openEditPostSheet(post);
     } else if (action == 'delete') {
@@ -210,11 +219,13 @@ class _CommunityViewState extends State<CommunityView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return AnimatedBuilder(
       animation: _viewModel,
       builder: (context, _) {
         return Scaffold(
-          backgroundColor: Appcolors.backgroundColor,
           body: SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,7 +239,6 @@ class _CommunityViewState extends State<CommunityView> {
                     _viewModel.updateSearchQuery(value);
                   },
                 ),
-
                 const SizedBox(height: 4),
                 FilterChips(
                   selectedTab: _viewModel.selectedTab,
@@ -245,8 +255,9 @@ class _CommunityViewState extends State<CommunityView> {
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: _openCreatePostSheet,
-            backgroundColor: Appcolors.primaryColor,
-            child: const Icon(Icons.edit, color: Colors.white),
+            backgroundColor: colorScheme.primary,
+            foregroundColor: colorScheme.onPrimary,
+            child: const Icon(Icons.edit),
           ),
         );
       },
@@ -254,9 +265,14 @@ class _CommunityViewState extends State<CommunityView> {
   }
 
   Widget _buildBody() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     if (_viewModel.isLoading && _viewModel.displayedPosts.isEmpty) {
-      return const Center(
-        child: CircularProgressIndicator(),
+      return Center(
+        child: CircularProgressIndicator(
+          color: colorScheme.primary,
+        ),
       );
     }
 
@@ -270,8 +286,8 @@ class _CommunityViewState extends State<CommunityView> {
               Text(
                 _viewModel.errorMessage!,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.red,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.error,
                   fontSize: 14,
                 ),
               ),
@@ -289,18 +305,19 @@ class _CommunityViewState extends State<CommunityView> {
     }
 
     if (_viewModel.displayedPosts.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'No posts found',
-          style: TextStyle(
+          style: theme.textTheme.bodyLarge?.copyWith(
             fontSize: 16,
-            color: Appcolors.secondaryColor,
+            color: colorScheme.onSurface.withOpacity(0.68),
           ),
         ),
       );
     }
 
     return RefreshIndicator(
+      color: colorScheme.primary,
       onRefresh: _viewModel.refreshCurrentTab,
       child: ListView.builder(
         padding: const EdgeInsets.only(bottom: 90),
@@ -326,9 +343,7 @@ class _CommunityViewState extends State<CommunityView> {
                 : null,
             onLikeTap: () async {
               await _viewModel.toggleLike(post);
-
               if (!mounted) return;
-
               if (_viewModel.errorMessage != null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

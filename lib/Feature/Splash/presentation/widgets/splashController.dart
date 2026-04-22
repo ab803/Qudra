@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'SplashAnimations.dart';
 
 class SplashController {
-
   // Required for animation tick
   final TickerProvider vsync;
 
@@ -18,6 +17,8 @@ class SplashController {
 
   // Animation definitions
   late SplashAnimations animations;
+
+  Timer? _navigationTimer;
 
   SplashController({required this.vsync, required this.context});
 
@@ -53,7 +54,6 @@ class SplashController {
   // Start animations sequentially
   void startAnimation() {
     logoController.forward();
-
     Future.delayed(const Duration(milliseconds: 800), () {
       textController.forward();
     });
@@ -61,7 +61,8 @@ class SplashController {
 
   // Navigate to home screen after delay
   void navigateNext() {
-    Timer(const Duration(seconds: 4), () {
+    _navigationTimer?.cancel();
+    _navigationTimer = Timer(const Duration(seconds: 3), () {
       if (context.mounted) {
         context.go('/home');
       }
@@ -76,6 +77,7 @@ class SplashController {
 
   // Dispose resources
   void dispose() {
+    _navigationTimer?.cancel();
     logoController.dispose();
     textController.dispose();
     dotsController.dispose();

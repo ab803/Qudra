@@ -43,6 +43,7 @@ import '../../Feature/institution/models/service_model.dart';
 import '../../Feature/booking/presentation/views/user_bookings_view.dart';
 import '../../Feature/booking/viewmodel/user_bookings_cubit.dart';
 
+import '../../Feature/profile/presentation/views/app_guidelines_view.dart';
 
 
 class AppRouter {
@@ -125,6 +126,12 @@ class AppRouter {
           child: const AccessibilityHubView(),
         ),
       ),
+
+      GoRoute(
+        path: '/AppGuidelines',
+        builder: (context, state) => const AppGuidelinesView(),
+      ),
+
 
 
 

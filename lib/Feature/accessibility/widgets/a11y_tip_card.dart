@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qudra_0/core/Styles/AppColors.dart';
-import 'package:qudra_0/core/Styles/AppTextsyles.dart';
 
 class A11yTipCard extends StatelessWidget {
   final String title;
@@ -18,15 +16,20 @@ class A11yTipCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: theme.dividerColor),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: theme.shadowColor.withOpacity(
+              theme.brightness == Brightness.dark ? 0.08 : 0.04,
+            ),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -42,8 +45,8 @@ class A11yTipCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: AppTextStyles.subtitle.copyWith(
-                    color: Appcolors.primaryColor,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: colorScheme.primary,
                     fontWeight: FontWeight.w800,
                     fontSize: 16,
                     height: 1.2,
@@ -54,7 +57,7 @@ class A11yTipCard extends StatelessWidget {
               Icon(
                 bookmarked ? Icons.bookmark : Icons.bookmark_border,
                 size: 20,
-                color: Appcolors.primaryColor,
+                color: colorScheme.primary,
               ),
             ],
           ),
@@ -63,13 +66,12 @@ class A11yTipCard extends StatelessWidget {
           // الوصف
           Text(
             body,
-            style: AppTextStyles.body.copyWith(
-              color: Appcolors.secondaryColor,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurface.withOpacity(0.72),
               height: 1.35,
               fontSize: 13.5,
             ),
           ),
-
           if (tags.isNotEmpty) ...[
             const SizedBox(height: 12),
             Wrap(
@@ -86,25 +88,33 @@ class A11yTipCard extends StatelessWidget {
 
 class _TagPill extends StatelessWidget {
   final String label;
+
   const _TagPill(this.label);
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Container(
       height: 28,
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        color: Appcolors.backgroundColor,
+        color: colorScheme.primary.withOpacity(
+          theme.brightness == Brightness.dark ? 0.16 : 0.08,
+        ),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(
+          color: colorScheme.primary.withOpacity(0.18),
+        ),
       ),
       alignment: Alignment.center,
       child: Text(
         label,
-        style: AppTextStyles.body.copyWith(
+        style: theme.textTheme.bodySmall?.copyWith(
           fontSize: 11.5,
           fontWeight: FontWeight.w700,
-          color: Appcolors.primaryColor,
+          color: colorScheme.primary,
           height: 1.0,
         ),
       ),

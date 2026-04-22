@@ -23,7 +23,6 @@ class _BookingResultViewState extends State<BookingResultView> {
   @override
   void initState() {
     super.initState();
-
     _future = getIt<BookingService>().getBookingSnapshot(widget.bookingId);
   }
 
@@ -54,15 +53,18 @@ class _BookingResultViewState extends State<BookingResultView> {
   }
 
   _ResultPresentation _buildPresentation(
+      BuildContext context,
       BookingModel? booking,
       BookingPaymentModel? payment,
       ) {
+    final onSurface = Theme.of(context).colorScheme.onSurface;
+
     if (booking == null) {
-      return const _ResultPresentation(
+      return _ResultPresentation(
         title: 'Booking Not Found',
         message: 'We could not load this booking right now.',
         icon: Icons.help_outline,
-        accent: Colors.black,
+        accent: onSurface,
       );
     }
 
@@ -90,11 +92,11 @@ class _BookingResultViewState extends State<BookingResultView> {
     }
 
     if (bookingStatus == 'cancelled') {
-      return const _ResultPresentation(
+      return _ResultPresentation(
         title: 'Booking Cancelled',
         message: 'The payment session was cancelled or voided.',
         icon: Icons.remove_circle_outline,
-        accent: Colors.black,
+        accent: onSurface,
       );
     }
 
@@ -124,32 +126,30 @@ class _BookingResultViewState extends State<BookingResultView> {
   // Custom app bar back button that always goes to Home.
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.white,
-      elevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: Colors.black),
+        icon: const Icon(Icons.arrow_back),
         onPressed: _goHome,
       ),
-      title: const Text(
-        'Booking Result',
-        style: TextStyle(color: Colors.black),
-      ),
-      iconTheme: const IconThemeData(color: Colors.black),
+      title: const Text('Booking Result'),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return FutureBuilder<Map<String, dynamic>>(
       future: _future,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return WillPopScope(
             onWillPop: _handleBackNavigation,
-            child: const Scaffold(
-              backgroundColor: Color(0xFFF7F8FA),
+            child: Scaffold(
               body: Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(
+                  color: colorScheme.primary,
+                ),
               ),
             ),
           );
@@ -159,7 +159,6 @@ class _BookingResultViewState extends State<BookingResultView> {
           return WillPopScope(
             onWillPop: _handleBackNavigation,
             child: Scaffold(
-              backgroundColor: const Color(0xFFF7F8FA),
               appBar: _buildAppBar(),
               body: SafeArea(
                 child: Center(
@@ -168,17 +167,16 @@ class _BookingResultViewState extends State<BookingResultView> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.error_outline,
                           size: 48,
-                          color: Colors.black,
+                          color: colorScheme.error,
                         ),
                         const SizedBox(height: 16),
-                        const Text(
+                        Text(
                           'Could not load booking result right now.',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 20,
+                          style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w800,
                           ),
                         ),
@@ -186,7 +184,7 @@ class _BookingResultViewState extends State<BookingResultView> {
                         Text(
                           snapshot.error.toString(),
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.grey.shade700),
+                          style: theme.textTheme.bodyMedium,
                         ),
                         const SizedBox(height: 24),
                         SizedBox(
@@ -197,15 +195,13 @@ class _BookingResultViewState extends State<BookingResultView> {
                             // Bottom action now goes to Home.
                             onPressed: _goHome,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black,
-                              foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(18),
                               ),
                             ),
-                            child: const Text(
+                            child: Text(
                               'Back to Home',
-                              style: TextStyle(
+                              style: theme.textTheme.labelLarge?.copyWith(
                                 fontWeight: FontWeight.w800,
                                 fontSize: 17,
                               ),
@@ -223,12 +219,11 @@ class _BookingResultViewState extends State<BookingResultView> {
 
         final booking = snapshot.data?['booking'] as BookingModel?;
         final payment = snapshot.data?['payment'] as BookingPaymentModel?;
-        final presentation = _buildPresentation(booking, payment);
+        final presentation = _buildPresentation(context, booking, payment);
 
         return WillPopScope(
           onWillPop: _handleBackNavigation,
           child: Scaffold(
-            backgroundColor: const Color(0xFFF7F8FA),
             appBar: _buildAppBar(),
             body: SafeArea(
               child: Center(
@@ -253,18 +248,16 @@ class _BookingResultViewState extends State<BookingResultView> {
                       Text(
                         presentation.title,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
+                        style: theme.textTheme.headlineSmall?.copyWith(
                           fontSize: 32,
                           fontWeight: FontWeight.w900,
-                          color: Colors.black,
                         ),
                       ),
                       const SizedBox(height: 12),
                       Text(
                         presentation.message,
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.grey.shade700,
+                        style: theme.textTheme.bodyMedium?.copyWith(
                           fontSize: 15,
                           height: 1.5,
                         ),
@@ -275,15 +268,11 @@ class _BookingResultViewState extends State<BookingResultView> {
                           width: double.infinity,
                           padding: const EdgeInsets.all(18),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: theme.cardColor,
                             borderRadius: BorderRadius.circular(22),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.03),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
+                            border: Border.all(
+                              color: theme.dividerColor,
+                            ),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -329,15 +318,13 @@ class _BookingResultViewState extends State<BookingResultView> {
                           // Bottom action always goes to Home.
                           onPressed: _goHome,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                            foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18),
                             ),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Back to Home',
-                            style: TextStyle(
+                            style: theme.textTheme.labelLarge?.copyWith(
                               fontWeight: FontWeight.w800,
                               fontSize: 17,
                             ),
@@ -381,6 +368,8 @@ class _ResultRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(
@@ -390,7 +379,7 @@ class _ResultRow extends StatelessWidget {
             width: 120,
             child: Text(
               '$label:',
-              style: const TextStyle(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -398,9 +387,7 @@ class _ResultRow extends StatelessWidget {
           Expanded(
             child: Text(
               value,
-              style: TextStyle(
-                color: Colors.grey.shade800,
-              ),
+              style: theme.textTheme.bodyMedium,
             ),
           ),
         ],

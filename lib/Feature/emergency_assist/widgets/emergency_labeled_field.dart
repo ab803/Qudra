@@ -19,6 +19,7 @@ class EmergencyLabeledField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,15 +30,15 @@ class EmergencyLabeledField extends StatelessWidget {
               label,
               style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFF111827),
+                color: colorScheme.onSurface,
               ),
             ),
             if (isRequired) ...[
               const SizedBox(width: 4),
-              const Text(
+              Text(
                 '*',
-                style: TextStyle(
-                  color: Colors.red,
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: colorScheme.error,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -51,7 +52,7 @@ class EmergencyLabeledField extends StatelessWidget {
           Text(
             errorText!,
             style: theme.textTheme.bodySmall?.copyWith(
-              color: Colors.red,
+              color: colorScheme.error,
               fontWeight: FontWeight.w600,
             ),
           ),

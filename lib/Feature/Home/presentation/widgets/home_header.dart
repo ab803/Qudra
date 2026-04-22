@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../../core/Styles/AppColors.dart';
 import '../../../../core/Styles/AppTextsyles.dart';
 import '../../../Auth/ViewModel/auth_cubit.dart';
 import '../../../Auth/ViewModel/auth_state.dart';
@@ -11,6 +9,8 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
         final authCubit = context.read<AuthCubit>();
@@ -30,7 +30,9 @@ class HomeHeader extends StatelessWidget {
               children: [
                 Text(
                   'Welcome',
-                  style: AppTextStyles.title,
+                  style: AppTextStyles.title.copyWith(
+                    color: theme.textTheme.titleLarge?.color,
+                  ),
                 ),
                 const SizedBox(height: 4),
 
@@ -38,7 +40,7 @@ class HomeHeader extends StatelessWidget {
                 Text(
                   'Hello, $firstName',
                   style: AppTextStyles.subtitle.copyWith(
-                    color: Appcolors.primaryColor,
+                    color: theme.textTheme.bodyLarge?.color,
                   ),
                 ),
               ],
@@ -48,19 +50,21 @@ class HomeHeader extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: theme.cardColor,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Appcolors.primaryColor.withOpacity(0.05),
+                    color: Colors.black.withOpacity(
+                      theme.brightness == Brightness.dark ? 0.16 : 0.05,
+                    ),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
                 ],
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.nightlight_round,
-                color: Appcolors.primaryColor,
+                color: theme.colorScheme.primary,
               ),
             ),
           ],

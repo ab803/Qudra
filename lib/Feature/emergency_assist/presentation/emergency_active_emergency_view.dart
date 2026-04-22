@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../models/emergency_contact_model.dart';
 import '../viewmodel/emergency_active_emergency_viewmodel.dart';
 
@@ -36,7 +35,6 @@ class _EmergencyActiveEmergencyViewState
 
   void _showSnackBar(String message) {
     if (!mounted) return;
-
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
@@ -47,9 +45,12 @@ class _EmergencyActiveEmergencyViewState
     required String subtitle,
     required IconData icon,
     required VoidCallback onPressed,
-    Color backgroundColor = Colors.white,
-    Color iconColor = const Color(0xFF0D6EFD),
+    Color? backgroundColor,
+    Color? iconColor,
   }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Expanded(
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
@@ -57,9 +58,9 @@ class _EmergencyActiveEmergencyViewState
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 10),
           decoration: BoxDecoration(
-            color: backgroundColor,
+            color: backgroundColor ?? theme.cardColor,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: const Color(0xFFE5E7EB)),
+            border: Border.all(color: theme.dividerColor),
           ),
           child: Column(
             children: [
@@ -67,16 +68,21 @@ class _EmergencyActiveEmergencyViewState
                 width: 46,
                 height: 46,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF3F4F6),
+                  color: colorScheme.onSurface.withOpacity(
+                    theme.brightness == Brightness.dark ? 0.10 : 0.05,
+                  ),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(icon, color: iconColor),
+                child: Icon(
+                  icon,
+                  color: iconColor ?? colorScheme.primary,
+                ),
               ),
               const SizedBox(height: 12),
               Text(
                 title,
-                style: const TextStyle(
-                  color: Color(0xFF111827),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.onSurface,
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
                 ),
@@ -84,8 +90,8 @@ class _EmergencyActiveEmergencyViewState
               const SizedBox(height: 4),
               Text(
                 subtitle,
-                style: const TextStyle(
-                  color: Color(0xFF6B7280),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurface.withOpacity(0.68),
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
                 ),
@@ -98,12 +104,15 @@ class _EmergencyActiveEmergencyViewState
   }
 
   Widget _buildContactTile(EmergencyContactModel contact) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Row(
         children: [
@@ -111,12 +120,14 @@ class _EmergencyActiveEmergencyViewState
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: const Color(0xFFF3F4F6),
+              color: colorScheme.onSurface.withOpacity(
+                theme.brightness == Brightness.dark ? 0.10 : 0.05,
+              ),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.person_outline_rounded,
-              color: Color(0xFF6B7280),
+              color: colorScheme.onSurface.withOpacity(0.58),
             ),
           ),
           const SizedBox(width: 12),
@@ -129,8 +140,7 @@ class _EmergencyActiveEmergencyViewState
                     Flexible(
                       child: Text(
                         contact.name,
-                        style: const TextStyle(
-                          color: Color(0xFF111827),
+                        style: theme.textTheme.titleMedium?.copyWith(
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
                         ),
@@ -144,13 +154,15 @@ class _EmergencyActiveEmergencyViewState
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEAF2FF),
+                          color: colorScheme.primary.withOpacity(
+                            theme.brightness == Brightness.dark ? 0.16 : 0.10,
+                          ),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Text(
+                        child: Text(
                           'أساسي',
-                          style: TextStyle(
-                            color: Color(0xFF0D6EFD),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colorScheme.primary,
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
                           ),
@@ -162,8 +174,8 @@ class _EmergencyActiveEmergencyViewState
                 const SizedBox(height: 4),
                 Text(
                   contact.relation,
-                  style: const TextStyle(
-                    color: Color(0xFF6B7280),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurface.withOpacity(0.68),
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -175,9 +187,9 @@ class _EmergencyActiveEmergencyViewState
             onPressed: () async {
               await widget.viewModel.callContact(contact.phoneNumber);
             },
-            icon: const Icon(
+            icon: Icon(
               Icons.call_rounded,
-              color: Color(0xFF0D6EFD),
+              color: colorScheme.primary,
             ),
           ),
         ],
@@ -186,48 +198,55 @@ class _EmergencyActiveEmergencyViewState
   }
 
   Widget _buildActiveEmergencyHeader() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final headerColor = colorScheme.error;
+    final headerColorSoft = colorScheme.error.withOpacity(
+      theme.brightness == Brightness.dark ? 0.82 : 0.78,
+    );
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           colors: [
-            Color(0xFFEF4444),
-            Color(0xFFF87171),
+            headerColor,
+            headerColorSoft,
           ],
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFEF4444).withOpacity(0.28),
+            color: headerColor.withOpacity(0.28),
             blurRadius: 14,
             offset: const Offset(0, 6),
           ),
         ],
       ),
-      child: const Column(
+      child: Column(
         children: [
           Icon(
             Icons.warning_amber_rounded,
-            color: Colors.white,
+            color: colorScheme.onError,
             size: 34,
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Text(
             'تم تفعيل حالة الطوارئ',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              color: colorScheme.onError,
               fontSize: 22,
               fontWeight: FontWeight.w900,
             ),
           ),
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             'يمكنك الآن مشاركة حالتك أو موقعك أو التواصل مباشرة مع خدمات الطوارئ.',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onError,
               fontSize: 14,
               fontWeight: FontWeight.w600,
               height: 1.5,
@@ -239,21 +258,24 @@ class _EmergencyActiveEmergencyViewState
   }
 
   Widget _buildLocationCard(EmergencyActiveEmergencyViewModel vm) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'الموقع الحالي',
-            style: TextStyle(
-              color: Color(0xFF111827),
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: colorScheme.onSurface,
               fontSize: 18,
               fontWeight: FontWeight.w800,
             ),
@@ -263,8 +285,8 @@ class _EmergencyActiveEmergencyViewState
             vm.isLocationAvailable
                 ? (vm.currentLocationUrl ?? 'الموقع متاح')
                 : 'الموقع غير متاح حاليًا',
-            style: const TextStyle(
-              color: Color(0xFF6B7280),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurface.withOpacity(0.68),
               fontSize: 14,
               fontWeight: FontWeight.w600,
               height: 1.6,
@@ -276,6 +298,9 @@ class _EmergencyActiveEmergencyViewState
   }
 
   Widget _buildShareActions(EmergencyActiveEmergencyViewModel vm) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Column(
       children: [
         SizedBox(
@@ -286,8 +311,8 @@ class _EmergencyActiveEmergencyViewState
               await vm.sendUrgentWhatsAppAlert();
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFFEF4444),
-              foregroundColor: Colors.white,
+              backgroundColor: colorScheme.error,
+              foregroundColor: colorScheme.onError,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -316,14 +341,14 @@ class _EmergencyActiveEmergencyViewState
               }
             },
             style: OutlinedButton.styleFrom(
-              foregroundColor: const Color(0xFF111827),
-              side: const BorderSide(
-                color: Color(0xFFE5E7EB),
+              foregroundColor: colorScheme.onSurface,
+              side: BorderSide(
+                color: theme.dividerColor,
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
-              backgroundColor: Colors.white,
+              backgroundColor: theme.cardColor,
             ),
             icon: const Icon(Icons.badge_outlined),
             label: const Text(
@@ -340,13 +365,14 @@ class _EmergencyActiveEmergencyViewState
   }
 
   Widget _buildQuickCalls(EmergencyActiveEmergencyViewModel vm) {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'اتصال مباشر',
-          style: TextStyle(
-            color: Color(0xFF111827),
+          style: theme.textTheme.titleMedium?.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w800,
           ),
@@ -358,7 +384,7 @@ class _EmergencyActiveEmergencyViewState
               title: 'الطوارئ',
               subtitle: '112',
               icon: Icons.call_outlined,
-              iconColor: const Color(0xFFEF4444),
+              iconColor: Theme.of(context).colorScheme.error,
               onPressed: () async {
                 await vm.callUnifiedEmergency();
               },
@@ -401,13 +427,15 @@ class _EmergencyActiveEmergencyViewState
   }
 
   Widget _buildContactsSection(EmergencyActiveEmergencyViewModel vm) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'جهات اتصال الطوارئ',
-          style: TextStyle(
-            color: Color(0xFF111827),
+          style: theme.textTheme.titleMedium?.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w800,
           ),
@@ -418,15 +446,15 @@ class _EmergencyActiveEmergencyViewState
             width: double.infinity,
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: theme.cardColor,
               borderRadius: BorderRadius.circular(22),
-              border: Border.all(color: const Color(0xFFE5E7EB)),
+              border: Border.all(color: theme.dividerColor),
             ),
-            child: const Text(
+            child: Text(
               'لا توجد جهات اتصال للطوارئ حتى الآن.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Color(0xFF6B7280),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurface.withOpacity(0.68),
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
               ),
@@ -449,6 +477,8 @@ class _EmergencyActiveEmergencyViewState
   }
 
   Widget _buildImSafeButton() {
+    const safeColor = Color(0xFF10B981);
+
     return SizedBox(
       width: double.infinity,
       height: 56,
@@ -462,7 +492,7 @@ class _EmergencyActiveEmergencyViewState
           }
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF10B981),
+          backgroundColor: safeColor,
           foregroundColor: Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(
@@ -488,19 +518,16 @@ class _EmergencyActiveEmergencyViewState
       child: AnimatedBuilder(
         animation: widget.viewModel,
         builder: (context, _) {
+          final theme = Theme.of(context);
+          final colorScheme = theme.colorScheme;
           final vm = widget.viewModel;
 
           return Scaffold(
-            backgroundColor: const Color(0xFFF6F7F9),
             appBar: AppBar(
-              backgroundColor: const Color(0xFFF6F7F9),
-              elevation: 0,
-              surfaceTintColor: const Color(0xFFF6F7F9),
               centerTitle: true,
-              title: const Text(
+              title: Text(
                 'حالة طوارئ نشطة',
-                style: TextStyle(
-                  color: Color(0xFF111827),
+                style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w800,
                   fontSize: 22,
                 ),
@@ -508,8 +535,10 @@ class _EmergencyActiveEmergencyViewState
             ),
             body: SafeArea(
               child: vm.isLoading
-                  ? const Center(
-                child: CircularProgressIndicator(),
+                  ? Center(
+                child: CircularProgressIndicator(
+                  color: colorScheme.primary,
+                ),
               )
                   : ListView(
                 padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),

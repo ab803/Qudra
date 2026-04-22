@@ -15,6 +15,8 @@ class InstitutionEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final hasQuery = query.isNotEmpty;
     final hasChipFilter = selectedFilter != 'All';
 
@@ -47,25 +49,21 @@ class InstitutionEmptyState extends StatelessWidget {
             Icon(
               Icons.search_off_rounded,
               size: 64,
-              color: Colors.black.withOpacity(0.2),
+              color: colorScheme.onSurface.withOpacity(0.2),
             ),
             const SizedBox(height: 16),
             Text(
               title,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 18,
+              style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade700,
+              style: theme.textTheme.bodyMedium?.copyWith(
                 height: 1.4,
               ),
             ),
@@ -75,8 +73,6 @@ class InstitutionEmptyState extends StatelessWidget {
                 // This button clears the active search text and chip filter.
                 onPressed: onClearFilters,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),

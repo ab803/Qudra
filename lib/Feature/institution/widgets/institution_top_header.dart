@@ -6,14 +6,23 @@ class InstitutionTopHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: const [
+      children: [
         Text(
           'Qudra',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          style: theme.textTheme.titleLarge?.copyWith(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
         ),
-        Icon(Icons.account_circle, size: 32),
+        Icon(
+          Icons.account_circle,
+          size: 32,
+          color: theme.iconTheme.color,
+        ),
       ],
     );
   }

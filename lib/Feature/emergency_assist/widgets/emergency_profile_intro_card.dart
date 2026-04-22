@@ -6,12 +6,14 @@ class EmergencyProfileIntroCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF3F4F6),
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Row(
         children: [
@@ -19,13 +21,15 @@ class EmergencyProfileIntroCard extends StatelessWidget {
             width: 84,
             height: 84,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colorScheme.primary.withOpacity(
+                theme.brightness == Brightness.dark ? 0.16 : 0.08,
+              ),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.badge_outlined,
               size: 36,
-              color: Color(0xFF0D6EFD),
+              color: colorScheme.primary,
             ),
           ),
           const SizedBox(width: 16),
@@ -37,7 +41,7 @@ class EmergencyProfileIntroCard extends StatelessWidget {
                   'معلوماتك\nالمنقذة للحياة',
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w800,
-                    color: const Color(0xFF0D6EFD),
+                    color: colorScheme.primary,
                     height: 1.15,
                   ),
                 ),
@@ -45,7 +49,7 @@ class EmergencyProfileIntroCard extends StatelessWidget {
                 Text(
                   'هذه البيانات تساعد فرق الطوارئ أو مقدم الدعم المناسب للوصول إليك بسرعة وقت الحاجة.',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: const Color(0xFF6B7280),
+                    color: colorScheme.onSurface.withOpacity(0.72),
                     height: 1.4,
                   ),
                 ),

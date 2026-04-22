@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../models/reminder_model.dart';
-import '../../viewmodel/medical_reminders_view_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../widgets/meds_header.dart';
 import '../../widgets/meds_progress_card.dart';
 import '../../widgets/meds_reminder_tile.dart';
 import '../../widgets/meds_section_title.dart';
 import '../../widgets/open_add_bottomsheet.dart';
+import '../../models/reminder_model.dart';
+import '../../viewmodel/medical_reminders_view_model.dart';
+
 
 class MedicalRemindersView extends StatelessWidget {
   const MedicalRemindersView({super.key});
@@ -73,6 +74,7 @@ class MedicalRemindersView extends StatelessWidget {
       String id,
       String title,
       ) async {
+    final colorScheme = Theme.of(context).colorScheme;
     final vm = context.read<MedicalRemindersViewModel>();
 
     final ok = await showDialog<bool>(
@@ -86,12 +88,12 @@ class MedicalRemindersView extends StatelessWidget {
             child: const Text('Cancel'),
           ),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text(
-              'Delete',
-              style: TextStyle(color: Colors.white),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: colorScheme.error,
+              foregroundColor: colorScheme.onError,
             ),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Delete'),
           ),
         ],
       ),
@@ -104,17 +106,18 @@ class MedicalRemindersView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final vm = context.watch<MedicalRemindersViewModel>();
     final items = vm.reminders.map((m) => _toViewData(context, vm, m)).toList();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F7F7),
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        surfaceTintColor: Colors.white,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black87),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: colorScheme.onSurface,
+          ),
           onPressed: () => Navigator.of(context).pop(),
         ),
         centerTitle: false,
@@ -123,7 +126,11 @@ class MedicalRemindersView extends StatelessWidget {
       ),
       body: SafeArea(
         child: vm.isLoading
-            ? const Center(child: CircularProgressIndicator())
+            ? Center(
+          child: CircularProgressIndicator(
+            color: colorScheme.primary,
+          ),
+        )
             : ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 90),
           children: [
@@ -140,7 +147,9 @@ class MedicalRemindersView extends StatelessWidget {
               const SizedBox(height: 12),
               Text(
                 vm.errorMessage!,
-                style: const TextStyle(color: Colors.red),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.error,
+                ),
               ),
             ],
             const SizedBox(height: 18),
@@ -155,8 +164,8 @@ class MedicalRemindersView extends StatelessWidget {
                 child: Center(
                   child: Text(
                     'No reminders yet. Tap + to add one.',
-                    style: TextStyle(
-                      color: Colors.grey.shade600,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface.withOpacity(0.68),
                     ),
                   ),
                 ),
@@ -186,14 +195,15 @@ class MedicalRemindersView extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.black87,
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
         onPressed: () async {
           final result = await openAddBottomSheet(context);
           if (result != null && context.mounted) {
             await context.read<MedicalRemindersViewModel>().addReminder(result);
           }
         },
-        child: const Icon(Icons.add, color: Colors.white),
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -204,7 +214,9 @@ class _SwipeDirectionLabels extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color labelColor = Colors.grey.shade500;
+    final theme = Theme.of(context);
+    final Color labelColor =
+    theme.colorScheme.onSurface.withOpacity(0.55);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -220,7 +232,7 @@ class _SwipeDirectionLabels extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 'Taken',
-                style: TextStyle(
+                style: theme.textTheme.bodySmall?.copyWith(
                   color: labelColor,
                   fontSize: 11.5,
                   fontWeight: FontWeight.w600,
@@ -232,7 +244,7 @@ class _SwipeDirectionLabels extends StatelessWidget {
           const Spacer(),
           Text(
             'Swipe',
-            style: TextStyle(
+            style: theme.textTheme.bodySmall?.copyWith(
               color: labelColor,
               fontSize: 11.5,
               fontWeight: FontWeight.w600,
@@ -244,7 +256,7 @@ class _SwipeDirectionLabels extends StatelessWidget {
             children: [
               Text(
                 'Skip',
-                style: TextStyle(
+                style: theme.textTheme.bodySmall?.copyWith(
                   color: labelColor,
                   fontSize: 11.5,
                   fontWeight: FontWeight.w600,

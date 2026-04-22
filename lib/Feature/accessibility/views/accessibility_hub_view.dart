@@ -72,8 +72,10 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
       final types = tip.disabilityType ?? [];
       final matchesType = type == 'all' || types.contains(type);
       final matchesSearch = _searchQuery.isEmpty ||
-          (tip.title?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false) ||
-          (tip.description?.toLowerCase().contains(_searchQuery.toLowerCase()) ?? false);
+          (tip.title?.toLowerCase().contains(_searchQuery.toLowerCase()) ??
+              false) ||
+          (tip.description?.toLowerCase().contains(_searchQuery.toLowerCase()) ??
+              false);
       return matchesType && matchesSearch;
     }).toList();
   }
@@ -81,7 +83,6 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F7),
       appBar: _buildAppBar(),
       body: Column(
         children: [
@@ -91,10 +92,14 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
             child: BlocConsumer<RightstipsCubit, RightstipsState>(
               listener: (context, state) {
                 if (state is RightstipsError) {
+                  final colorScheme = Theme.of(context).colorScheme;
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(state.message),
-                      backgroundColor: Colors.redAccent,
+                      content: Text(
+                        state.message,
+                        style: TextStyle(color: colorScheme.onError),
+                      ),
+                      backgroundColor: colorScheme.error,
                       behavior: SnackBarBehavior.floating,
                     ),
                   );
@@ -102,8 +107,10 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
               },
               builder: (context, state) {
                 if (state is RightstipsLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(color: Color(0xFF1C1C1E)),
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   );
                 }
                 if (state is RightstipsError) {
@@ -122,22 +129,21 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
   }
 
   PreferredSizeWidget _buildAppBar() {
+    final theme = Theme.of(context);
+
     return AppBar(
-      backgroundColor: const Color(0xFFF2F2F7),
-      elevation: 0,
-      title: const Text(
+      title: Text(
         'Accessibility Hub',
-        style: TextStyle(
-          color: Color(0xFF1C1C1E),
-          fontWeight: FontWeight.bold,
+        style: theme.textTheme.titleLarge?.copyWith(
           fontSize: 18,
+          fontWeight: FontWeight.bold,
         ),
       ),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 16),
           child: CircleAvatar(
-            backgroundColor: const Color(0xFFE5E5EA),
+            backgroundColor: theme.cardColor,
             radius: 16,
             child: Icon(
               Icons.accessibility_new,
@@ -151,6 +157,9 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
   }
 
   Widget _buildSearchBar() {
+    final theme = Theme.of(context);
+    final onSurface = theme.colorScheme.onSurface;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
       child: TextField(
@@ -158,11 +167,22 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
         onChanged: (val) => setState(() => _searchQuery = val),
         decoration: InputDecoration(
           hintText: 'Search rights, tips, resources...',
-          hintStyle: const TextStyle(fontSize: 13, color: Colors.black38),
-          prefixIcon: const Icon(Icons.search, size: 20, color: Colors.black38),
+          hintStyle: theme.textTheme.bodyMedium?.copyWith(
+            fontSize: 13,
+            color: onSurface.withOpacity(0.38),
+          ),
+          prefixIcon: Icon(
+            Icons.search,
+            size: 20,
+            color: onSurface.withOpacity(0.38),
+          ),
           suffixIcon: _searchQuery.isNotEmpty
               ? IconButton(
-            icon: const Icon(Icons.clear, size: 18, color: Colors.black38),
+            icon: Icon(
+              Icons.clear,
+              size: 18,
+              color: onSurface.withOpacity(0.38),
+            ),
             onPressed: () {
               _searchController.clear();
               setState(() => _searchQuery = '');
@@ -170,19 +190,22 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
           )
               : null,
           filled: true,
-          fillColor: Colors.white,
+          fillColor: theme.cardColor,
           contentPadding: const EdgeInsets.symmetric(vertical: 10),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.black.withOpacity(0.06)),
+            borderSide: BorderSide(color: theme.dividerColor),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.black.withOpacity(0.06)),
+            borderSide: BorderSide(color: theme.dividerColor),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Appcolors.primaryColor, width: 1.5),
+            borderSide: BorderSide(
+              color: Appcolors.primaryColor,
+              width: 1.5,
+            ),
           ),
         ),
       ),
@@ -205,7 +228,10 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
   }
 
   Widget _buildChip({required String label, required String value}) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final selected = _selectedFilter == value;
+
     return GestureDetector(
       onTap: () => setState(() => _selectedFilter = value),
       child: AnimatedContainer(
@@ -213,20 +239,22 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
         margin: const EdgeInsets.only(right: 8),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
         decoration: BoxDecoration(
-          color: selected ? const Color(0xFF1C1C1E) : Colors.white,
+          color: selected ? colorScheme.primary : theme.cardColor,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: selected
-                ? const Color(0xFF1C1C1E)
-                : Colors.black.withOpacity(0.1),
+            color: selected ? colorScheme.primary : theme.dividerColor,
           ),
         ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
-            color: selected ? Colors.white : Colors.black54,
+        child: Center(
+          child: Text(
+            label,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 13,
+              fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
+              color: selected
+                  ? colorScheme.onPrimary
+                  : colorScheme.onSurface.withOpacity(0.72),
+            ),
           ),
         ),
       ),
@@ -246,16 +274,18 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
       final sorted = [...allTips]
         ..sort((a, b) =>
             (b.createdAt ?? DateTime(0)).compareTo(a.createdAt ?? DateTime(0)));
-      final searched = sorted.where((t) =>
+      final searched = sorted
+          .where((t) =>
       _searchQuery.isEmpty ||
           (t.title?.toLowerCase().contains(_searchQuery.toLowerCase()) ??
-              false)).toList();
+              false))
+          .toList();
       return _buildFlatList(context, searched);
     }
 
     // All: grouped by category
     return RefreshIndicator(
-      color: const Color(0xFF1C1C1E),
+      color: Theme.of(context).colorScheme.primary,
       onRefresh: () => context.read<RightstipsCubit>().loadAll(),
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
@@ -276,20 +306,23 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
       _CategoryMeta meta,
       List<tipsRightsModel> tips,
       ) {
+    final theme = Theme.of(context);
+    final onSurface = theme.colorScheme.onSurface;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 24),
+
         // Section header
         Row(
           children: [
-            Icon(meta.icon, color: const Color(0xFF1C1C1E), size: 22),
+            Icon(meta.icon, color: meta.color, size: 22),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
                 meta.label,
-                style: const TextStyle(
-                  color: Color(0xFF1C1C1E),
+                style: theme.textTheme.titleLarge?.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -297,8 +330,8 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
             ),
             Text(
               '${tips.length} items',
-              style: TextStyle(
-                color: Colors.grey[500],
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: onSurface.withOpacity(0.6),
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
               ),
@@ -308,7 +341,10 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
         const SizedBox(height: 4),
         Text(
           meta.subtitle,
-          style: TextStyle(color: Colors.grey[500], fontSize: 13),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: onSurface.withOpacity(0.6),
+            fontSize: 13,
+          ),
         ),
         const SizedBox(height: 16),
         if (tips.isEmpty)
@@ -316,14 +352,17 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: theme.cardColor,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.black.withOpacity(0.06)),
+              border: Border.all(color: theme.dividerColor),
             ),
             child: Text(
               'No resources yet',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey[400], fontSize: 14),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: onSurface.withOpacity(0.5),
+                fontSize: 14,
+              ),
             ),
           )
         else
@@ -343,6 +382,9 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
       _CategoryMeta meta,
       List<tipsRightsModel> tips,
       ) {
+    final theme = Theme.of(context);
+    final onSurface = theme.colorScheme.onSurface;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
       child: Column(
@@ -350,13 +392,12 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
         children: [
           Row(
             children: [
-              Icon(meta.icon, color: const Color(0xFF1C1C1E), size: 22),
+              Icon(meta.icon, color: meta.color, size: 22),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   meta.label,
-                  style: const TextStyle(
-                    color: Color(0xFF1C1C1E),
+                  style: theme.textTheme.titleLarge?.copyWith(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -364,14 +405,20 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
               ),
               Text(
                 '${tips.length} items',
-                style: TextStyle(color: Colors.grey[500], fontSize: 13),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: onSurface.withOpacity(0.6),
+                  fontSize: 13,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 4),
           Text(
             meta.subtitle,
-            style: TextStyle(color: Colors.grey[500], fontSize: 13),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: onSurface.withOpacity(0.6),
+              fontSize: 13,
+            ),
           ),
           const SizedBox(height: 16),
           if (tips.isEmpty)
@@ -380,7 +427,10 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
                 padding: const EdgeInsets.symmetric(vertical: 32),
                 child: Text(
                   'No resources in this category',
-                  style: TextStyle(color: Colors.grey[400], fontSize: 14),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: onSurface.withOpacity(0.5),
+                    fontSize: 14,
+                  ),
                 ),
               ),
             )
@@ -399,14 +449,20 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
   }
 
   Widget _buildFlatList(BuildContext context, List<tipsRightsModel> tips) {
+    final theme = Theme.of(context);
+
     if (tips.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'No resources found',
-          style: TextStyle(color: Colors.black38, fontSize: 14),
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface.withOpacity(0.38),
+            fontSize: 14,
+          ),
         ),
       );
     }
+
     return ListView.separated(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
       itemCount: tips.length,
@@ -419,25 +475,35 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
   }
 
   Widget _buildErrorView(BuildContext context, String message) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.error_outline, color: Colors.redAccent, size: 36),
+            Icon(
+              Icons.error_outline,
+              color: colorScheme.error,
+              size: 36,
+            ),
             const SizedBox(height: 8),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.redAccent, fontSize: 14),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.error,
+                fontSize: 14,
+              ),
             ),
             const SizedBox(height: 12),
             TextButton(
               onPressed: () => context.read<RightstipsCubit>().loadAll(),
-              child: const Text(
+              child: Text(
                 'Retry',
-                style: TextStyle(color: Color(0xFF1C1C1E)),
+                style: TextStyle(color: colorScheme.primary),
               ),
             ),
           ],
@@ -473,15 +539,20 @@ class _TipCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final onSurface = theme.colorScheme.onSurface;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.black.withOpacity(0.06)),
+        border: Border.all(color: theme.dividerColor),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: theme.shadowColor.withOpacity(
+              theme.brightness == Brightness.dark ? 0.08 : 0.04,
+            ),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -498,8 +569,7 @@ class _TipCard extends StatelessWidget {
               children: [
                 Text(
                   tip.title ?? '',
-                  style: const TextStyle(
-                    color: Color(0xFF1C1C1E),
+                  style: theme.textTheme.bodyLarge?.copyWith(
                     fontSize: 15,
                     fontWeight: FontWeight.bold,
                   ),
@@ -510,8 +580,8 @@ class _TipCard extends StatelessWidget {
                     tip.description!,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: Colors.grey[600],
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: onSurface.withOpacity(0.7),
                       fontSize: 13,
                       height: 1.4,
                     ),
@@ -520,7 +590,11 @@ class _TipCard extends StatelessWidget {
               ],
             ),
           ),
-          Icon(Icons.chevron_right, color: Colors.grey[400], size: 20),
+          Icon(
+            Icons.chevron_right,
+            color: onSurface.withOpacity(0.4),
+            size: 20,
+          ),
         ],
       ),
     );

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/Styles/AppColors.dart';
 import '../models/community_comment_model.dart';
 import '../models/community_post_model.dart';
 import '../viewmodel/community_viewmodel.dart';
@@ -45,7 +44,6 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
     );
 
     if (!mounted) return;
-
     if (success) {
       _commentController.clear();
       FocusScope.of(context).unfocus();
@@ -61,10 +59,13 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
   }
 
   Future<void> _openEditCommentSheet(CommunityCommentModel comment) async {
+    final theme = Theme.of(context);
+
     final updated = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Appcolors.backgroundColor,
+      backgroundColor:
+      theme.bottomSheetTheme.backgroundColor ?? theme.scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(24),
@@ -80,7 +81,6 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
     );
 
     if (!mounted) return;
-
     if (updated == true) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -91,6 +91,8 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
   }
 
   Future<void> _confirmDeleteComment(CommunityCommentModel comment) async {
+    final colorScheme = Theme.of(context).colorScheme;
+
     final confirm = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
@@ -106,9 +108,9 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
             ),
             TextButton(
               onPressed: () => Navigator.pop(dialogContext, true),
-              child: const Text(
+              child: Text(
                 'Delete',
-                style: TextStyle(color: Colors.red),
+                style: TextStyle(color: colorScheme.error),
               ),
             ),
           ],
@@ -124,7 +126,6 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
     );
 
     if (!mounted) return;
-
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -143,9 +144,13 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
   }
 
   Future<void> _openCommentOptions(CommunityCommentModel comment) async {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     final action = await showModalBottomSheet<String>(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor:
+      theme.bottomSheetTheme.backgroundColor ?? theme.cardColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(20),
@@ -163,13 +168,13 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                 },
               ),
               ListTile(
-                leading: const Icon(
+                leading: Icon(
                   Icons.delete_outline,
-                  color: Colors.red,
+                  color: colorScheme.error,
                 ),
-                title: const Text(
+                title: Text(
                   'Delete Comment',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: colorScheme.error),
                 ),
                 onTap: () {
                   Navigator.pop(sheetContext, 'delete');
@@ -182,7 +187,6 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
     );
 
     if (!mounted) return;
-
     if (action == 'edit') {
       await _openEditCommentSheet(comment);
     } else if (action == 'delete') {
@@ -195,6 +199,8 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
     return AnimatedBuilder(
       animation: widget.viewModel,
       builder: (context, _) {
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
         final comments = widget.viewModel.getCommentsForPost(widget.post.id);
         final isLoading = widget.viewModel.isCommentsLoading(widget.post.id);
         final isAdding = widget.viewModel.isAddingComment(widget.post.id);
@@ -219,15 +225,15 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                       height: 5,
                       margin: const EdgeInsets.only(bottom: 14),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade400,
+                        color: theme.dividerColor,
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
                   ),
-                  const Center(
+                  Center(
                     child: Text(
                       'Comments',
-                      style: TextStyle(
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                       ),
@@ -236,15 +242,18 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                   const SizedBox(height: 16),
                   Expanded(
                     child: isLoading
-                        ? const Center(
-                      child: CircularProgressIndicator(),
+                        ? Center(
+                      child: CircularProgressIndicator(
+                        color: colorScheme.primary,
+                      ),
                     )
                         : comments.isEmpty
-                        ? const Center(
+                        ? Center(
                       child: Text(
                         'No comments yet',
-                        style: TextStyle(
-                          color: Appcolors.secondaryColor,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color:
+                          colorScheme.onSurface.withOpacity(0.68),
                           fontSize: 15,
                         ),
                       ),
@@ -285,8 +294,11 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                             maxLines: 4,
                             decoration: InputDecoration(
                               hintText: 'Write a comment...',
+                              hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.onSurface.withOpacity(0.5),
+                              ),
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: theme.cardColor,
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                                 vertical: 14,
@@ -294,21 +306,21 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
                                 borderSide: BorderSide(
-                                  color: Colors.grey.shade300,
+                                  color: theme.dividerColor,
                                 ),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
                                 borderSide: BorderSide(
-                                  color: Colors.grey.shade300,
+                                  color: theme.dividerColor,
                                 ),
                               ),
-                              focusedBorder: const OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: const BorderRadius.all(
                                   Radius.circular(16),
                                 ),
                                 borderSide: BorderSide(
-                                  color: Appcolors.primaryColor,
+                                  color: colorScheme.primary,
                                 ),
                               ),
                             ),
@@ -316,11 +328,9 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                               if (value == null || value.trim().isEmpty) {
                                 return 'Comment cannot be empty';
                               }
-
                               if (value.trim().length < 2) {
                                 return 'Comment is too short';
                               }
-
                               return null;
                             },
                           ),
@@ -332,24 +342,23 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                           child: ElevatedButton(
                             onPressed: isAdding ? null : _submitComment,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Appcolors.primaryColor,
                               padding: EdgeInsets.zero,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(16),
                               ),
                             ),
                             child: isAdding
-                                ? const SizedBox(
+                                ? SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2.2,
-                                color: Colors.white,
+                                color: colorScheme.onPrimary,
                               ),
                             )
-                                : const Icon(
+                                : Icon(
                               Icons.send,
-                              color: Colors.white,
+                              color: colorScheme.onPrimary,
                             ),
                           ),
                         ),

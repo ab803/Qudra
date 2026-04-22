@@ -18,22 +18,36 @@ class ProfileMenuItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(30),
+        border: Border.all(color: theme.dividerColor.withOpacity(0.7)),
       ),
       child: ListTile(
         leading: Container(
           padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(color: iconBg, shape: BoxShape.circle),
+          decoration: BoxDecoration(
+            color: iconBg,
+            shape: BoxShape.circle,
+          ),
           child: Icon(icon, color: iconColor),
         ),
-        title: Text(title,
-            style: const TextStyle(fontWeight: FontWeight.w600)),
-        trailing: const Icon(Icons.arrow_forward_ios,
-            size: 16, color: Colors.grey),
+        title: Text(
+          title,
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: theme.textTheme.bodyLarge?.color,
+          ),
+        ),
+        trailing: Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: theme.textTheme.bodyMedium?.color,
+        ),
         onTap: ontap,
       ),
     );

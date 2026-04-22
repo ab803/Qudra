@@ -11,16 +11,17 @@ class BookingNotesField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // This block renders the notes label above the input field.
-        const Text(
+        Text(
           'Additional Notes',
-          style: TextStyle(
+          style: theme.textTheme.titleMedium?.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w800,
-            color: Colors.black,
           ),
         ),
         const SizedBox(height: 12),
@@ -33,19 +34,19 @@ class BookingNotesField extends StatelessWidget {
           decoration: InputDecoration(
             hintText: 'Add any notes or details for the institution...',
             filled: true,
-            fillColor: Colors.white,
+            fillColor: theme.inputDecorationTheme.fillColor ?? theme.cardColor,
             contentPadding: const EdgeInsets.all(16),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
-              borderSide: BorderSide(color: Colors.black.withOpacity(0.05)),
+              borderSide: BorderSide(color: theme.dividerColor),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
-              borderSide: BorderSide(color: Colors.black.withOpacity(0.05)),
+              borderSide: BorderSide(color: theme.dividerColor),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(18),
-              borderSide: const BorderSide(color: Colors.black),
+              borderSide: BorderSide(color: theme.colorScheme.primary),
             ),
           ),
         ),

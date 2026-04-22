@@ -17,19 +17,21 @@ class EmergencySwitchTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFF7F7F8),
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Row(
         children: [
           Switch.adaptive(
             value: value,
             onChanged: onChanged,
-            activeColor: const Color(0xFF0D6EFD),
+            activeColor: colorScheme.primary,
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -40,7 +42,7 @@ class EmergencySwitchTile extends StatelessWidget {
                   title,
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: FontWeight.w700,
-                    color: const Color(0xFF111827),
+                    color: colorScheme.onSurface,
                   ),
                 ),
                 if (subtitle != null && subtitle!.trim().isNotEmpty) ...[
@@ -48,7 +50,7 @@ class EmergencySwitchTile extends StatelessWidget {
                   Text(
                     subtitle!,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: const Color(0xFF6B7280),
+                      color: colorScheme.onSurface.withOpacity(0.68),
                       height: 1.4,
                     ),
                   ),

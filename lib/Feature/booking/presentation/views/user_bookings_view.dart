@@ -4,8 +4,6 @@ import '../../viewmodel/user_bookings_cubit.dart';
 import '../../viewmodel/user_bookings_state.dart';
 import '../../../feedback/widgets/rate_institution_dialog.dart';
 
-
-
 // This screen shows all bookings created by the current signed-in user.
 class UserBookingsView extends StatelessWidget {
   const UserBookingsView({super.key});
@@ -19,39 +17,38 @@ class UserBookingsView extends StatelessWidget {
   }
 
   // This helper maps booking status to a compact label color.
-  Color _statusColor(String status) {
+  Color _statusColor(BuildContext context, String status) {
     final value = status.toLowerCase();
+    final colorScheme = Theme.of(context).colorScheme;
+
     if (value == 'confirmed' || value == 'success') {
       return Colors.green;
     }
     if (value == 'failed') {
-      return Colors.red;
+      return colorScheme.error;
     }
     if (value == 'pending_payment' || value == 'pending') {
       return Colors.orange;
     }
-    return Colors.black54;
+    return colorScheme.onSurface.withOpacity(0.7);
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FA),
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          'My Bookings',
-          style: TextStyle(color: Colors.black),
-        ),
-        iconTheme: const IconThemeData(color: Colors.black),
+        title: const Text('My Bookings'),
       ),
       body: SafeArea(
         child: BlocBuilder<UserBookingsCubit, UserBookingsState>(
           builder: (context, state) {
             if (state is UserBookingsLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
+              return Center(
+                child: CircularProgressIndicator(
+                  color: theme.colorScheme.primary,
+                ),
               );
             }
 
@@ -62,6 +59,7 @@ class UserBookingsView extends StatelessWidget {
                   child: Text(
                     state.errorMessage,
                     textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyMedium,
                   ),
                 ),
               );
@@ -69,8 +67,11 @@ class UserBookingsView extends StatelessWidget {
 
             if (state is UserBookingsLoaded) {
               if (state.bookings.isEmpty) {
-                return const Center(
-                  child: Text('No bookings found yet.'),
+                return Center(
+                  child: Text(
+                    'No bookings found yet.',
+                    style: theme.textTheme.bodyMedium,
+                  ),
                 );
               }
 
@@ -83,15 +84,19 @@ class UserBookingsView extends StatelessWidget {
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final booking = state.bookings[index];
-
                     return Container(
                       padding: const EdgeInsets.all(18),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: theme.cardColor,
                         borderRadius: BorderRadius.circular(22),
+                        border: Border.all(
+                          color: theme.dividerColor,
+                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.03),
+                            color: theme.shadowColor.withOpacity(
+                              theme.brightness == Brightness.dark ? 0.08 : 0.04,
+                            ),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -103,18 +108,14 @@ class UserBookingsView extends StatelessWidget {
                           // This block shows the institution and service titles.
                           Text(
                             booking.institutionName,
-                            style: const TextStyle(
-                              fontSize: 18,
+                            style: theme.textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.w800,
-                              color: Colors.black,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
                             booking.serviceName,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey.shade700,
+                            style: theme.textTheme.bodyMedium?.copyWith(
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -146,16 +147,20 @@ class UserBookingsView extends StatelessWidget {
                             children: [
                               _StatusChip(
                                 label: 'Booking: ${booking.bookingStatus}',
-                                color: _statusColor(booking.bookingStatus),
+                                color: _statusColor(
+                                  context,
+                                  booking.bookingStatus,
+                                ),
                               ),
                               _StatusChip(
                                 label: 'Payment: ${booking.paymentStatus}',
-                                color: _statusColor(booking.paymentStatus),
+                                color: _statusColor(
+                                  context,
+                                  booking.paymentStatus,
+                                ),
                               ),
                             ],
                           ),
-
-
                           const SizedBox(height: 14),
                           SizedBox(
                             width: double.infinity,
@@ -169,7 +174,6 @@ class UserBookingsView extends StatelessWidget {
                                     institutionName: booking.institutionName,
                                   ),
                                 );
-
                                 if (didSubmit == true && context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
@@ -181,21 +185,18 @@ class UserBookingsView extends StatelessWidget {
                                 }
                               },
                               style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.black,
-                                side: const BorderSide(color: Colors.black),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(14),
                                 ),
                               ),
-                              child: const Text(
+                              child: Text(
                                 'Rate Institution',
-                                style: TextStyle(
+                                style: theme.textTheme.bodyMedium?.copyWith(
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
                             ),
                           ),
-
                         ],
                       ),
                     );
@@ -224,6 +225,8 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.only(top: 6),
       child: Row(
@@ -232,13 +235,16 @@ class _InfoRow extends StatelessWidget {
             width: 70,
             child: Text(
               '$label:',
-              style: const TextStyle(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w700,
               ),
             ),
           ),
           Expanded(
-            child: Text(value),
+            child: Text(
+              value,
+              style: theme.textTheme.bodyMedium,
+            ),
           ),
         ],
       ),
@@ -258,6 +264,8 @@ class _StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       decoration: BoxDecoration(
@@ -266,7 +274,7 @@ class _StatusChip extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: TextStyle(
+        style: theme.textTheme.bodySmall?.copyWith(
           color: color,
           fontWeight: FontWeight.w700,
           fontSize: 12,

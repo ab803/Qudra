@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qudra_0/core/Styles/AppColors.dart';
 
 class ChatSuggestionPill extends StatelessWidget {
   final String label;
@@ -17,12 +16,22 @@ class ChatSuggestionPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bgColor = isCritical
-        ? Colors.red.shade50
-        : Colors.grey.shade100;
-    final fgColor = isCritical
-        ? Colors.red.shade700
-        : Appcolors.primaryColor;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    final Color fgColor = isCritical
+        ? colorScheme.error
+        : colorScheme.primary;
+
+    final Color bgColor = isCritical
+        ? colorScheme.error.withOpacity(
+      theme.brightness == Brightness.dark ? 0.16 : 0.08,
+    )
+        : theme.cardColor;
+
+    final Color borderColor = isCritical
+        ? colorScheme.error.withOpacity(0.24)
+        : theme.dividerColor;
 
     return GestureDetector(
       onTap: onTap,
@@ -32,9 +41,7 @@ class ChatSuggestionPill extends StatelessWidget {
           color: bgColor,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isCritical
-                ? Colors.red.shade200
-                : Colors.grey.shade300,
+            color: borderColor,
           ),
         ),
         child: Row(
@@ -44,7 +51,7 @@ class ChatSuggestionPill extends StatelessWidget {
             const SizedBox(width: 6),
             Text(
               label,
-              style: TextStyle(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: fgColor,

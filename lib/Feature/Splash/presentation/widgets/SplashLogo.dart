@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:qudra_0/core/Styles/AppIcons.dart';
 
 class SplashLogo extends StatelessWidget {
-
   final Animation<double> scale;
   final Animation<double> opacity;
 
@@ -14,17 +13,21 @@ class SplashLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final glowColor = theme.colorScheme.primary.withOpacity(
+      theme.brightness == Brightness.dark ? 0.12 : 0.08,
+    );
+
     return Stack(
       alignment: Alignment.center,
       children: [
-
         // Background glow circle
         Container(
           width: 220,
           height: 220,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.blue.withOpacity(0.08),
+            color: glowColor,
           ),
         ),
 

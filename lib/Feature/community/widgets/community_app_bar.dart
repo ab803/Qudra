@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import '../../../core/Styles/AppIcons.dart';
-import '../../../core/Styles/AppTextsyles.dart';
 
 class CommunityAppBar extends StatelessWidget {
   const CommunityAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
@@ -29,7 +30,10 @@ class CommunityAppBar extends StatelessWidget {
           Expanded(
             child: Text(
               'Community Feed',
-              style: AppTextStyles.title.copyWith(fontSize: 20),
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ],

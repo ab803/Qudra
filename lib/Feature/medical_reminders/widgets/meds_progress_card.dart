@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qudra_0/core/Styles/AppTextsyles.dart';
-import 'package:qudra_0/core/Styles/AppColors.dart';
 
 class MedsProgressCard extends StatelessWidget {
   final int taken;
@@ -20,6 +18,9 @@ class MedsProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     final double progress =
     total <= 0 ? 0.0 : (taken / total).clamp(0.0, 1.0).toDouble();
 
@@ -32,11 +33,17 @@ class MedsProgressCard extends StatelessWidget {
         ? Icons.warning_amber_rounded
         : Icons.access_time_rounded;
 
+    final Color accentColor = isComplete
+        ? Colors.green
+        : hasMissed
+        ? Colors.orange
+        : colorScheme.onPrimary;
+
     return Container(
       height: 116,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: Appcolors.primaryColor,
+        color: colorScheme.primary,
         borderRadius: BorderRadius.circular(18),
       ),
       child: Row(
@@ -52,13 +59,13 @@ class MedsProgressCard extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.12),
+                    color: colorScheme.onPrimary.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
                     "Today's Progress",
-                    style: AppTextStyles.body.copyWith(
-                      color: Colors.white,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onPrimary,
                       fontSize: 12,
                       letterSpacing: 0.2,
                       height: 1.0,
@@ -71,10 +78,11 @@ class MedsProgressCard extends StatelessWidget {
                   children: [
                     Text(
                       '$taken/$total',
-                      style: AppTextStyles.title.copyWith(
+                      style: theme.textTheme.titleLarge?.copyWith(
                         fontSize: 34,
-                        color: Colors.white,
+                        color: colorScheme.onPrimary,
                         height: 1.0,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -82,8 +90,8 @@ class MedsProgressCard extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 6),
                       child: Text(
                         caption,
-                        style: AppTextStyles.body.copyWith(
-                          color: Colors.white70,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onPrimary.withOpacity(0.72),
                           fontSize: 12,
                           height: 1.0,
                         ),
@@ -96,8 +104,8 @@ class MedsProgressCard extends StatelessWidget {
                   footerText,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.body.copyWith(
-                    color: Colors.white.withOpacity(0.92),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onPrimary.withOpacity(0.92),
                     fontSize: 12.5,
                     height: 1.1,
                   ),
@@ -118,22 +126,20 @@ class MedsProgressCard extends StatelessWidget {
                   child: CircularProgressIndicator(
                     value: progress,
                     strokeWidth: 5,
-                    backgroundColor: Colors.white.withOpacity(0.16),
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                      Colors.greenAccent,
-                    ),
+                    backgroundColor: colorScheme.onPrimary.withOpacity(0.16),
+                    valueColor: AlwaysStoppedAnimation<Color>(accentColor),
                   ),
                 ),
                 Container(
                   width: 42,
                   height: 42,
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.12),
+                    color: colorScheme.onPrimary.withOpacity(0.12),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
                     centerIcon,
-                    color: Colors.greenAccent,
+                    color: accentColor,
                     size: 22,
                   ),
                 ),

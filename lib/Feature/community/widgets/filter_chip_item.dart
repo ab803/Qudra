@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/Styles/AppColors.dart';
 
 class FilterChipItem extends StatelessWidget {
   final String label;
@@ -15,20 +14,25 @@ class FilterChipItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return InkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? Appcolors.primaryColor : Colors.white,
+          color: isSelected ? colorScheme.primary : theme.cardColor,
           borderRadius: BorderRadius.circular(20),
-          border: isSelected ? null : Border.all(color: Colors.grey[300]!),
+          border: isSelected ? null : Border.all(color: theme.dividerColor),
         ),
         child: Text(
           label,
-          style: TextStyle(
-            color: isSelected ? Colors.white : Appcolors.primaryColor,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: isSelected
+                ? colorScheme.onPrimary
+                : colorScheme.onSurface.withOpacity(0.78),
             fontWeight: FontWeight.w500,
           ),
         ),

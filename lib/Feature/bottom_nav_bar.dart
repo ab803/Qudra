@@ -3,11 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../core/Styles/AppColors.dart';
-
 class MainNavView extends StatefulWidget {
   final Widget child;
-
   const MainNavView({super.key, required this.child});
 
   @override
@@ -33,36 +30,60 @@ class _MainNavViewState extends State<MainNavView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       body: widget.child, // 👈 show routed page here
-      backgroundColor: Appcolors.backgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       bottomNavigationBar: AnimatedNotchBottomBar(
         notchBottomBarController: _controller,
-        color: Appcolors.backgroundColor,
-        notchColor: Appcolors.primaryColor,
+        color: theme.cardColor,
+        notchColor: theme.colorScheme.primary,
         showLabel: true,
         kIconSize: 24,
         kBottomRadius: 11,
-
-        bottomBarItems: const [
+        bottomBarItems: [
           BottomBarItem(
-            inActiveItem: Icon(Icons.home_outlined),
-            activeItem: Icon(Icons.home_outlined,color: Colors.white),
+            inActiveItem: Icon(
+              Icons.home_outlined,
+              color: theme.colorScheme.onSurface.withOpacity(0.65),
+            ),
+            activeItem: Icon(
+              Icons.home_outlined,
+              color: theme.colorScheme.onPrimary,
+            ),
           ),
           BottomBarItem(
-            inActiveItem: Icon(Symbols.corporate_fare),
-            activeItem: Icon(Symbols.corporate_fare,color: Colors.white),
+            inActiveItem: Icon(
+              Symbols.corporate_fare,
+              color: theme.colorScheme.onSurface.withOpacity(0.65),
+            ),
+            activeItem: Icon(
+              Symbols.corporate_fare,
+              color: theme.colorScheme.onPrimary,
+            ),
           ),
           BottomBarItem(
-            inActiveItem: Icon(Symbols.groups),
-            activeItem: Icon(Symbols.groups,color: Colors.white),
+            inActiveItem: Icon(
+              Symbols.groups,
+              color: theme.colorScheme.onSurface.withOpacity(0.65),
+            ),
+            activeItem: Icon(
+              Symbols.groups,
+              color: theme.colorScheme.onPrimary,
+            ),
           ),
           BottomBarItem(
-            inActiveItem: Icon(Icons.person_outline),
-            activeItem: Icon(Icons.person_outline,color: Colors.white),
+            inActiveItem: Icon(
+              Icons.person_outline,
+              color: theme.colorScheme.onSurface.withOpacity(0.65),
+            ),
+            activeItem: Icon(
+              Icons.person_outline,
+              color: theme.colorScheme.onPrimary,
+            ),
           ),
         ],
-
         onTap: _onTap,
       ),
     );

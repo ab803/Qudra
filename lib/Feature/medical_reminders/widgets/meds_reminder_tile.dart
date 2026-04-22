@@ -99,6 +99,7 @@ class _MedsReminderTileState extends State<MedsReminderTile>
       });
     }
   }
+
   @override
   void didUpdateWidget(covariant MedsReminderTile oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -121,7 +122,11 @@ class _MedsReminderTileState extends State<MedsReminderTile>
 
   @override
   Widget build(BuildContext context) {
-    final dismissDirection = (widget.onMarkTaken != null || widget.onSkip != null)
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    final dismissDirection =
+    (widget.onMarkTaken != null || widget.onSkip != null)
         ? DismissDirection.horizontal
         : DismissDirection.none;
 
@@ -165,12 +170,14 @@ class _MedsReminderTileState extends State<MedsReminderTile>
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: theme.cardColor,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey.shade200),
+              border: Border.all(color: theme.dividerColor),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: theme.shadowColor.withOpacity(
+                    theme.brightness == Brightness.dark ? 0.10 : 0.05,
+                  ),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -184,8 +191,8 @@ class _MedsReminderTileState extends State<MedsReminderTile>
                     children: [
                       Text(
                         widget.data.title,
-                        style: const TextStyle(
-                          color: Colors.black87,
+                        style: theme.textTheme.bodyLarge?.copyWith(
+                          color: colorScheme.onSurface,
                           fontWeight: FontWeight.w800,
                           fontSize: 14,
                           height: 1.0,
@@ -199,10 +206,10 @@ class _MedsReminderTileState extends State<MedsReminderTile>
                               widget.data.subtitle,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: theme.textTheme.bodyMedium?.copyWith(
                                 fontSize: 12.5,
                                 height: 1.1,
-                                color: Colors.black54,
+                                color: colorScheme.onSurface.withOpacity(0.68),
                               ),
                             ),
                           ),
@@ -210,10 +217,10 @@ class _MedsReminderTileState extends State<MedsReminderTile>
                             const SizedBox(width: 10),
                             Text(
                               widget.data.timeText!,
-                              style: const TextStyle(
+                              style: theme.textTheme.bodyMedium?.copyWith(
                                 fontSize: 12.5,
                                 height: 1.1,
-                                color: Colors.black54,
+                                color: colorScheme.onSurface.withOpacity(0.68),
                               ),
                             ),
                           ],
@@ -248,10 +255,10 @@ class _MedsReminderTileState extends State<MedsReminderTile>
                 Switch.adaptive(
                   value: widget.data.isEnabled,
                   onChanged: widget.onToggle,
-                  activeColor: Colors.white,
-                  activeTrackColor: Colors.black87,
-                  inactiveThumbColor: Colors.white,
-                  inactiveTrackColor: Colors.black12,
+                  activeColor: colorScheme.onPrimary,
+                  activeTrackColor: colorScheme.primary,
+                  inactiveThumbColor: theme.cardColor,
+                  inactiveTrackColor: colorScheme.onSurface.withOpacity(0.18),
                 ),
               ],
             ),

@@ -6,18 +6,21 @@ class PersonalInfoAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       children: [
         Stack(
           alignment: Alignment.bottomRight,
           children: [
-            const CircleAvatar(
+            CircleAvatar(
               radius: 44,
-              backgroundColor: Colors.black,
+              backgroundColor: theme.colorScheme.primary,
               child: CircleAvatar(
                 radius: 42,
-                backgroundColor: Colors.white,
-                backgroundImage: AssetImage('assets/images/avatar_placeholder.png'),
+                backgroundColor: theme.cardColor,
+                backgroundImage:
+                const AssetImage('assets/images/avatar_placeholder.png'),
               ),
             ),
             Container(
@@ -26,7 +29,7 @@ class PersonalInfoAvatar extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Appcolors.cardBlue,
                 shape: BoxShape.circle,
-                border: Border.all(color: Colors.white, width: 2),
+                border: Border.all(color: theme.cardColor, width: 2),
               ),
               child: const Icon(Icons.edit, size: 14, color: Colors.white),
             ),

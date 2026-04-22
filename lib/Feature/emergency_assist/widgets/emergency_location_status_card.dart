@@ -12,11 +12,12 @@ class EmergencyLocationStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isReady = isLocationServiceEnabled && isLocationPermissionGranted;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
 
+    final isReady = isLocationServiceEnabled && isLocationPermissionGranted;
     final String title =
     isReady ? 'الموقع جاهز للمشاركة' : 'الموقع غير جاهز حاليًا';
-
     final String subtitle = isReady
         ? 'سيتمكن التطبيق من مشاركة موقعك وقت الطوارئ.'
         : 'تحقق من تشغيل خدمة الموقع أو تفعيل الصلاحية من إعدادات الهاتف.';
@@ -28,11 +29,14 @@ class EmergencyLocationStatusCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: theme.dividerColor),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: theme.shadowColor.withOpacity(
+              theme.brightness == Brightness.dark ? 0.08 : 0.04,
+            ),
             blurRadius: 12,
             offset: const Offset(0, 5),
           ),
@@ -48,7 +52,9 @@ class EmergencyLocationStatusCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(18),
             ),
             child: Icon(
-              isReady ? Icons.my_location_rounded : Icons.location_off_rounded,
+              isReady
+                  ? Icons.my_location_rounded
+                  : Icons.location_off_rounded,
               color: statusColor,
               size: 28,
             ),
@@ -60,8 +66,8 @@ class EmergencyLocationStatusCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    color: Color(0xFF111827),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: colorScheme.onSurface,
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                   ),
@@ -69,8 +75,8 @@ class EmergencyLocationStatusCard extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   subtitle,
-                  style: const TextStyle(
-                    color: Color(0xFF6B7280),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurface.withOpacity(0.68),
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     height: 1.5,

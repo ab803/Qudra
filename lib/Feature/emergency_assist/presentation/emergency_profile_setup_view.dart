@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../models/emergency_profile_model.dart';
 import '../viewmodel/emergency_profile_setup_viewmodel.dart';
 import '../widgets/emergency_labeled_field.dart';
@@ -43,36 +42,33 @@ class _EmergencyProfileSetupViewState
       child: AnimatedBuilder(
         animation: widget.viewModel,
         builder: (context, _) {
+          final theme = Theme.of(context);
+          final colorScheme = theme.colorScheme;
           final vm = widget.viewModel;
 
           return Scaffold(
-            backgroundColor: const Color(0xFFF6F7F9),
             appBar: AppBar(
-              backgroundColor: const Color(0xFFF6F7F9),
-              elevation: 0,
-              surfaceTintColor: const Color(0xFFF6F7F9),
               centerTitle: true,
-              title: const Text(
+              title: Text(
                 'إعداد الملف الشخصي للطوارئ',
-                style: TextStyle(
-                  color: Color(0xFF111827),
+                style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w800,
                   fontSize: 22,
                 ),
               ),
-              iconTheme: const IconThemeData(
-                color: Color(0xFF111827),
-              ),
             ),
             body: SafeArea(
               child: vm.isLoading && !vm.hasLoadedInitialData
-                  ? const Center(child: CircularProgressIndicator())
+                  ? Center(
+                child: CircularProgressIndicator(
+                  color: colorScheme.primary,
+                ),
+              )
                   : ListView(
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
                 children: [
                   const EmergencyProfileIntroCard(),
                   const SizedBox(height: 24),
-
                   EmergencyLabeledField(
                     label: 'الاسم الكامل',
                     isRequired: true,
@@ -86,12 +82,12 @@ class _EmergencyProfileSetupViewState
                         }
                       },
                       decoration: _inputDecoration(
+                        context,
                         hintText: 'أدخل اسمك كما في الهوية',
                       ),
                     ),
                   ),
                   const SizedBox(height: 20),
-
                   EmergencyLabeledField(
                     label: 'نوع الإعاقة',
                     isRequired: true,
@@ -108,13 +104,16 @@ class _EmergencyProfileSetupViewState
                           .toList(),
                       onChanged: vm.updateDisabilityType,
                       decoration: _inputDecoration(
+                        context,
                         hintText: 'اختر نوع الإعاقة',
                       ),
-                      icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                      icon: Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: colorScheme.onSurface.withOpacity(0.72),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 20),
-
                   EmergencyLabeledField(
                     label: 'فصيلة الدم',
                     isRequired: true,
@@ -131,13 +130,16 @@ class _EmergencyProfileSetupViewState
                           .toList(),
                       onChanged: vm.updateBloodType,
                       decoration: _inputDecoration(
+                        context,
                         hintText: 'اختر فصيلة الدم',
                       ),
-                      icon: const Icon(Icons.keyboard_arrow_down_rounded),
+                      icon: Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: colorScheme.onSurface.withOpacity(0.72),
+                      ),
                     ),
                   ),
                   const SizedBox(height: 20),
-
                   EmergencyLabeledField(
                     label: 'طريقة التواصل المفضلة',
                     child: EmergencySegmentedSelector<
@@ -162,7 +164,6 @@ class _EmergencyProfileSetupViewState
                     ),
                   ),
                   const SizedBox(height: 20),
-
                   EmergencyLabeledField(
                     label: 'ملاحظات طبية هامة',
                     child: TextField(
@@ -170,46 +171,46 @@ class _EmergencyProfileSetupViewState
                       minLines: 4,
                       maxLines: 6,
                       decoration: _inputDecoration(
+                        context,
                         hintText:
                         'أي حالات طبية مزمنة أو معلومات ضرورية للمساعدة...',
                       ),
                     ),
                   ),
                   const SizedBox(height: 20),
-
                   EmergencyLabeledField(
                     label: 'الحساسية والأدوية',
                     child: TextField(
-                      controller:
-                      vm.allergiesAndMedicationsController,
+                      controller: vm.allergiesAndMedicationsController,
                       minLines: 4,
                       maxLines: 6,
                       decoration: _inputDecoration(
+                        context,
                         hintText:
                         'قائمة بالحساسية من أطعمة أو أدوية، والأدوية الحالية...',
                       ),
                     ),
                   ),
                   const SizedBox(height: 24),
-
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF7F7F8),
+                      color: theme.cardColor,
                       borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: theme.dividerColor),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
                         Icon(
                           Icons.lock_outline_rounded,
-                          color: Color(0xFF0D6EFD),
+                          color: colorScheme.primary,
                         ),
-                        SizedBox(width: 10),
+                        const SizedBox(width: 10),
                         Expanded(
                           child: Text(
                             'يتم حفظ هذه البيانات محليًا على هذا الجهاز فقط لاستخدامها أثناء الطوارئ.',
-                            style: TextStyle(
-                              color: Color(0xFF4B5563),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.onSurface.withOpacity(0.72),
                               fontWeight: FontWeight.w600,
                               height: 1.5,
                             ),
@@ -219,34 +220,37 @@ class _EmergencyProfileSetupViewState
                     ),
                   ),
                   const SizedBox(height: 12),
-
                   EmergencySwitchTile(
                     title: 'تفعيل الاهتزاز عند التنبيه',
-                    subtitle:
-                    'استجابة لمسية قوية أثناء حالات الطوارئ',
+                    subtitle: 'استجابة لمسية قوية أثناء حالات الطوارئ',
                     value: vm.vibrationOnAlert,
                     onChanged: vm.updateVibrationOnAlert,
                   ),
                   const SizedBox(height: 20),
-
                   if (vm.submitError != null) ...[
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.08),
+                        color: colorScheme.error.withOpacity(
+                          theme.brightness == Brightness.dark
+                              ? 0.14
+                              : 0.08,
+                        ),
                         borderRadius: BorderRadius.circular(14),
+                        border: Border.all(
+                          color: colorScheme.error.withOpacity(0.18),
+                        ),
                       ),
                       child: Text(
                         vm.submitError!,
-                        style: const TextStyle(
-                          color: Colors.red,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.error,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
                     const SizedBox(height: 16),
                   ],
-
                   SizedBox(
                     height: 56,
                     child: ElevatedButton.icon(
@@ -256,33 +260,28 @@ class _EmergencyProfileSetupViewState
                         final saved = await vm.saveProfile();
                         if (!mounted) return;
                         if (!saved) return;
-
                         if (widget.onSavedSuccessfully != null) {
                           await widget.onSavedSuccessfully!();
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF5B5E66),
-                        foregroundColor: Colors.white,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
                         ),
                       ),
                       icon: vm.isLoading
-                          ? const SizedBox(
+                          ? SizedBox(
                         width: 18,
                         height: 18,
                         child: CircularProgressIndicator(
                           strokeWidth: 2.2,
-                          color: Colors.white,
+                          color: colorScheme.onPrimary,
                         ),
                       )
                           : const Icon(Icons.save_outlined),
                       label: Text(
-                        vm.isLoading
-                            ? 'جاري الحفظ...'
-                            : 'حفظ البيانات',
+                        vm.isLoading ? 'جاري الحفظ...' : 'حفظ البيانات',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
@@ -299,33 +298,37 @@ class _EmergencyProfileSetupViewState
     );
   }
 
-  InputDecoration _inputDecoration({
-    required String hintText,
-  }) {
+  InputDecoration _inputDecoration(
+      BuildContext context, {
+        required String hintText,
+      }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return InputDecoration(
       hintText: hintText,
-      hintStyle: const TextStyle(
-        color: Color(0xFF9CA3AF),
+      hintStyle: theme.textTheme.bodyMedium?.copyWith(
+        color: colorScheme.onSurface.withOpacity(0.45),
         fontWeight: FontWeight.w500,
       ),
       filled: true,
-      fillColor: const Color(0xFFEDEEF0),
+      fillColor: theme.cardColor,
       contentPadding: const EdgeInsets.symmetric(
         horizontal: 18,
         vertical: 16,
       ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(18),
-        borderSide: BorderSide.none,
+        borderSide: BorderSide(color: theme.dividerColor),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(18),
-        borderSide: BorderSide.none,
+        borderSide: BorderSide(color: theme.dividerColor),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(18),
-        borderSide: const BorderSide(
-          color: Color(0xFF0D6EFD),
+        borderSide: BorderSide(
+          color: colorScheme.primary,
           width: 1.2,
         ),
       ),

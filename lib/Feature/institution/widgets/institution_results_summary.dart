@@ -15,6 +15,7 @@ class InstitutionResultsSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final hasQuery = query.isNotEmpty;
     final hasChipFilter = selectedFilter != 'All';
 
@@ -37,15 +38,15 @@ class InstitutionResultsSummary extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: theme.dividerColor),
           ),
           child: Text(
             label,
-            style: const TextStyle(
+            style: theme.textTheme.bodySmall?.copyWith(
               fontSize: 12.5,
               fontWeight: FontWeight.w600,
-              color: Colors.black87,
             ),
           ),
         ),

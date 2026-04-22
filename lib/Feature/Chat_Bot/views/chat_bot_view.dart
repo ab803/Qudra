@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:qudra_0/core/Styles/AppColors.dart';
-import 'package:qudra_0/core/Styles/AppTextsyles.dart';
 import '../../../core/Models/ChatMessage.dart';
 import '../view model/chat_cubit.dart';
 import '../view model/chat_state.dart';
@@ -31,13 +29,13 @@ class _ChatBotBody extends StatefulWidget {
 
 class _ChatBotBodyState extends State<_ChatBotBody> {
   final _scrollController = ScrollController();
-  final _textController   = TextEditingController();
+  final _textController = TextEditingController();
 
   static const _suggestions = [
-    ('Emergency help',       Icons.emergency_outlined, true),
-    ('Nearby institutions',  Icons.place_outlined,     false),
+    ('Emergency help', Icons.emergency_outlined, true),
+    ('Nearby institutions', Icons.place_outlined, false),
     ('Accessible transport', Icons.directions_bus_outlined, false),
-    ('My rights',            Icons.gavel_outlined,     false),
+    ('My rights', Icons.gavel_outlined, false),
   ];
 
   @override
@@ -74,8 +72,10 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
-      backgroundColor: Appcolors.backgroundColor,
       appBar: _buildAppBar(context),
       body: SafeArea(
         child: Column(
@@ -86,25 +86,34 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
                 listener: (context, state) {
                   if (state is ChatLoaded) _scrollToBottom();
                   if (state is ChatFailure) {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(state.errorMessage),
-                      backgroundColor: Colors.redAccent,
-                      behavior: SnackBarBehavior.floating,
-                    ));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          state.errorMessage,
+                          style: TextStyle(color: colorScheme.onError),
+                        ),
+                        backgroundColor: colorScheme.error,
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
                   }
                 },
                 builder: (context, state) {
                   if (state is ChatLoaded) {
                     return _buildMessageList(state.messages, state.isTyping);
                   }
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: colorScheme.primary,
+                    ),
+                  );
                 },
               ),
             ),
 
             // ── Suggestion pills ───────────────────────────────
             Container(
-              color: Colors.white,
+              color: theme.cardColor,
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -168,13 +177,15 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
   }
 
   AppBar _buildAppBar(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return AppBar(
-      backgroundColor: Colors.white,
-      elevation: 0,
-      surfaceTintColor: Colors.white,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios_new,
-            color: Appcolors.primaryColor),
+        icon: Icon(
+          Icons.arrow_back_ios_new,
+          color: colorScheme.primary,
+        ),
         onPressed: () => Navigator.of(context).pop(),
       ),
       centerTitle: true,
@@ -183,8 +194,8 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
         children: [
           Text(
             'Qudra AI',
-            style: AppTextStyles.subtitle.copyWith(
-              color: Appcolors.primaryColor,
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: colorScheme.primary,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -197,17 +208,17 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
                 height: 6,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Appcolors.successColor,
+                  color: Colors.green,
                 ),
               ),
               const SizedBox(width: 6),
               Text(
                 'ONLINE',
-                style: AppTextStyles.body.copyWith(
+                style: theme.textTheme.bodySmall?.copyWith(
                   fontSize: 11,
                   letterSpacing: 1.2,
                   fontWeight: FontWeight.w700,
-                  color: Appcolors.secondaryColor,
+                  color: colorScheme.onSurface.withOpacity(0.65),
                   height: 1.0,
                 ),
               ),
@@ -218,12 +229,12 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
       actions: [
         // ✅ Clear chat button
         IconButton(
-          icon: const Icon(Icons.refresh, color: Appcolors.primaryColor),
+          icon: Icon(Icons.refresh, color: colorScheme.primary),
           tooltip: 'Clear chat',
           onPressed: () => context.read<ChatCubit>().clearChat(),
         ),
         IconButton(
-          icon: const Icon(Icons.info_outline, color: Appcolors.primaryColor),
+          icon: Icon(Icons.info_outline, color: colorScheme.primary),
           onPressed: () {},
         ),
       ],

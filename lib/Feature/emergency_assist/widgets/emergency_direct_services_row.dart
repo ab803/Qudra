@@ -14,13 +14,16 @@ class EmergencyDirectServicesRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'خدمات الطوارئ المباشرة',
-          style: TextStyle(
-            color: Color(0xFF111827),
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: colorScheme.onSurface,
             fontSize: 18,
             fontWeight: FontWeight.w800,
           ),
@@ -76,15 +79,19 @@ class _ServiceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    const emergencyAccent = Color(0xFFDC0909);
+
     return InkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 10),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFFE5E7EB)),
+          border: Border.all(color: theme.dividerColor),
         ),
         child: Column(
           children: [
@@ -92,19 +99,21 @@ class _ServiceCard extends StatelessWidget {
               width: 46,
               height: 46,
               decoration: BoxDecoration(
-                color: const Color(0xFFF3F4F6),
+                color: emergencyAccent.withOpacity(
+                  theme.brightness == Brightness.dark ? 0.16 : 0.08,
+                ),
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: Icon(
-                icon,
-                color: const Color(0xFFDC0909),
+              child: const Icon(
+                Icons.local_police_outlined,
+                color: emergencyAccent,
               ),
             ),
             const SizedBox(height: 12),
             Text(
               title,
-              style: const TextStyle(
-                color: Color(0xFF111827),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurface,
                 fontSize: 14,
                 fontWeight: FontWeight.w800,
               ),
@@ -112,8 +121,8 @@ class _ServiceCard extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               subtitle,
-              style: const TextStyle(
-                color: Color(0xFF6B7280),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurface.withOpacity(0.68),
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
               ),

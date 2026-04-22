@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qudra_0/core/Styles/AppColors.dart';
 
 class ActionItem extends StatelessWidget {
   final IconData icon;
@@ -19,6 +18,9 @@ class ActionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final fallbackColor = theme.colorScheme.onSurface.withOpacity(0.72);
+
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       onTap: onTap,
@@ -27,13 +29,13 @@ class ActionItem extends StatelessWidget {
           Icon(
             icon,
             size: 20,
-            color: iconColor ?? Appcolors.secondaryColor,
+            color: iconColor ?? fallbackColor,
           ),
           const SizedBox(width: 6),
           Text(
             label,
-            style: TextStyle(
-              color: textColor ?? Appcolors.secondaryColor,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: textColor ?? fallbackColor,
             ),
           ),
         ],

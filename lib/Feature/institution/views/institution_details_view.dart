@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import '../../feedback/widgets/institution_rating_summary.dart';
 import '../../feedback/widgets/rate_institution_dialog.dart';
 import '../viewmodel/institution_cubit.dart';
 import '../viewmodel/institution_state.dart';
 import '../widgets/service_tile.dart';
-
 
 class InstitutionDetailsView extends StatefulWidget {
   final String institutionId;
@@ -77,16 +75,17 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FA),
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
+        title: Text(
           'Institution Details',
-          style: TextStyle(color: Colors.black),
+          style: theme.textTheme.titleLarge,
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: SafeArea(
         child: BlocBuilder<InstitutionCubit, InstitutionState>(
@@ -99,7 +98,10 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
 
             if (state is InstitutionError) {
               return Center(
-                child: Text(state.errorMessage),
+                child: Text(
+                  state.errorMessage,
+                  style: theme.textTheme.bodyMedium,
+                ),
               );
             }
 
@@ -116,11 +118,13 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                     Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: theme.cardColor,
                         borderRadius: BorderRadius.circular(24),
+                        border: Border.all(color: theme.dividerColor),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.04),
+                            color:
+                            theme.shadowColor.withOpacity(isDark ? 0.30 : 0.08),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -132,12 +136,14 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                             width: 56,
                             height: 56,
                             decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.05),
+                              color:
+                              colorScheme.onSurface.withOpacity(isDark ? 0.08 : 0.05),
                               shape: BoxShape.circle,
                             ),
-                            child: const Icon(
+                            child: Icon(
                               Icons.business,
                               size: 28,
+                              color: colorScheme.onSurface,
                             ),
                           ),
                           const SizedBox(width: 16),
@@ -147,7 +153,7 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                               children: [
                                 Text(
                                   institution.name,
-                                  style: const TextStyle(
+                                  style: theme.textTheme.titleLarge?.copyWith(
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -155,9 +161,7 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                                 const SizedBox(height: 4),
                                 Text(
                                   institution.institutionType,
-                                  style: TextStyle(
-                                    color: Colors.grey.shade600,
-                                  ),
+                                  style: theme.textTheme.bodyMedium,
                                 ),
                               ],
                             ),
@@ -168,7 +172,7 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                     const SizedBox(height: 18),
                     Text(
                       institution.name,
-                      style: const TextStyle(
+                      style: theme.textTheme.headlineSmall?.copyWith(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -176,8 +180,7 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                     const SizedBox(height: 6),
                     Text(
                       institution.institutionType,
-                      style: TextStyle(
-                        color: Colors.grey.shade700,
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         fontSize: 15,
                       ),
                     ),
@@ -203,8 +206,6 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.black,
-                            foregroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
@@ -241,17 +242,18 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                       value: institution.email,
                     ),
                     const SizedBox(height: 22),
-                    const Text(
+                    Text(
                       'Services',
-                      style: TextStyle(
+                      style: theme.textTheme.titleLarge?.copyWith(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 14),
                     if (services.isEmpty)
-                      const Text(
+                      Text(
                         'No active services available right now',
+                        style: theme.textTheme.bodyMedium,
                       ),
                     ...services.map(
                           (service) => ServiceTile(
@@ -295,6 +297,10 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
@@ -304,7 +310,7 @@ class _InfoRow extends StatelessWidget {
             width: 80,
             child: Text(
               '$label:',
-              style: const TextStyle(
+              style: theme.textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -322,13 +328,12 @@ class _InfoRow extends StatelessWidget {
                     Icon(
                       Icons.location_on_outlined,
                       size: 16,
-                      color: Colors.blueAccent,
+                      color: colorScheme.primary,
                     ),
                     const SizedBox(width: 6),
                     Text(
                       value,
-                      style: const TextStyle(
-                        color: Colors.black87,
+                      style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -336,7 +341,9 @@ class _InfoRow extends StatelessWidget {
                     Icon(
                       Icons.open_in_new_rounded,
                       size: 15,
-                      color: Colors.grey.shade600,
+                      color: theme.textTheme.bodySmall?.color?.withOpacity(
+                        isDark ? 0.9 : 1,
+                      ),
                     ),
                   ],
                 ),
@@ -344,9 +351,7 @@ class _InfoRow extends StatelessWidget {
             )
                 : Text(
               value,
-              style: const TextStyle(
-                color: Colors.black87,
-              ),
+              style: theme.textTheme.bodyLarge,
             ),
           ),
         ],

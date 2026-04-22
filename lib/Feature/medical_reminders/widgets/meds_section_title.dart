@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qudra_0/core/Styles/AppTextsyles.dart';
-import 'package:qudra_0/core/Styles/AppColors.dart';
 
 class MedsSectionTitle extends StatelessWidget {
   final IconData icon;
@@ -18,15 +16,22 @@ class MedsSectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Row(
       children: [
-        Icon(icon, color: iconColor ?? Appcolors.primaryColor, size: 20),
+        Icon(
+          icon,
+          color: iconColor ?? colorScheme.primary,
+          size: 20,
+        ),
         const SizedBox(width: 8),
         Text(
           label,
-          style: AppTextStyles.subtitle.copyWith(
+          style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w800,
-            color: labelColor ?? Appcolors.textDark,
+            color: labelColor ?? colorScheme.onSurface,
           ),
         ),
       ],

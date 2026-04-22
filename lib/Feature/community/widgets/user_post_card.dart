@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/Styles/AppColors.dart';
 import 'action_item.dart';
 
 class UserPostCard extends StatelessWidget {
@@ -30,7 +29,9 @@ class UserPostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final likeColor = isLiked ? Colors.red : Appcolors.secondaryColor;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final likeColor = isLiked ? Colors.red : colorScheme.onSurface.withOpacity(0.72);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -38,11 +39,14 @@ class UserPostCard extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: theme.dividerColor),
           boxShadow: [
             BoxShadow(
-              color: Appcolors.primaryColor.withOpacity(0.03),
+              color: theme.shadowColor.withOpacity(
+                theme.brightness == Brightness.dark ? 0.08 : 0.04,
+              ),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -60,7 +64,7 @@ class UserPostCard extends StatelessWidget {
                     children: [
                       Text(
                         name,
-                        style: const TextStyle(
+                        style: theme.textTheme.titleMedium?.copyWith(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),
@@ -68,9 +72,9 @@ class UserPostCard extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         subtitle,
-                        style: const TextStyle(
+                        style: theme.textTheme.bodySmall?.copyWith(
                           fontSize: 13,
-                          color: Appcolors.secondaryColor,
+                          color: colorScheme.onSurface.withOpacity(0.65),
                         ),
                       ),
                     ],
@@ -79,14 +83,17 @@ class UserPostCard extends StatelessWidget {
                 if (showMoreButton)
                   IconButton(
                     onPressed: onMoreTap,
-                    icon: const Icon(Icons.more_horiz),
+                    icon: Icon(
+                      Icons.more_horiz,
+                      color: colorScheme.onSurface.withOpacity(0.72),
+                    ),
                   ),
               ],
             ),
             const SizedBox(height: 12),
             Text(
               body,
-              style: const TextStyle(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontSize: 15,
                 height: 1.5,
               ),

@@ -4,12 +4,11 @@ import 'package:go_router/go_router.dart';
 import '../../ViewModel/auth_cubit.dart';
 import '../../ViewModel/auth_state.dart';
 import '../../widgets/CustomTextField.dart';
-
+import '../../../../core/Styles/AppColors.dart';
 
 class ResetPasswordView extends StatefulWidget {
   // ✅ email is passed as a route parameter from ForgotPasswordView
   final String email;
-
   const ResetPasswordView({super.key, required this.email});
 
   @override
@@ -17,13 +16,13 @@ class ResetPasswordView extends StatefulWidget {
 }
 
 class _ResetPasswordViewState extends State<ResetPasswordView> {
-  final _tokenController       = TextEditingController();
-  final _passwordController    = TextEditingController();
-  final _confirmController     = TextEditingController();
-  final _formKey               = GlobalKey<FormState>();
+  final _tokenController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
-  bool _obscurePassword        = true;
-  bool _obscureConfirm         = true;
+  bool _obscurePassword = true;
+  bool _obscureConfirm = true;
 
   @override
   void dispose() {
@@ -36,21 +35,23 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
   void _onUpdatePressed() {
     if (!_formKey.currentState!.validate()) return;
     context.read<AuthCubit>().resetPassword(
-      email:       widget.email,
-      token:       _tokenController.text.trim(),
+      email: widget.email,
+      token: _tokenController.text.trim(),
       newPassword: _passwordController.text.trim(),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is ResetPasswordSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Password updated successfully!'),
-              backgroundColor: Colors.green,
+              backgroundColor: Appcolors.successColor,
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -60,7 +61,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.errorMessage),
-              backgroundColor: Colors.redAccent,
+              backgroundColor: theme.colorScheme.error,
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -68,18 +69,21 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
         }
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.scaffoldBackgroundColor,
         appBar: AppBar(
-          backgroundColor: Colors.white,
+          backgroundColor: theme.scaffoldBackgroundColor,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            icon: Icon(
+              Icons.arrow_back,
+              color: theme.appBarTheme.foregroundColor,
+            ),
             onPressed: () => context.go('/forget'),
           ),
-          title: const Text(
+          title: Text(
             'Reset Password',
             style: TextStyle(
-              color: Colors.black,
+              color: theme.appBarTheme.foregroundColor,
               fontWeight: FontWeight.bold,
               fontSize: 18,
             ),
@@ -87,7 +91,10 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
           centerTitle: true,
           bottom: PreferredSize(
             preferredSize: const Size.fromHeight(1.0),
-            child: Container(color: Colors.grey.shade200, height: 1.0),
+            child: Container(
+              color: theme.dividerColor,
+              height: 1.0,
+            ),
           ),
         ),
         // ✅ Button pinned to bottom, form scrolls above it
@@ -97,68 +104,77 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0, vertical: 32.0),
+                    horizontal: 24.0,
+                    vertical: 32.0,
+                  ),
                   child: Form(
                     key: _formKey,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         // ── Instruction ────────────────────────────
-                        const Text(
+                        Text(
                           'Enter the verification code sent to your email and choose your new password.',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Color(0xFF374151),
+                          style: theme.textTheme.bodyLarge?.copyWith(
                             height: 1.5,
                           ),
                         ),
                         const SizedBox(height: 32),
 
                         // ── Verification Token ─────────────────────
-
                         const SizedBox(height: 10),
                         CustomTextField(
                           controller: _tokenController,
                           keyboardType: TextInputType.number,
                           validator: (v) {
-                            if (v == null || v.isEmpty)
+                            if (v == null || v.isEmpty) {
                               return 'Token is required';
+                            }
                             return null;
-                          }, label: 'Verification Token', hint: 'enter token',
-
+                          },
+                          label: 'Verification Token',
+                          hint: 'enter token',
                         ),
                         const SizedBox(height: 24),
 
                         // ── New Password ───────────────────────────
-
                         const SizedBox(height: 10),
                         CustomTextField(
                           controller: _passwordController,
                           obscureText: _obscurePassword,
                           validator: (v) {
-                            if (v == null || v.isEmpty)
+                            if (v == null || v.isEmpty) {
                               return 'Password is required';
-                            if (v.length < 6)
+                            }
+                            if (v.length < 6) {
                               return 'Minimum 6 characters';
+                            }
                             return null;
-                          }, label: 'New password', hint: 'enter new password', keyboardType: TextInputType.visiblePassword,
+                          },
+                          label: 'New password',
+                          hint: 'enter new password',
+                          keyboardType: TextInputType.visiblePassword,
                         ),
                         const SizedBox(height: 24),
 
                         // ── Confirm Password ───────────────────────
-
                         const SizedBox(height: 10),
                         CustomTextField(
                           controller: _confirmController,
                           obscureText: _obscureConfirm,
                           validator: (v) {
-                            if (v == null || v.isEmpty)
+                            if (v == null || v.isEmpty) {
                               return 'Please confirm your password';
-                            if (v != _passwordController.text)
+                            }
+                            if (v != _passwordController.text) {
                               return 'Passwords do not match';
+                            }
                             return null;
-                          }, label: 'Confirm New Password', hint: 'confirm password', keyboardType:TextInputType.visiblePassword ,
+                          },
+                          label: 'Confirm New Password',
+                          hint: 'confirm password',
+                          keyboardType: TextInputType.visiblePassword,
                         ),
                       ],
                     ),
@@ -178,25 +194,24 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                       child: ElevatedButton(
                         onPressed: isLoading ? null : _onUpdatePressed,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(28),
                           ),
                           elevation: 0,
                         ),
                         child: isLoading
-                            ? const SizedBox(
+                            ? SizedBox(
                           width: 24,
                           height: 24,
                           child: CircularProgressIndicator(
-                            color: Colors.white,
+                            color: theme.colorScheme.onPrimary,
                             strokeWidth: 2.5,
                           ),
                         )
-                            : const Text(
+                            : Text(
                           'Update Password',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: theme.colorScheme.onPrimary,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),

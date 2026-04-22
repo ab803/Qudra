@@ -36,7 +36,6 @@ class _BookingCardViewState extends State<BookingCardView> {
       String checkoutUrl,
       ) async {
     final uri = Uri.parse(checkoutUrl);
-
     final launched = await launchUrl(
       uri,
       mode: LaunchMode.externalApplication,
@@ -44,7 +43,6 @@ class _BookingCardViewState extends State<BookingCardView> {
 
     if (!launched) {
       if (!mounted) return;
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Could not open the payment checkout page.'),
@@ -54,7 +52,6 @@ class _BookingCardViewState extends State<BookingCardView> {
     }
 
     if (!mounted) return;
-
     context.pushReplacement(
       '/booking/processing',
       extra: {
@@ -106,7 +103,6 @@ class _BookingCardViewState extends State<BookingCardView> {
 
         if (state is BookingFailed) {
           final bookingId = state.booking?.id;
-
           if (bookingId != null) {
             // ✅ Updated: keep the result route contract consistent by sending bookingId only.
             context.pushReplacement(
@@ -125,18 +121,13 @@ class _BookingCardViewState extends State<BookingCardView> {
         }
       },
       builder: (context, state) {
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
         final isLoading = state is BookingLoading;
 
         return Scaffold(
-          backgroundColor: const Color(0xFFF7F8FA),
           appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            title: const Text(
-              'Card Payment',
-              style: TextStyle(color: Colors.black),
-            ),
-            iconTheme: const IconThemeData(color: Colors.black),
+            title: const Text('Card Payment'),
           ),
           body: SafeArea(
             child: SingleChildScrollView(
@@ -156,13 +147,15 @@ class _BookingCardViewState extends State<BookingCardView> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: theme.cardColor,
                       borderRadius: BorderRadius.circular(22),
+                      border: Border.all(
+                        color: theme.dividerColor,
+                      ),
                     ),
                     child: Text(
                       'When you press pay, Paymob test checkout will open so you can complete the card payment securely.',
-                      style: TextStyle(
-                        color: Colors.grey.shade700,
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         height: 1.5,
                         fontSize: 15,
                       ),
@@ -175,24 +168,22 @@ class _BookingCardViewState extends State<BookingCardView> {
                     child: ElevatedButton(
                       onPressed: isLoading ? null : _payWithCard,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18),
                         ),
                       ),
                       child: isLoading
-                          ? const SizedBox(
+                          ? SizedBox(
                         width: 22,
                         height: 22,
                         child: CircularProgressIndicator(
-                          color: Colors.white,
+                          color: colorScheme.onPrimary,
                           strokeWidth: 2.4,
                         ),
                       )
-                          : const Text(
+                          : Text(
                         'Pay with Card',
-                        style: TextStyle(
+                        style: theme.textTheme.labelLarge?.copyWith(
                           fontWeight: FontWeight.w800,
                           fontSize: 17,
                         ),

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/Styles/AppColors.dart';
 import '../models/community_comment_model.dart';
 import '../viewmodel/community_viewmodel.dart';
 
@@ -45,7 +44,6 @@ class _EditCommentBottomSheetState extends State<EditCommentBottomSheet> {
     );
 
     if (!mounted) return;
-
     if (success) {
       Navigator.pop(context, true);
     } else {
@@ -64,6 +62,8 @@ class _EditCommentBottomSheetState extends State<EditCommentBottomSheet> {
     return AnimatedBuilder(
       animation: widget.viewModel,
       builder: (context, _) {
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
         final isUpdating = widget.viewModel.isUpdatingComment(widget.comment.id);
 
         return Padding(
@@ -77,10 +77,10 @@ class _EditCommentBottomSheetState extends State<EditCommentBottomSheet> {
             key: _formKey,
             child: Wrap(
               children: [
-                const Center(
+                Center(
                   child: Text(
                     'Edit Comment',
-                    style: TextStyle(
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                     ),
@@ -94,21 +94,24 @@ class _EditCommentBottomSheetState extends State<EditCommentBottomSheet> {
                   textInputAction: TextInputAction.newline,
                   decoration: InputDecoration(
                     hintText: 'Update your comment...',
+                    hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface.withOpacity(0.5),
+                    ),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: theme.cardColor,
                     contentPadding: const EdgeInsets.all(16),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
+                      borderSide: BorderSide(color: theme.dividerColor),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
+                      borderSide: BorderSide(color: theme.dividerColor),
                     ),
-                    focusedBorder: const OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(16)),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: const BorderRadius.all(Radius.circular(16)),
                       borderSide: BorderSide(
-                        color: Appcolors.primaryColor,
+                        color: colorScheme.primary,
                       ),
                     ),
                   ),
@@ -116,11 +119,9 @@ class _EditCommentBottomSheetState extends State<EditCommentBottomSheet> {
                     if (value == null || value.trim().isEmpty) {
                       return 'Comment cannot be empty';
                     }
-
                     if (value.trim().length < 2) {
                       return 'Comment is too short';
                     }
-
                     return null;
                   },
                 ),
@@ -131,24 +132,22 @@ class _EditCommentBottomSheetState extends State<EditCommentBottomSheet> {
                   child: ElevatedButton(
                     onPressed: isUpdating ? null : _submitUpdate,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Appcolors.primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
                     child: isUpdating
-                        ? const SizedBox(
+                        ? SizedBox(
                       width: 22,
                       height: 22,
                       child: CircularProgressIndicator(
                         strokeWidth: 2.4,
-                        color: Colors.white,
+                        color: colorScheme.onPrimary,
                       ),
                     )
-                        : const Text(
+                        : Text(
                       'Save Changes',
-                      style: TextStyle(
-                        color: Colors.white,
+                      style: theme.textTheme.labelLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),

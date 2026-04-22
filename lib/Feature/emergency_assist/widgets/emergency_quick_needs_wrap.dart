@@ -14,13 +14,16 @@ class EmergencyQuickNeedsWrap extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'احتياجات سريعة',
-          style: TextStyle(
-            color: Color(0xFF111827),
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: colorScheme.onSurface,
             fontSize: 18,
             fontWeight: FontWeight.w800,
           ),
@@ -31,25 +34,26 @@ class EmergencyQuickNeedsWrap extends StatelessWidget {
           runSpacing: 10,
           children: quickNeeds.map((label) {
             final isSelected = selectedQuickNeeds.contains(label);
-
             return FilterChip(
               label: Text(label),
               selected: isSelected,
               onSelected: (_) => onToggle(label),
-              selectedColor: const Color(0xFFEAF2FF),
-              checkmarkColor: const Color(0xFF0D6EFD),
-              labelStyle: TextStyle(
+              selectedColor: colorScheme.primary.withOpacity(
+                theme.brightness == Brightness.dark ? 0.16 : 0.10,
+              ),
+              checkmarkColor: colorScheme.primary,
+              labelStyle: theme.textTheme.bodyMedium?.copyWith(
                 color: isSelected
-                    ? const Color(0xFF0D6EFD)
-                    : const Color(0xFF4B5563),
+                    ? colorScheme.primary
+                    : colorScheme.onSurface.withOpacity(0.72),
                 fontWeight: FontWeight.w700,
               ),
               side: BorderSide(
                 color: isSelected
-                    ? const Color(0xFF0D6EFD)
-                    : const Color(0xFFE5E7EB),
+                    ? colorScheme.primary
+                    : theme.dividerColor,
               ),
-              backgroundColor: Colors.white,
+              backgroundColor: theme.cardColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
               ),

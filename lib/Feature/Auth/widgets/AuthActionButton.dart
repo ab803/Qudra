@@ -19,16 +19,18 @@ class AuthButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     // ✅ Reads loading state automatically — no need to pass isLoading manually
     return BlocBuilder<AuthCubit, AuthState>(
       builder: (context, state) {
         final isLoading = state is AuthLoading;
+
         return SizedBox(
           width: double.infinity,
           height: 56,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(borderRadius),
@@ -36,11 +38,11 @@ class AuthButton extends StatelessWidget {
             ),
             onPressed: isLoading ? null : onPressed,
             child: isLoading
-                ? const SizedBox(
+                ? SizedBox(
               width: 24,
               height: 24,
               child: CircularProgressIndicator(
-                color: Colors.white,
+                color: theme.colorScheme.onPrimary,
                 strokeWidth: 2.5,
               ),
             )
@@ -49,8 +51,8 @@ class AuthButton extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: theme.colorScheme.onPrimary,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),

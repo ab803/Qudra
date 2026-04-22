@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/Styles/AppColors.dart';
 import '../../../../core/Styles/AppTextsyles.dart';
 import '../../../../core/Utilies/getit.dart';
 import '../../../Auth/ViewModel/auth_cubit.dart';
@@ -36,6 +35,7 @@ class _RecommendedSectionState extends State<RecommendedSection> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final cardWidth = screenWidth > 420 ? 360.0 : screenWidth * 0.88;
 
@@ -45,7 +45,7 @@ class _RecommendedSectionState extends State<RecommendedSection> {
         Text(
           'Recommended For You',
           style: AppTextStyles.subtitle.copyWith(
-            color: Appcolors.primaryColor,
+            color: theme.textTheme.titleMedium?.color,
           ),
         ),
         const SizedBox(height: 16),
@@ -65,11 +65,12 @@ class _RecommendedSectionState extends State<RecommendedSection> {
                 );
               }
 
-              return const SizedBox(
+              return SizedBox(
                 height: 220,
                 child: Center(
                   child: Text(
                     'No recommendations available right now',
+                    style: theme.textTheme.bodyMedium,
                   ),
                 ),
               );
@@ -91,15 +92,19 @@ class _RecommendedSectionState extends State<RecommendedSection> {
 
                   if (snapshot.hasError) {
                     return Center(
-                      child: Text(snapshot.error.toString()),
+                      child: Text(
+                        snapshot.error.toString(),
+                        style: theme.textTheme.bodySmall,
+                      ),
                     );
                   }
 
                   final institutions = snapshot.data ?? [];
                   if (institutions.isEmpty) {
-                    return const Center(
+                    return Center(
                       child: Text(
                         'No recommendations available right now',
+                        style: theme.textTheme.bodyMedium,
                       ),
                     );
                   }

@@ -26,16 +26,17 @@ class BookingDateTimeSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // This block renders the title above the date and time selectors.
-        const Text(
+        Text(
           'Booking Details',
-          style: TextStyle(
+          style: theme.textTheme.titleMedium?.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w800,
-            color: Colors.black,
           ),
         ),
         const SizedBox(height: 14),
@@ -77,6 +78,10 @@ class _PickerTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return InkWell(
       borderRadius: BorderRadius.circular(18),
       onTap: onTap,
@@ -84,13 +89,20 @@ class _PickerTile extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: Colors.black.withOpacity(0.05)),
+          border: Border.all(color: theme.dividerColor),
+          boxShadow: [
+            BoxShadow(
+              color: theme.shadowColor.withOpacity(isDark ? 0.22 : 0.06),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Row(
           children: [
-            Icon(icon, color: Colors.black87),
+            Icon(icon, color: colorScheme.onSurface),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
@@ -98,22 +110,23 @@ class _PickerTile extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: Colors.black,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     value,
-                    style: TextStyle(
-                      color: Colors.grey.shade700,
-                    ),
+                    style: theme.textTheme.bodyMedium,
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 16,
+              color: theme.textTheme.bodySmall?.color,
+            ),
           ],
         ),
       ),

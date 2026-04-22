@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../institution/models/institution_model.dart';
 import '../../../institution/models/service_model.dart';
 import '../widgets/booking_payment_method_tile.dart';
@@ -59,16 +58,11 @@ class _BookingPaymentMethodViewState extends State<BookingPaymentMethodView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FA),
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          'Payment Method',
-          style: TextStyle(color: Colors.black),
-        ),
-        iconTheme: const IconThemeData(color: Colors.black),
+        title: const Text('Payment Method'),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -87,12 +81,10 @@ class _BookingPaymentMethodViewState extends State<BookingPaymentMethodView> {
               const SizedBox(height: 20),
 
               // This block shows the payment method title.
-              const Text(
+              Text(
                 'Choose Payment Method',
-                style: TextStyle(
-                  fontSize: 18,
+                style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w800,
-                  color: Colors.black,
                 ),
               ),
               const SizedBox(height: 14),
@@ -146,15 +138,13 @@ class _BookingPaymentMethodViewState extends State<BookingPaymentMethodView> {
                 child: ElevatedButton(
                   onPressed: _continue,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18),
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Continue',
-                    style: TextStyle(
+                    style: theme.textTheme.labelLarge?.copyWith(
                       fontWeight: FontWeight.w800,
                       fontSize: 17,
                     ),

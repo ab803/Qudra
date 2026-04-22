@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../institution/models/institution_model.dart';
 import '../../../institution/models/service_model.dart';
 
@@ -37,15 +36,20 @@ class BookingSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: theme.dividerColor),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: theme.shadowColor.withOpacity(isDark ? 0.22 : 0.08),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -61,10 +65,10 @@ class BookingSummaryCard extends StatelessWidget {
                 width: 46,
                 height: 46,
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.05),
+                  color: colorScheme.onSurface.withOpacity(isDark ? 0.08 : 0.05),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.business, color: Colors.black),
+                child: Icon(Icons.business, color: colorScheme.onSurface),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -73,18 +77,16 @@ class BookingSummaryCard extends StatelessWidget {
                   children: [
                     Text(
                       institution.name,
-                      style: const TextStyle(
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
-                        color: Colors.black,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       service.name,
-                      style: TextStyle(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         fontSize: 14,
-                        color: Colors.grey.shade700,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -134,6 +136,8 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(
@@ -143,17 +147,15 @@ class _InfoRow extends StatelessWidget {
             width: 80,
             child: Text(
               '$label:',
-              style: const TextStyle(
+              style: theme.textTheme.bodyLarge?.copyWith(
                 fontWeight: FontWeight.w700,
-                color: Colors.black87,
               ),
             ),
           ),
           Expanded(
             child: Text(
               value,
-              style: TextStyle(
-                color: Colors.grey.shade800,
+              style: theme.textTheme.bodyMedium?.copyWith(
                 height: 1.4,
               ),
             ),

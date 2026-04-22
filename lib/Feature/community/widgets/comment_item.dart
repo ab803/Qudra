@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/Styles/AppColors.dart';
 
 class CommentItem extends StatelessWidget {
   final String authorName;
@@ -19,13 +18,17 @@ class CommentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final onSurface = theme.colorScheme.onSurface;
+
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,7 +42,7 @@ class CommentItem extends StatelessWidget {
                   children: [
                     Text(
                       authorName,
-                      style: const TextStyle(
+                      style: theme.textTheme.bodyMedium?.copyWith(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
                       ),
@@ -47,9 +50,9 @@ class CommentItem extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       subtitle,
-                      style: const TextStyle(
+                      style: theme.textTheme.bodySmall?.copyWith(
                         fontSize: 12,
-                        color: Appcolors.secondaryColor,
+                        color: onSurface.withOpacity(0.65),
                       ),
                     ),
                   ],
@@ -58,14 +61,17 @@ class CommentItem extends StatelessWidget {
               if (showMoreButton)
                 IconButton(
                   onPressed: onMoreTap,
-                  icon: const Icon(Icons.more_horiz),
+                  icon: Icon(
+                    Icons.more_horiz,
+                    color: onSurface.withOpacity(0.72),
+                  ),
                 ),
             ],
           ),
           const SizedBox(height: 10),
           Text(
             content,
-            style: const TextStyle(
+            style: theme.textTheme.bodyMedium?.copyWith(
               fontSize: 14,
               height: 1.4,
             ),

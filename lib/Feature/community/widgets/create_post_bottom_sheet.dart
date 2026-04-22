@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/Styles/AppColors.dart';
 import '../viewmodel/community_viewmodel.dart';
 
 class CreatePostBottomSheet extends StatefulWidget {
@@ -32,7 +31,6 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
     );
 
     if (!mounted) return;
-
     if (success) {
       Navigator.pop(context, true);
     } else {
@@ -51,6 +49,8 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
     return AnimatedBuilder(
       animation: widget.viewModel,
       builder: (context, _) {
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
         final isSubmitting = widget.viewModel.isCreatingPost;
 
         return Padding(
@@ -64,10 +64,10 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
             key: _formKey,
             child: Wrap(
               children: [
-                const Center(
+                Center(
                   child: Text(
                     'Create Post',
-                    style: TextStyle(
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
                     ),
@@ -81,21 +81,24 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
                   textInputAction: TextInputAction.newline,
                   decoration: InputDecoration(
                     hintText: 'Share something with the community...',
+                    hintStyle: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface.withOpacity(0.5),
+                    ),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: theme.cardColor,
                     contentPadding: const EdgeInsets.all(16),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
+                      borderSide: BorderSide(color: theme.dividerColor),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
+                      borderSide: BorderSide(color: theme.dividerColor),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
-                      borderSide: const BorderSide(
-                        color: Appcolors.primaryColor,
+                      borderSide: BorderSide(
+                        color: colorScheme.primary,
                       ),
                     ),
                   ),
@@ -103,11 +106,9 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
                     if (value == null || value.trim().isEmpty) {
                       return 'Post content cannot be empty';
                     }
-
                     if (value.trim().length < 3) {
                       return 'Post content is too short';
                     }
-
                     return null;
                   },
                 ),
@@ -118,24 +119,22 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
                   child: ElevatedButton(
                     onPressed: isSubmitting ? null : _submitPost,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Appcolors.primaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                       ),
                     ),
                     child: isSubmitting
-                        ? const SizedBox(
+                        ? SizedBox(
                       width: 22,
                       height: 22,
                       child: CircularProgressIndicator(
                         strokeWidth: 2.4,
-                        color: Colors.white,
+                        color: colorScheme.onPrimary,
                       ),
                     )
-                        : const Text(
+                        : Text(
                       'Publish Post',
-                      style: TextStyle(
-                        color: Colors.white,
+                      style: theme.textTheme.labelLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),

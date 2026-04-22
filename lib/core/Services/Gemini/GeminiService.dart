@@ -1,14 +1,14 @@
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 class GeminiService {
-  static const _apiKey = 'AIzaSyDhC4JBEsWMOOMyyJ5LK6dqrPqOQ84rgB8'; // 🔑 replace with your key
+  static const _apiKey = 'AIzaSyDs88SzDH8_TG6jzFlekxBItxOW2eaYLhU'; // 🔑 replace with your key
 
   late final GenerativeModel _model;
   late ChatSession _chat;
 
   GeminiService() {
     _model = GenerativeModel(
-      model: 'gemini-2.5-flash',
+      model: 'gemini-chat-3.5',
       apiKey: _apiKey,
       systemInstruction: Content.system(
         '''You are Qudra AI, a compassionate and knowledgeable assistant 

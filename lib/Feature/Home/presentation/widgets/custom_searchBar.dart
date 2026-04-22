@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/Styles/AppColors.dart';
 
 class CustomSearchBar extends StatefulWidget {
   const CustomSearchBar({super.key});
@@ -21,7 +20,6 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
   // This method switches to the institutions tab and passes the current query.
   void _submitSearch() {
     final query = _searchController.text.trim();
-
     FocusScope.of(context).unfocus();
 
     final destination = Uri(
@@ -34,14 +32,21 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final iconColor =
+        theme.inputDecorationTheme.hintStyle?.color ??
+            theme.textTheme.bodyMedium?.color;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Appcolors.primaryColor.withOpacity(0.03),
+            color: Colors.black.withOpacity(
+              theme.brightness == Brightness.dark ? 0.16 : 0.03,
+            ),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -51,16 +56,17 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
         controller: _searchController,
         textInputAction: TextInputAction.search,
         onSubmitted: (_) => _submitSearch(),
+        style: theme.textTheme.bodyLarge,
         decoration: InputDecoration(
           hintText: 'Search institutions or guidelines...',
-          hintStyle: const TextStyle(color: Appcolors.secondaryColor),
+          hintStyle: TextStyle(color: iconColor),
           border: InputBorder.none,
-          icon: const Icon(Icons.search, color: Appcolors.secondaryColor),
+          icon: Icon(Icons.search, color: iconColor),
           suffixIcon: IconButton(
             onPressed: _submitSearch,
-            icon: const Icon(
+            icon: Icon(
               Icons.arrow_forward_rounded,
-              color: Appcolors.secondaryColor,
+              color: theme.colorScheme.primary,
             ),
           ),
         ),

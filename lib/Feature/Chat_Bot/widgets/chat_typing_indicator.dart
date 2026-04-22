@@ -1,7 +1,5 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:qudra_0/core/Styles/AppColors.dart';
-import 'package:qudra_0/core/Styles/AppTextsyles.dart';
 
 class ChatTypingIndicator extends StatefulWidget {
   final String time;
@@ -36,6 +34,9 @@ class _ChatTypingIndicatorState extends State<ChatTypingIndicator>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -43,8 +44,8 @@ class _ChatTypingIndicatorState extends State<ChatTypingIndicator>
           padding: const EdgeInsetsDirectional.only(start: 52, bottom: 6),
           child: Text(
             'Qudra AI',
-            style: AppTextStyles.body.copyWith(
-              color: Appcolors.secondaryColor,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurface.withOpacity(0.65),
               fontSize: 12,
               fontWeight: FontWeight.w600,
             ),
@@ -55,11 +56,13 @@ class _ChatTypingIndicatorState extends State<ChatTypingIndicator>
           children: [
             CircleAvatar(
               radius: 18,
-              backgroundColor: Appcolors.cardTeal,
-              child: const Text(
+              backgroundColor: colorScheme.primary.withOpacity(
+                theme.brightness == Brightness.dark ? 0.20 : 0.12,
+              ),
+              child: Text(
                 'AI',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: colorScheme.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -68,17 +71,19 @@ class _ChatTypingIndicatorState extends State<ChatTypingIndicator>
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: theme.cardColor,
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(6),
                   topRight: Radius.circular(18),
                   bottomLeft: Radius.circular(18),
                   bottomRight: Radius.circular(18),
                 ),
-                border: Border.all(color: Colors.grey.shade200),
+                border: Border.all(color: theme.dividerColor),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.04),
+                    color: theme.shadowColor.withOpacity(
+                      theme.brightness == Brightness.dark ? 0.08 : 0.04,
+                    ),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -101,9 +106,9 @@ class _ChatTypingIndicatorState extends State<ChatTypingIndicator>
           padding: const EdgeInsetsDirectional.only(start: 52, top: 6),
           child: Text(
             widget.time,
-            style: AppTextStyles.body.copyWith(
+            style: theme.textTheme.bodySmall?.copyWith(
               fontSize: 11,
-              color: Appcolors.secondaryColor,
+              color: colorScheme.onSurface.withOpacity(0.6),
               height: 1.0,
             ),
           ),
@@ -113,6 +118,9 @@ class _ChatTypingIndicatorState extends State<ChatTypingIndicator>
   }
 
   Widget _animatedDot(int index) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
@@ -142,7 +150,7 @@ class _ChatTypingIndicatorState extends State<ChatTypingIndicator>
         width: 6,
         height: 6,
         decoration: BoxDecoration(
-          color: Appcolors.textLight,
+          color: colorScheme.onSurface.withOpacity(0.45),
           borderRadius: BorderRadius.circular(3),
         ),
       ),

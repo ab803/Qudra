@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/Styles/AppTextsyles.dart';
 import '../../services/feedback_service.dart';
-import '../../../../core/Styles/AppColors.dart';
-
 
 class FeedbackView extends StatefulWidget {
   const FeedbackView({super.key});
@@ -15,7 +13,6 @@ class FeedbackView extends StatefulWidget {
 class _FeedbackViewState extends State<FeedbackView> {
   final FeedbackService _feedbackService = FeedbackService();
   final TextEditingController _commentController = TextEditingController();
-
   int _selectedRating = 0;
   final List<String> _selectedTags = [];
   bool _isSubmitting = false;
@@ -65,7 +62,6 @@ class _FeedbackViewState extends State<FeedbackView> {
       }
     } catch (e) {
       if (!mounted) return;
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.toString()),
@@ -73,7 +69,6 @@ class _FeedbackViewState extends State<FeedbackView> {
       );
     } finally {
       if (!mounted) return;
-
       setState(() {
         _isSubmitting = false;
       });
@@ -88,16 +83,20 @@ class _FeedbackViewState extends State<FeedbackView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: const Icon(
+          icon: Icon(
             Icons.arrow_back,
-            color: Appcolors.primaryColor,
+            color: theme.appBarTheme.foregroundColor ?? theme.iconTheme.color,
           ),
           onPressed: () {
             if (context.canPop()) {
@@ -109,15 +108,18 @@ class _FeedbackViewState extends State<FeedbackView> {
         ),
         title: Text(
           'Feedback',
-          style: AppTextStyles.title.copyWith(fontSize: 18),
+          style: AppTextStyles.title.copyWith(
+            fontSize: 18,
+            color: theme.textTheme.titleLarge?.color,
+          ),
         ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const Divider(
-              color: Appcolors.backgroundColor,
+            Divider(
+              color: theme.dividerColor,
               thickness: 1,
               height: 1,
             ),
@@ -130,25 +132,33 @@ class _FeedbackViewState extends State<FeedbackView> {
                   Container(
                     width: 60,
                     height: 60,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFFF3F4F6),
+                    decoration: BoxDecoration(
+                      color: theme.cardColor,
                       shape: BoxShape.circle,
+                      border: Border.all(color: theme.dividerColor),
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.shadowColor.withOpacity(isDark ? 0.22 : 0.06),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Icon(
                         Icons.chat_bubble,
-                        color: Colors.black,
+                        color: colorScheme.primary,
                         size: 28,
                       ),
                     ),
                   ),
                   const SizedBox(height: 24),
-
                   Text(
                     'How was your experience?',
                     style: AppTextStyles.title.copyWith(
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
+                      color: theme.textTheme.titleLarge?.color,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -158,38 +168,39 @@ class _FeedbackViewState extends State<FeedbackView> {
                     style: AppTextStyles.body.copyWith(
                       fontSize: 15,
                       height: 1.5,
-                      color: const Color(0xFF6B7280),
+                      color: theme.textTheme.bodyMedium?.color,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 40),
 
                   // Rate Your Experience
-                  _buildSectionTitle('RATE YOUR EXPERIENCE'),
+                  _buildSectionTitle(context, 'RATE YOUR EXPERIENCE'),
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 24),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF3F4F6),
+                      color: theme.cardColor,
                       borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: theme.dividerColor),
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: List.generate(5, (index) {
-                        return _buildStarRating(index + 1);
+                        return _buildStarRating(context, index + 1);
                       }),
                     ),
                   ),
                   const SizedBox(height: 32),
 
                   // Additional Comments
-                  _buildSectionTitle('ADDITIONAL COMMENTS'),
+                  _buildSectionTitle(context, 'ADDITIONAL COMMENTS'),
                   Container(
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: theme.cardColor,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: const Color(0xFFE5E7EB),
+                        color: theme.dividerColor,
                         width: 1.5,
                       ),
                     ),
@@ -201,7 +212,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                         hintText:
                         'Tell us more about your experience...\nWhat did you like? What can we\nimprove?',
                         hintStyle: AppTextStyles.body.copyWith(
-                          color: const Color(0xFF9CA3AF),
+                          color: theme.textTheme.bodySmall?.color,
                           height: 1.5,
                         ),
                         border: InputBorder.none,
@@ -212,15 +223,15 @@ class _FeedbackViewState extends State<FeedbackView> {
                   const SizedBox(height: 32),
 
                   // What Stood Out
-                  _buildSectionTitle('WHAT STOOD OUT?'),
+                  _buildSectionTitle(context, 'WHAT STOOD OUT?'),
                   Wrap(
                     spacing: 12,
                     runSpacing: 12,
                     children: [
-                      _buildTagChip('Fast Response'),
-                      _buildTagChip('Ease of Use'),
-                      _buildTagChip('Design'),
-                      _buildTagChip('Support'),
+                      _buildTagChip(context, 'Fast Response'),
+                      _buildTagChip(context, 'Ease of Use'),
+                      _buildTagChip(context, 'Design'),
+                      _buildTagChip(context, 'Support'),
                     ],
                   ),
                   const SizedBox(height: 40),
@@ -231,7 +242,6 @@ class _FeedbackViewState extends State<FeedbackView> {
                     child: ElevatedButton(
                       onPressed: _isSubmitting ? null : _submitFeedback,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.black,
                         padding: const EdgeInsets.symmetric(vertical: 18),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -239,12 +249,14 @@ class _FeedbackViewState extends State<FeedbackView> {
                         elevation: 0,
                       ),
                       child: _isSubmitting
-                          ? const SizedBox(
+                          ? SizedBox(
                         width: 22,
                         height: 22,
                         child: CircularProgressIndicator(
                           strokeWidth: 2.3,
-                          color: Colors.white,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            colorScheme.onPrimary,
+                          ),
                         ),
                       )
                           : Row(
@@ -254,13 +266,13 @@ class _FeedbackViewState extends State<FeedbackView> {
                             'Submit Feedback',
                             style: AppTextStyles.button.copyWith(
                               fontSize: 16,
-                              color: Colors.white,
+                              color: colorScheme.onPrimary,
                             ),
                           ),
                           const SizedBox(width: 8),
-                          const Icon(
+                          Icon(
                             Icons.send,
-                            color: Colors.white,
+                            color: colorScheme.onPrimary,
                             size: 18,
                           ),
                         ],
@@ -274,7 +286,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                     'By submitting, you agree to our Terms of Service.',
                     style: AppTextStyles.body.copyWith(
                       fontSize: 12,
-                      color: const Color(0xFF9CA3AF),
+                      color: theme.textTheme.bodySmall?.color,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -288,7 +300,9 @@ class _FeedbackViewState extends State<FeedbackView> {
     );
   }
 
-  Widget _buildSectionTitle(String title) {
+  Widget _buildSectionTitle(BuildContext context, String title) {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Align(
@@ -298,7 +312,7 @@ class _FeedbackViewState extends State<FeedbackView> {
           style: AppTextStyles.title.copyWith(
             fontSize: 14,
             letterSpacing: 1.2,
-            color: Colors.black,
+            color: theme.textTheme.titleLarge?.color,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -306,7 +320,9 @@ class _FeedbackViewState extends State<FeedbackView> {
     );
   }
 
-  Widget _buildStarRating(int rating) {
+  Widget _buildStarRating(BuildContext context, int rating) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final isSelected = _selectedRating >= rating;
 
     return GestureDetector(
@@ -321,7 +337,7 @@ class _FeedbackViewState extends State<FeedbackView> {
         children: [
           Icon(
             isSelected ? Icons.star : Icons.star_border,
-            color: isSelected ? Colors.black : const Color(0xFF9CA3AF),
+            color: isSelected ? colorScheme.primary : theme.textTheme.bodySmall?.color,
             size: 32,
           ),
           const SizedBox(height: 8),
@@ -330,7 +346,9 @@ class _FeedbackViewState extends State<FeedbackView> {
             style: AppTextStyles.body.copyWith(
               fontSize: 12,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              color: isSelected ? Colors.black : const Color(0xFF9CA3AF),
+              color: isSelected
+                  ? theme.textTheme.titleLarge?.color
+                  : theme.textTheme.bodySmall?.color,
             ),
           ),
         ],
@@ -338,7 +356,9 @@ class _FeedbackViewState extends State<FeedbackView> {
     );
   }
 
-  Widget _buildTagChip(String label) {
+  Widget _buildTagChip(BuildContext context, String label) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final isSelected = _selectedTags.contains(label);
 
     return GestureDetector(
@@ -356,19 +376,21 @@ class _FeedbackViewState extends State<FeedbackView> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
-          color: isSelected ? Colors.black : const Color(0xFFF3F4F6),
+          color: isSelected ? colorScheme.primary : theme.cardColor,
           borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: theme.dividerColor),
         ),
         child: Text(
           label,
           style: TextStyle(
             fontSize: 14,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            color: isSelected ? Colors.white : const Color(0xFF6B7280),
+            color: isSelected
+                ? colorScheme.onPrimary
+                : theme.textTheme.bodyMedium?.color,
           ),
         ),
       ),
     );
   }
 }
-

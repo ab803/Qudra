@@ -12,6 +12,9 @@ class EmergencySosCountdownCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return SizedBox(
       width: 220,
       height: 220,
@@ -30,24 +33,23 @@ class EmergencySosCountdownCircle extends StatelessWidget {
                   value: animatedValue,
                   strokeWidth: 14,
                   strokeCap: StrokeCap.round,
-                  backgroundColor: const Color(0xFFFEE2E2),
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                    Color(0xFFEF4444),
+                  backgroundColor: colorScheme.error.withOpacity(0.14),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    colorScheme.error,
                   ),
                 ),
               );
             },
           ),
-
           Container(
             width: 172,
             height: 172,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: const Color(0xFFEF4444),
+              color: colorScheme.error,
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFEF4444).withOpacity(0.22),
+                  color: colorScheme.error.withOpacity(0.22),
                   blurRadius: 22,
                   offset: const Offset(0, 8),
                 ),
@@ -56,9 +58,9 @@ class EmergencySosCountdownCircle extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(
+                Icon(
                   Icons.warning_rounded,
-                  color: Colors.white,
+                  color: colorScheme.onError,
                   size: 34,
                 ),
                 const SizedBox(height: 8),
@@ -76,18 +78,18 @@ class EmergencySosCountdownCircle extends StatelessWidget {
                   child: Text(
                     label,
                     key: ValueKey<String>(label),
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: colorScheme.onError,
                       fontSize: 36,
                       fontWeight: FontWeight.w900,
                     ),
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
+                Text(
                   'SOS',
                   style: TextStyle(
-                    color: Colors.white70,
+                    color: colorScheme.onError.withOpacity(0.72),
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.1,

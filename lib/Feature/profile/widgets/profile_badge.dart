@@ -26,9 +26,13 @@ class ProfileBadge extends StatelessWidget {
         children: [
           Icon(icon, size: 18, color: textColor),
           const SizedBox(width: 8),
-          Text(text,
-              style:
-              TextStyle(color: textColor, fontWeight: FontWeight.w600)),
+          Text(
+            text,
+            style: TextStyle(
+              color: textColor,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
         ],
       ),
     );

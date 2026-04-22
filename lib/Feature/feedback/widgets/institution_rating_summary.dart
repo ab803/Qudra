@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../services/feedback_service.dart';
 
 // This widget loads and displays the average rating and reviews count
@@ -51,6 +50,9 @@ class _InstitutionRatingSummaryState extends State<InstitutionRatingSummary> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return FutureBuilder<Map<String, dynamic>>(
       future: _summaryFuture,
       builder: (context, snapshot) {
@@ -78,7 +80,7 @@ class _InstitutionRatingSummaryState extends State<InstitutionRatingSummary> {
           children: [
             Icon(
               Icons.star_rounded,
-              color: Colors.amber.shade600,
+              color: colorScheme.primary,
               size: widget.compact ? 17 : 18,
             ),
             const SizedBox(width: 4),
@@ -95,7 +97,7 @@ class _InstitutionRatingSummaryState extends State<InstitutionRatingSummary> {
                 style: TextStyle(
                   fontSize: widget.compact ? 12 : 13,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  color: theme.textTheme.bodyMedium?.color,
                   height: 1.2,
                 ),
               ),

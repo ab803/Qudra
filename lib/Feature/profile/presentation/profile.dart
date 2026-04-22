@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
+import '../../../core/theme/theme_cubit.dart';
 import '../../Auth/ViewModel/auth_cubit.dart';
 import '../../Auth/ViewModel/auth_state.dart';
 import '../widgets/profile_logout_button.dart';
@@ -12,8 +12,10 @@ class ProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: BlocBuilder<AuthCubit, AuthState>(
           builder: (context, state) {
@@ -43,9 +45,9 @@ class ProfileView extends StatelessWidget {
                       left: 20,
                       right: 20,
                     ),
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
+                    decoration: BoxDecoration(
+                      color: theme.cardColor,
+                      borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(36),
                         bottomRight: Radius.circular(36),
                       ),
@@ -57,18 +59,18 @@ class ProfileView extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: 58,
-                              backgroundColor: Colors.black,
+                              backgroundColor: theme.colorScheme.primary,
                               child: CircleAvatar(
                                 radius: 56,
-                                backgroundColor: Colors.grey.shade200,
+                                backgroundColor: theme.scaffoldBackgroundColor,
                                 child: Text(
                                   fullName.isNotEmpty
                                       ? fullName[0].toUpperCase()
                                       : '?',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 38,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.black,
+                                    color: theme.textTheme.titleLarge?.color,
                                   ),
                                 ),
                               ),
@@ -91,18 +93,18 @@ class ProfileView extends StatelessWidget {
                         Text(
                           fullName,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 28,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                            color: theme.textTheme.titleLarge?.color,
                           ),
                         ),
                         const SizedBox(height: 6),
                         Text(
                           disabilityType,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.grey,
+                          style: TextStyle(
+                            color: theme.textTheme.bodyMedium?.color,
                             fontSize: 16,
                           ),
                         ),
@@ -122,11 +124,13 @@ class ProfileView extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: theme.cardColor,
                             borderRadius: BorderRadius.circular(24),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.03),
+                                color: Colors.black.withOpacity(
+                                  theme.brightness == Brightness.dark ? 0.14 : 0.03,
+                                ),
                                 blurRadius: 12,
                                 offset: const Offset(0, 4),
                               ),
@@ -168,11 +172,13 @@ class ProfileView extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: Colors.white,
+                            color: theme.cardColor,
                             borderRadius: BorderRadius.circular(24),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.03),
+                                color: Colors.black.withOpacity(
+                                  theme.brightness == Brightness.dark ? 0.14 : 0.03,
+                                ),
                                 blurRadius: 12,
                                 offset: const Offset(0, 4),
                               ),
@@ -201,17 +207,114 @@ class ProfileView extends StatelessWidget {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 26),
 
+                  // ── Appearance Section ──────────────────────
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const _SectionTitle(title: 'Appearance'),
+                        const SizedBox(height: 14),
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: theme.cardColor,
+                            borderRadius: BorderRadius.circular(24),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(
+                                  theme.brightness == Brightness.dark ? 0.14 : 0.03,
+                                ),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: BlocBuilder<ThemeCubit, ThemeMode>(
+                            builder: (context, themeMode) {
+                              return Column(
+                                children: [
+                                  RadioListTile<ThemeMode>(
+                                    contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                    title: Text(
+                                      'Light Mode',
+                                      style: TextStyle(
+                                        color: theme.textTheme.bodyLarge?.color,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    value: ThemeMode.light,
+                                    groupValue: themeMode,
+                                    activeColor: theme.colorScheme.primary,
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        context.read<ThemeCubit>().setTheme(value);
+                                      }
+                                    },
+                                  ),
+                                  Divider(color: theme.dividerColor),
+                                  RadioListTile<ThemeMode>(
+                                    contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                    title: Text(
+                                      'Dark Mode',
+                                      style: TextStyle(
+                                        color: theme.textTheme.bodyLarge?.color,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    value: ThemeMode.dark,
+                                    groupValue: themeMode,
+                                    activeColor: theme.colorScheme.primary,
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        context.read<ThemeCubit>().setTheme(value);
+                                      }
+                                    },
+                                  ),
+                                  Divider(color: theme.dividerColor),
+                                  RadioListTile<ThemeMode>(
+                                    contentPadding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                    title: Text(
+                                      'System Default',
+                                      style: TextStyle(
+                                        color: theme.textTheme.bodyLarge?.color,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    value: ThemeMode.system,
+                                    groupValue: themeMode,
+                                    activeColor: theme.colorScheme.primary,
+                                    onChanged: (value) {
+                                      if (value != null) {
+                                        context.read<ThemeCubit>().setTheme(value);
+                                      }
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 28),
+
                   const ProfileLogoutButton(),
                   const SizedBox(height: 26),
-                  const Center(
+
+                  Center(
                     child: Text(
                       "«With you to discover your ability»",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontStyle: FontStyle.italic,
-                        color: Colors.grey,
+                        color: theme.textTheme.bodySmall?.color,
                       ),
                     ),
                   ),
@@ -233,10 +336,10 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 18,
         fontWeight: FontWeight.bold,
-        color: Colors.black,
+        color: Theme.of(context).textTheme.titleLarge?.color,
       ),
     );
   }

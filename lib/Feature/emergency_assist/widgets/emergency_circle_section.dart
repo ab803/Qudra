@@ -16,6 +16,8 @@ class EmergencyCircleSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final previewContacts = contacts.take(3).toList();
 
     return Column(
@@ -23,11 +25,11 @@ class EmergencyCircleSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Text(
                 'دائرة الطوارئ',
-                style: TextStyle(
-                  color: Color(0xFF111827),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: colorScheme.onSurface,
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                 ),
@@ -37,8 +39,8 @@ class EmergencyCircleSection extends StatelessWidget {
               onPressed: onAddContactsPressed,
               child: Text(
                 contacts.isEmpty ? 'إضافة' : 'إدارة',
-                style: const TextStyle(
-                  color: Color(0xFF0D6EFD),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: colorScheme.primary,
                   fontSize: 15,
                   fontWeight: FontWeight.w800,
                 ),
@@ -52,33 +54,33 @@ class EmergencyCircleSection extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(18),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: theme.cardColor,
               borderRadius: BorderRadius.circular(22),
-              border: Border.all(color: const Color(0xFFE5E7EB)),
+              border: Border.all(color: theme.dividerColor),
             ),
             child: Column(
               children: [
-                const Icon(
+                Icon(
                   Icons.people_outline_rounded,
                   size: 36,
-                  color: Color(0xFF9CA3AF),
+                  color: colorScheme.onSurface.withOpacity(0.45),
                 ),
                 const SizedBox(height: 12),
-                const Text(
+                Text(
                   'لا توجد جهات اتصال للطوارئ حتى الآن',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xFF111827),
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: colorScheme.onSurface,
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   'أضف أشخاصًا موثوقين مثل أحد الوالدين أو مقدم رعاية أو طبيب.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xFF6B7280),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurface.withOpacity(0.68),
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     height: 1.5,
@@ -90,8 +92,6 @@ class EmergencyCircleSection extends StatelessWidget {
                   child: ElevatedButton.icon(
                     onPressed: onAddContactsPressed,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0D6EFD),
-                      foregroundColor: Colors.white,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -144,12 +144,15 @@ class _ContactTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Row(
         children: [
@@ -157,12 +160,14 @@ class _ContactTile extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: const Color(0xFFF3F4F6),
+              color: colorScheme.onSurface.withOpacity(
+                theme.brightness == Brightness.dark ? 0.10 : 0.05,
+              ),
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.person_outline_rounded,
-              color: Color(0xFF6B7280),
+              color: colorScheme.onSurface.withOpacity(0.58),
             ),
           ),
           const SizedBox(width: 12),
@@ -174,8 +179,8 @@ class _ContactTile extends StatelessWidget {
                   children: [
                     Text(
                       name,
-                      style: const TextStyle(
-                        color: Color(0xFF111827),
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: colorScheme.onSurface,
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
                       ),
@@ -188,13 +193,15 @@ class _ContactTile extends StatelessWidget {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEAF2FF),
+                          color: colorScheme.primary.withOpacity(
+                            theme.brightness == Brightness.dark ? 0.16 : 0.10,
+                          ),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Text(
+                        child: Text(
                           'أساسي',
-                          style: TextStyle(
-                            color: Color(0xFF0D6EFD),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colorScheme.primary,
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
                           ),
@@ -206,8 +213,8 @@ class _ContactTile extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   relation,
-                  style: const TextStyle(
-                    color: Color(0xFF6B7280),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurface.withOpacity(0.68),
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -217,9 +224,9 @@ class _ContactTile extends StatelessWidget {
           ),
           IconButton(
             onPressed: onCallPressed,
-            icon: const Icon(
+            icon: Icon(
               Icons.call_rounded,
-              color: Color(0xFF0D6EFD),
+              color: colorScheme.primary,
             ),
           ),
         ],
@@ -227,3 +234,4 @@ class _ContactTile extends StatelessWidget {
     );
   }
 }
+

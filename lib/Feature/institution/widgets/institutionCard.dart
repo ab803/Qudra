@@ -32,13 +32,18 @@ class InstitutionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: theme.dividerColor),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: theme.shadowColor.withOpacity(isDark ? 0.30 : 0.08),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -55,12 +60,12 @@ class InstitutionCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.06),
+                  color: colorScheme.onSurface.withOpacity(isDark ? 0.08 : 0.06),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.business,
-                  color: Colors.black,
+                  color: colorScheme.onSurface,
                   size: 24,
                 ),
               ),
@@ -71,18 +76,16 @@ class InstitutionCard extends StatelessWidget {
                   children: [
                     Text(
                       institution.name,
-                      style: const TextStyle(
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       institution.institutionType,
-                      style: TextStyle(
+                      style: theme.textTheme.bodySmall?.copyWith(
                         fontSize: 13,
-                        color: Colors.grey.shade600,
                       ),
                     ),
                   ],
@@ -96,9 +99,8 @@ class InstitutionCard extends StatelessWidget {
           if (institution.address != null && institution.address!.isNotEmpty)
             Text(
               institution.address!,
-              style: TextStyle(
+              style: theme.textTheme.bodyMedium?.copyWith(
                 fontSize: 14,
-                color: Colors.grey.shade800,
                 height: 1.4,
               ),
             ),
@@ -116,22 +118,21 @@ class InstitutionCard extends StatelessWidget {
                   Icon(
                     Icons.location_on_outlined,
                     size: 16,
-                    color: Colors.blueAccent,
+                    color: colorScheme.primary,
                   ),
                   const SizedBox(width: 6),
-                  const Text(
+                  Text(
                     'Open in Maps',
-                    style: TextStyle(
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
-                      color: Colors.black87,
                     ),
                   ),
                   const SizedBox(width: 6),
                   Icon(
                     Icons.open_in_new_rounded,
                     size: 15,
-                    color: Colors.grey.shade600,
+                    color: theme.textTheme.bodySmall?.color,
                   ),
                 ],
               ),
@@ -155,8 +156,6 @@ class InstitutionCard extends StatelessWidget {
               ElevatedButton(
                 onPressed: onViewDetails,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),

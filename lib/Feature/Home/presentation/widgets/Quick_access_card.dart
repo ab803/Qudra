@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-
 class QuickAccessCard extends StatelessWidget {
-
   // Card content
   final String title;
   final String subtitle;
@@ -20,6 +18,8 @@ class QuickAccessCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       height: 140,
       padding: const EdgeInsets.all(20),
@@ -30,17 +30,17 @@ class QuickAccessCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: color.withOpacity(0.3),
+            color: color.withOpacity(
+              theme.brightness == Brightness.dark ? 0.22 : 0.30,
+            ),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
         ],
       ),
-
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           // Icon container
           Container(
             padding: const EdgeInsets.all(8),
@@ -50,7 +50,6 @@ class QuickAccessCard extends StatelessWidget {
             ),
             child: Icon(icon, color: Colors.white),
           ),
-
           const Spacer(),
 
           // Title
@@ -62,7 +61,6 @@ class QuickAccessCard extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 4),
 
           // Subtitle

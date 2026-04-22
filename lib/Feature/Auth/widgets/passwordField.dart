@@ -24,6 +24,10 @@ class _PasswordFieldState extends State<PasswordField> {
 
   @override
   Widget build(BuildContext context) {
+    final iconColor =
+        Theme.of(context).inputDecorationTheme.hintStyle?.color ??
+            Theme.of(context).iconTheme.color;
+
     return CustomTextField(
       controller: widget.controller,
       label: widget.label,
@@ -36,11 +40,11 @@ class _PasswordFieldState extends State<PasswordField> {
             if (v.length < 6) return 'Minimum 6 characters';
             return null;
           },
-      prefixIcon: Icon(Icons.lock_outline, color: Colors.grey.shade600),
+      prefixIcon: Icon(Icons.lock_outline, color: iconColor),
       suffixIcon: IconButton(
         icon: Icon(
           _obscure ? Icons.visibility_off_outlined : Icons.visibility_outlined,
-          color: Colors.grey.shade600,
+          color: iconColor,
         ),
         onPressed: () => setState(() => _obscure = !_obscure),
       ),

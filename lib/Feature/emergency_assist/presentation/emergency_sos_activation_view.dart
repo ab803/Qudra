@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../viewmodel/emergency_sos_activation_viewmodel.dart';
 import '../widgets/emergency_sos_countdown_circle.dart';
 
@@ -25,9 +24,7 @@ class _EmergencySosActivationViewState
   @override
   void initState() {
     super.initState();
-
     widget.viewModel.addListener(_viewModelListener);
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.viewModel.startCountdown();
     });
@@ -39,10 +36,8 @@ class _EmergencySosActivationViewState
     if (!widget.viewModel.isCompleted) return;
 
     _hasHandledCompletion = true;
-
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!mounted) return;
-
       if (widget.onCompleted != null) {
         await widget.onCompleted!();
       }
@@ -63,25 +58,19 @@ class _EmergencySosActivationViewState
       child: AnimatedBuilder(
         animation: widget.viewModel,
         builder: (context, _) {
+          final theme = Theme.of(context);
+          final colorScheme = theme.colorScheme;
           final vm = widget.viewModel;
 
           return Scaffold(
-            backgroundColor: const Color(0xFFF6F7F9),
             appBar: AppBar(
-              backgroundColor: const Color(0xFFF6F7F9),
-              elevation: 0,
-              surfaceTintColor: const Color(0xFFF6F7F9),
               centerTitle: true,
-              title: const Text(
+              title: Text(
                 'تفعيل الاستغاثة',
-                style: TextStyle(
-                  color: Color(0xFF111827),
+                style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w800,
                   fontSize: 22,
                 ),
-              ),
-              iconTheme: const IconThemeData(
-                color: Color(0xFF111827),
               ),
             ),
             body: SafeArea(
@@ -93,17 +82,19 @@ class _EmergencySosActivationViewState
                       width: double.infinity,
                       padding: const EdgeInsets.all(18),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFFF7ED),
+                        color: colorScheme.error.withOpacity(
+                          theme.brightness == Brightness.dark ? 0.14 : 0.08,
+                        ),
                         borderRadius: BorderRadius.circular(22),
                         border: Border.all(
-                          color: const Color(0xFFF59E0B).withOpacity(0.28),
+                          color: colorScheme.error.withOpacity(0.22),
                         ),
                       ),
-                      child: const Text(
+                      child: Text(
                         'سيتم تفعيل حالة الطوارئ تلقائيًا بعد انتهاء العد التنازلي.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Color(0xFF92400E),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: colorScheme.error,
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                           height: 1.5,
@@ -111,41 +102,35 @@ class _EmergencySosActivationViewState
                       ),
                     ),
                     const Spacer(),
-
                     EmergencySosCountdownCircle(
                       progress: vm.progress,
                       label: vm.countdownLabel,
                     ),
-
                     const SizedBox(height: 26),
-
                     Text(
                       vm.isCompleted
                           ? 'تم تفعيل حالة الطوارئ'
                           : 'سيتم التفعيل خلال ${vm.countdownNumber} ثوانٍ',
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Color(0xFF111827),
+                      style: theme.textTheme.headlineSmall?.copyWith(
+                        color: colorScheme.onSurface,
                         fontSize: 24,
                         fontWeight: FontWeight.w900,
                         height: 1.3,
                       ),
                     ),
                     const SizedBox(height: 12),
-
-                    const Text(
+                    Text(
                       'يمكنك الإلغاء الآن إذا تم الضغط بالخطأ.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Color(0xFF6B7280),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurface.withOpacity(0.68),
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                         height: 1.5,
                       ),
                     ),
-
                     const Spacer(),
-
                     SizedBox(
                       width: double.infinity,
                       height: 56,
@@ -157,8 +142,7 @@ class _EmergencySosActivationViewState
                           Navigator.of(context).pop();
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF5B5E66),
-                          foregroundColor: Colors.white,
+                          foregroundColor: colorScheme.onPrimary,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),

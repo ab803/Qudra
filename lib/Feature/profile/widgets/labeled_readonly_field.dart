@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qudra_0/core/Styles/AppColors.dart';
 import 'package:qudra_0/core/Styles/AppTextsyles.dart';
 
 class LabeledReadonlyField extends StatelessWidget {
@@ -20,13 +19,15 @@ class LabeledReadonlyField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
           style: AppTextStyles.body.copyWith(
-            color: Appcolors.primaryColor,
+            color: theme.textTheme.titleMedium?.color,
             fontWeight: FontWeight.w700,
             fontSize: 13,
           ),
@@ -35,27 +36,35 @@ class LabeledReadonlyField extends StatelessWidget {
         Container(
           height: 48,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade200),
+            border: Border.all(color: theme.dividerColor),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
             children: [
-              Icon(prefixIcon, color: Appcolors.secondaryColor, size: 20),
+              Icon(
+                prefixIcon,
+                color: theme.textTheme.bodyMedium?.color,
+                size: 20,
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   hint,
                   overflow: TextOverflow.ellipsis,
                   style: AppTextStyles.body.copyWith(
-                    color: Appcolors.primaryColor,
+                    color: theme.textTheme.bodyLarge?.color,
                     fontSize: 13.5,
                   ),
                 ),
               ),
               if (trailingIcon != null)
-                Icon(trailingIcon, color: Appcolors.secondaryColor, size: 20),
+                Icon(
+                  trailingIcon,
+                  color: theme.textTheme.bodyMedium?.color,
+                  size: 20,
+                ),
             ],
           ),
         ),

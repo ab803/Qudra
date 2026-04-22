@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:qudra_0/core/Styles/AppTextsyles.dart';
 
 class SplashTagline extends StatelessWidget {
-
   final Animation<Offset> slide;
   final Animation<double> opacity;
 
@@ -20,7 +19,9 @@ class SplashTagline extends StatelessWidget {
         opacity: opacity,
         child: Text(
           "معاك علشان تكتشف قدراتك",
-          style: AppTextStyles.slogan,
+          style: AppTextStyles.slogan.copyWith(
+            color: Theme.of(context).textTheme.bodyMedium?.color,
+          ),
           textAlign: TextAlign.center,
         ),
       ),

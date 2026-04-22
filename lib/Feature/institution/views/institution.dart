@@ -12,7 +12,6 @@ import 'package:qudra_0/Feature/institution/widgets/institution_filter_bar.dart'
 import 'package:qudra_0/Feature/institution/widgets/institution_results_summary.dart';
 import 'package:qudra_0/Feature/institution/widgets/institution_search_bar.dart';
 import 'package:qudra_0/Feature/institution/widgets/institution_sticky_filter_delegate.dart';
-import 'package:qudra_0/core/Styles/AppColors.dart';
 
 class InstitutionView extends StatefulWidget {
   final String initialQuery;
@@ -41,7 +40,6 @@ class _InstitutionViewState extends State<InstitutionView> {
       List<InstitutionModel> institutions,
       ) {
     final query = _searchController.text.trim().toLowerCase();
-
     if (query.isEmpty) {
       return institutions;
     }
@@ -78,7 +76,6 @@ class _InstitutionViewState extends State<InstitutionView> {
       Map<String, List<String>> supportedDisabilitiesByInstitution,
       ) {
     final mappedFilter = _mapChipToDisabilityValue(_selectedDisabilityFilter);
-
     if (mappedFilter == 'All') {
       return institutions;
     }
@@ -86,7 +83,6 @@ class _InstitutionViewState extends State<InstitutionView> {
     return institutions.where((institution) {
       final supportedDisabilities =
           supportedDisabilitiesByInstitution[institution.id] ?? const [];
-
       return supportedDisabilities.any(
             (item) => item.toLowerCase() == mappedFilter.toLowerCase(),
       );
@@ -99,7 +95,6 @@ class _InstitutionViewState extends State<InstitutionView> {
       Map<String, List<String>> supportedDisabilitiesByInstitution,
       ) {
     final searchFilteredInstitutions = _applySearchFilter(institutions);
-
     return _applyDisabilityFilter(
       searchFilteredInstitutions,
       supportedDisabilitiesByInstitution,
@@ -128,8 +123,10 @@ class _InstitutionViewState extends State<InstitutionView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Appcolors.backgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
@@ -159,7 +156,7 @@ class _InstitutionViewState extends State<InstitutionView> {
               pinned: true,
               delegate: InstitutionStickyFilterDelegate(
                 child: Container(
-                  color: const Color(0xFFF7F8FA),
+                  color: theme.scaffoldBackgroundColor,
                   alignment: Alignment.centerLeft,
                   padding: const EdgeInsets.fromLTRB(0, 4, 0, 14),
                   child: InstitutionFilterBar(
@@ -188,7 +185,6 @@ class _InstitutionViewState extends State<InstitutionView> {
                       selectedFilter: _selectedDisabilityFilter,
                     );
                   }
-
                   return const SizedBox.shrink();
                 },
               ),
@@ -203,7 +199,12 @@ class _InstitutionViewState extends State<InstitutionView> {
 
                 if (state is InstitutionError) {
                   return SliverFillRemaining(
-                    child: Center(child: Text(state.errorMessage)),
+                    child: Center(
+                      child: Text(
+                        state.errorMessage,
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    ),
                   );
                 }
 

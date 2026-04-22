@@ -6,9 +6,12 @@ class InstitutionTitleSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Text(
+    return Text(
       'Support Centers',
-      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+      ),
     );
   }
 }

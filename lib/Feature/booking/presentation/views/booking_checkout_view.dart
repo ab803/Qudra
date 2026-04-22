@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import '../../../institution/models/institution_model.dart';
 import '../../../institution/models/service_model.dart';
 import '../widgets/booking_date_time_section.dart';
@@ -24,7 +23,6 @@ class BookingCheckoutView extends StatefulWidget {
 
 class _BookingCheckoutViewState extends State<BookingCheckoutView> {
   final TextEditingController _notesController = TextEditingController();
-
   DateTime? _selectedDate;
   String? _selectedTime;
 
@@ -38,16 +36,13 @@ class _BookingCheckoutViewState extends State<BookingCheckoutView> {
   Future<void> _pickDate() async {
     final now = DateTime.now();
     final initialDate = _selectedDate ?? now;
-
     final result = await showDatePicker(
       context: context,
       initialDate: initialDate,
       firstDate: now,
       lastDate: now.add(const Duration(days: 180)),
     );
-
     if (result == null) return;
-
     setState(() {
       _selectedDate = result;
     });
@@ -59,12 +54,9 @@ class _BookingCheckoutViewState extends State<BookingCheckoutView> {
       context: context,
       initialTime: TimeOfDay.now(),
     );
-
     if (result == null) return;
-
     final formatted =
         '${result.hour.toString().padLeft(2, '0')}:${result.minute.toString().padLeft(2, '0')}';
-
     setState(() {
       _selectedTime = formatted;
     });
@@ -95,16 +87,11 @@ class _BookingCheckoutViewState extends State<BookingCheckoutView> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FA),
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          'Book Service',
-          style: TextStyle(color: Colors.black),
-        ),
-        iconTheme: const IconThemeData(color: Colors.black),
+        title: const Text('Book Service'),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -144,15 +131,13 @@ class _BookingCheckoutViewState extends State<BookingCheckoutView> {
                 child: ElevatedButton(
                   onPressed: _continueToPaymentMethods,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18),
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Continue to Payment',
-                    style: TextStyle(
+                    style: theme.textTheme.labelLarge?.copyWith(
                       fontWeight: FontWeight.w800,
                       fontSize: 17,
                     ),

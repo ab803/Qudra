@@ -12,23 +12,26 @@ Future<ReminderModel?> openAddBottomSheet(BuildContext context) async {
     context: context,
     useRootNavigator: true,
     isScrollControlled: true,
-    backgroundColor: Colors.white,
+    backgroundColor:
+    Theme.of(context).bottomSheetTheme.backgroundColor ??
+        Theme.of(context).scaffoldBackgroundColor,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
     ),
     builder: (ctx) {
       return StatefulBuilder(
         builder: (ctx, setState) {
+          final theme = Theme.of(ctx);
+          final colorScheme = theme.colorScheme;
+
           Future<void> pickTime() async {
             final picked = await showTimePicker(
               context: ctx,
               initialTime: TimeOfDay.now(),
             );
-
             if (picked != null) {
               final hh = picked.hour.toString().padLeft(2, '0');
               final mm = picked.minute.toString().padLeft(2, '0');
-
               setState(() {
                 timeText = '$hh:$mm';
                 timeError = null;
@@ -52,12 +55,12 @@ Future<ReminderModel?> openAddBottomSheet(BuildContext context) async {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Add Reminder',
-                      style: TextStyle(
+                      style: theme.textTheme.titleMedium?.copyWith(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
-                        color: Colors.black87,
+                        color: colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -98,8 +101,8 @@ Future<ReminderModel?> openAddBottomSheet(BuildContext context) async {
                       const SizedBox(height: 8),
                       Text(
                         timeError!,
-                        style: const TextStyle(
-                          color: Colors.red,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: colorScheme.error,
                           fontSize: 12.5,
                           fontWeight: FontWeight.w600,
                         ),
@@ -111,10 +114,8 @@ Future<ReminderModel?> openAddBottomSheet(BuildContext context) async {
                       height: 48,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green,
-                          foregroundColor: Colors.white,
-                          disabledBackgroundColor: Colors.green,
-                          disabledForegroundColor: Colors.white,
+                          disabledBackgroundColor: colorScheme.primary,
+                          disabledForegroundColor: colorScheme.onPrimary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),

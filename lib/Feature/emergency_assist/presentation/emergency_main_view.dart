@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../viewmodel/emergency_main_viewmodel.dart';
 import '../widgets/emergency_circle_section.dart';
 import '../widgets/emergency_direct_services_row.dart';
@@ -34,7 +33,6 @@ class _EmergencyMainViewState extends State<EmergencyMainView> {
 
   void _showSnackBar(String message) {
     if (!mounted) return;
-
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -49,19 +47,16 @@ class _EmergencyMainViewState extends State<EmergencyMainView> {
       child: AnimatedBuilder(
         animation: widget.viewModel,
         builder: (context, _) {
+          final theme = Theme.of(context);
+          final colorScheme = theme.colorScheme;
           final vm = widget.viewModel;
 
           return Scaffold(
-            backgroundColor: const Color(0xFFF6F7F9),
             appBar: AppBar(
-              backgroundColor: const Color(0xFFF6F7F9),
-              elevation: 0,
-              surfaceTintColor: const Color(0xFFF6F7F9),
               centerTitle: true,
-              title: const Text(
+              title: Text(
                 'المساعدة في الطوارئ',
-                style: TextStyle(
-                  color: Color(0xFF111827),
+                style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w800,
                   fontSize: 22,
                 ),
@@ -77,27 +72,26 @@ class _EmergencyMainViewState extends State<EmergencyMainView> {
                       );
                     }
                   },
-                  icon: const Icon(
-                    Icons.settings_outlined,
-                    color: Color(0xFF111827),
-                  ),
+                  icon: const Icon(Icons.settings_outlined),
                 ),
               ],
             ),
             body: SafeArea(
               child: vm.isLoading
-                  ? const Center(child: CircularProgressIndicator())
+                  ? Center(
+                child: CircularProgressIndicator(
+                  color: colorScheme.primary,
+                ),
+              )
                   : ListView(
                 padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
                 children: [
                   EmergencyLocationStatusCard(
-                    isLocationServiceEnabled:
-                    vm.isLocationServiceEnabled,
+                    isLocationServiceEnabled: vm.isLocationServiceEnabled,
                     isLocationPermissionGranted:
                     vm.isLocationPermissionGranted,
                   ),
                   const SizedBox(height: 24),
-
                   Center(
                     child: EmergencySosButton(
                       onLongPress: () {
@@ -112,7 +106,6 @@ class _EmergencyMainViewState extends State<EmergencyMainView> {
                     ),
                   ),
                   const SizedBox(height: 28),
-
                   EmergencyDirectServicesRow(
                     onPolicePressed: () async {
                       await vm.callPolice();
@@ -125,14 +118,12 @@ class _EmergencyMainViewState extends State<EmergencyMainView> {
                     },
                   ),
                   const SizedBox(height: 28),
-
                   EmergencyQuickNeedsWrap(
                     quickNeeds: vm.quickNeeds,
                     selectedQuickNeeds: vm.selectedQuickNeeds,
                     onToggle: vm.toggleQuickNeed,
                   ),
                   const SizedBox(height: 28),
-
                   EmergencyCircleSection(
                     contacts: vm.contacts,
                     onAddContactsPressed: () async {

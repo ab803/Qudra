@@ -19,21 +19,25 @@ class BookingPaymentMethodTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(22),
           border: Border.all(
-            color: selected ? Colors.black : Colors.black12,
+            color: selected ? colorScheme.primary : theme.dividerColor,
             width: selected ? 1.4 : 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: theme.shadowColor.withOpacity(isDark ? 0.22 : 0.06),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -46,10 +50,10 @@ class BookingPaymentMethodTile extends StatelessWidget {
               width: 46,
               height: 46,
               decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.05),
+                color: colorScheme.onSurface.withOpacity(isDark ? 0.08 : 0.05),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, color: Colors.black),
+              child: Icon(icon, color: colorScheme.onSurface),
             ),
             const SizedBox(width: 14),
 
@@ -60,17 +64,15 @@ class BookingPaymentMethodTile extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
+                    style: theme.textTheme.titleMedium?.copyWith(
                       fontSize: 18,
                       fontWeight: FontWeight.w800,
-                      color: Colors.black,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      color: Colors.grey.shade700,
+                    style: theme.textTheme.bodyMedium?.copyWith(
                       height: 1.4,
                     ),
                   ),
@@ -85,13 +87,13 @@ class BookingPaymentMethodTile extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: selected ? Colors.black : Colors.black26,
+                  color: selected ? colorScheme.primary : theme.dividerColor,
                   width: 2,
                 ),
-                color: selected ? Colors.black : Colors.white,
+                color: selected ? colorScheme.primary : theme.cardColor,
               ),
               child: selected
-                  ? const Icon(Icons.circle, size: 9, color: Colors.white)
+                  ? Icon(Icons.circle, size: 9, color: colorScheme.onPrimary)
                   : null,
             ),
           ],

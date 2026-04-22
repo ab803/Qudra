@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import '../../../../core/Styles/AppColors.dart';
 import '../widgets/Category_section.dart';
 import '../widgets/QuickSection.dart';
 import '../widgets/Recommended_section.dart';
 import '../widgets/custom_searchBar.dart';
 import '../widgets/home_header.dart';
-
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
@@ -13,7 +11,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Appcolors.backgroundColor, // Use background color
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Use background color
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -34,7 +32,6 @@ class HomeView extends StatelessWidget {
           ),
         ),
       ),
-
     );
   }
 }

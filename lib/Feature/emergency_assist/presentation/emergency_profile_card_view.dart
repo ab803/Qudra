@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../models/emergency_contact_model.dart';
 import '../viewmodel/emergency_profile_card_viewmodel.dart';
 
@@ -34,16 +33,19 @@ class _EmergencyProfileCardViewState
   Widget _buildSectionCard({
     required String title,
     required Widget child,
-    Color backgroundColor = Colors.white,
+    Color? backgroundColor,
   }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: backgroundColor,
+        color: backgroundColor ?? theme.cardColor,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: const Color(0xFFE5E7EB),
+          color: theme.dividerColor,
         ),
       ),
       child: Column(
@@ -51,8 +53,8 @@ class _EmergencyProfileCardViewState
         children: <Widget>[
           Text(
             title,
-            style: const TextStyle(
-              color: Color(0xFF111827),
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: colorScheme.onSurface,
               fontSize: 18,
               fontWeight: FontWeight.w800,
             ),
@@ -68,6 +70,9 @@ class _EmergencyProfileCardViewState
     required String label,
     required String value,
   }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
@@ -75,8 +80,8 @@ class _EmergencyProfileCardViewState
         children: <Widget>[
           Text(
             '$label: ',
-            style: const TextStyle(
-              color: Color(0xFF111827),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurface,
               fontSize: 15,
               fontWeight: FontWeight.w800,
             ),
@@ -84,8 +89,8 @@ class _EmergencyProfileCardViewState
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
-                color: Color(0xFF4B5563),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurface.withOpacity(0.72),
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
                 height: 1.5,
@@ -101,14 +106,17 @@ class _EmergencyProfileCardViewState
       EmergencyContactModel contact,
       EmergencyProfileCardViewModel vm,
       ) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9FAFB),
+        color: theme.scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: const Color(0xFFE5E7EB),
+          color: theme.dividerColor,
         ),
       ),
       child: Row(
@@ -117,12 +125,14 @@ class _EmergencyProfileCardViewState
             width: 46,
             height: 46,
             decoration: BoxDecoration(
-              color: const Color(0xFFF3F4F6),
+              color: colorScheme.onSurface.withOpacity(
+                theme.brightness == Brightness.dark ? 0.10 : 0.05,
+              ),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.person_outline_rounded,
-              color: Color(0xFF6B7280),
+              color: colorScheme.onSurface.withOpacity(0.58),
             ),
           ),
           const SizedBox(width: 12),
@@ -135,8 +145,8 @@ class _EmergencyProfileCardViewState
                     Flexible(
                       child: Text(
                         contact.name,
-                        style: const TextStyle(
-                          color: Color(0xFF111827),
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: colorScheme.onSurface,
                           fontSize: 16,
                           fontWeight: FontWeight.w800,
                         ),
@@ -150,13 +160,15 @@ class _EmergencyProfileCardViewState
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFEAF2FF),
+                          color: colorScheme.primary.withOpacity(
+                            theme.brightness == Brightness.dark ? 0.16 : 0.10,
+                          ),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Text(
+                        child: Text(
                           'أساسي',
-                          style: TextStyle(
-                            color: Color(0xFF0D6EFD),
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colorScheme.primary,
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
                           ),
@@ -168,8 +180,8 @@ class _EmergencyProfileCardViewState
                 const SizedBox(height: 4),
                 Text(
                   contact.relation,
-                  style: const TextStyle(
-                    color: Color(0xFF6B7280),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurface.withOpacity(0.68),
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                   ),
@@ -177,8 +189,8 @@ class _EmergencyProfileCardViewState
                 const SizedBox(height: 4),
                 Text(
                   contact.phoneNumber,
-                  style: const TextStyle(
-                    color: Color(0xFF4B5563),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurface.withOpacity(0.82),
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
@@ -190,9 +202,9 @@ class _EmergencyProfileCardViewState
             onPressed: () async {
               await vm.callContact(contact.phoneNumber);
             },
-            icon: const Icon(
+            icon: Icon(
               Icons.call_rounded,
-              color: Color(0xFF0D6EFD),
+              color: colorScheme.primary,
             ),
           ),
         ],
@@ -201,15 +213,17 @@ class _EmergencyProfileCardViewState
   }
 
   Widget _buildProfileSummary(EmergencyProfileCardViewModel vm) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final profile = vm.profile;
 
     if (profile == null) {
       return _buildSectionCard(
         title: 'الملف الشخصي',
-        child: const Text(
+        child: Text(
           'لا توجد بيانات ملف شخصي متاحة.',
-          style: TextStyle(
-            color: Color(0xFF6B7280),
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurface.withOpacity(0.68),
             fontSize: 15,
             fontWeight: FontWeight.w600,
           ),
@@ -244,6 +258,8 @@ class _EmergencyProfileCardViewState
   }
 
   Widget _buildMedicalInfo(EmergencyProfileCardViewModel vm) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     final profile = vm.profile;
 
     final String medicalNotes =
@@ -261,10 +277,10 @@ class _EmergencyProfileCardViewState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const Text(
+          Text(
             'ملاحظات طبية هامة',
-            style: TextStyle(
-              color: Color(0xFF111827),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurface,
               fontSize: 15,
               fontWeight: FontWeight.w800,
             ),
@@ -272,18 +288,18 @@ class _EmergencyProfileCardViewState
           const SizedBox(height: 6),
           Text(
             medicalNotes,
-            style: const TextStyle(
-              color: Color(0xFF4B5563),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurface.withOpacity(0.72),
               fontSize: 15,
               fontWeight: FontWeight.w600,
               height: 1.6,
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'الحساسية والأدوية',
-            style: TextStyle(
-              color: Color(0xFF111827),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurface,
               fontSize: 15,
               fontWeight: FontWeight.w800,
             ),
@@ -291,8 +307,8 @@ class _EmergencyProfileCardViewState
           const SizedBox(height: 6),
           Text(
             allergies,
-            style: const TextStyle(
-              color: Color(0xFF4B5563),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurface.withOpacity(0.72),
               fontSize: 15,
               fontWeight: FontWeight.w600,
               height: 1.6,
@@ -304,13 +320,16 @@ class _EmergencyProfileCardViewState
   }
 
   Widget _buildContactsSection(EmergencyProfileCardViewModel vm) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return _buildSectionCard(
       title: 'جهات اتصال الطوارئ',
       child: vm.contacts.isEmpty
-          ? const Text(
+          ? Text(
         'لا توجد جهات اتصال للطوارئ حتى الآن.',
-        style: TextStyle(
-          color: Color(0xFF6B7280),
+        style: theme.textTheme.bodyMedium?.copyWith(
+          color: colorScheme.onSurface.withOpacity(0.68),
           fontSize: 15,
           fontWeight: FontWeight.w600,
         ),
@@ -327,14 +346,17 @@ class _EmergencyProfileCardViewState
   }
 
   Widget _buildLocationSection(EmergencyProfileCardViewModel vm) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return _buildSectionCard(
       title: 'الموقع الحالي',
       child: Text(
         vm.isLocationAvailable
             ? (vm.currentLocationUrl ?? 'الموقع غير متاح حاليًا.')
             : 'الموقع غير متاح حاليًا.',
-        style: const TextStyle(
-          color: Color(0xFF4B5563),
+        style: theme.textTheme.bodyMedium?.copyWith(
+          color: colorScheme.onSurface.withOpacity(0.72),
           fontSize: 15,
           fontWeight: FontWeight.w600,
           height: 1.6,
@@ -344,31 +366,30 @@ class _EmergencyProfileCardViewState
   }
 
   Widget _buildHeader(EmergencyProfileCardViewModel vm) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: <Color>[
-            Color(0xFF111827),
-            Color(0xFF374151),
-          ],
-        ),
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(26),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Column(
         children: <Widget>[
-          const Icon(
+          Icon(
             Icons.badge_outlined,
             size: 34,
-            color: Colors.white,
+            color: colorScheme.primary,
           ),
           const SizedBox(height: 10),
           Text(
             vm.profile?.fullName ?? 'بطاقة الطوارئ',
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              color: colorScheme.onSurface,
               fontSize: 22,
               fontWeight: FontWeight.w900,
             ),
@@ -377,8 +398,8 @@ class _EmergencyProfileCardViewState
           Text(
             vm.communicationMethodLabel,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.white70,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: colorScheme.onSurface.withOpacity(0.68),
               fontSize: 14,
               fontWeight: FontWeight.w700,
             ),
@@ -397,8 +418,6 @@ class _EmergencyProfileCardViewState
           await vm.shareCard();
         },
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF0D6EFD),
-          foregroundColor: Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -423,31 +442,27 @@ class _EmergencyProfileCardViewState
       child: AnimatedBuilder(
         animation: widget.viewModel,
         builder: (BuildContext context, _) {
+          final theme = Theme.of(context);
+          final colorScheme = theme.colorScheme;
           final vm = widget.viewModel;
 
           return Scaffold(
-            backgroundColor: const Color(0xFFF6F7F9),
             appBar: AppBar(
-              backgroundColor: const Color(0xFFF6F7F9),
-              elevation: 0,
-              surfaceTintColor: const Color(0xFFF6F7F9),
               centerTitle: true,
-              title: const Text(
+              title: Text(
                 'بطاقة الطوارئ',
-                style: TextStyle(
-                  color: Color(0xFF111827),
+                style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w800,
                   fontSize: 22,
                 ),
               ),
-              iconTheme: const IconThemeData(
-                color: Color(0xFF111827),
-              ),
             ),
             body: SafeArea(
               child: vm.isLoading
-                  ? const Center(
-                child: CircularProgressIndicator(),
+                  ? Center(
+                child: CircularProgressIndicator(
+                  color: colorScheme.primary,
+                ),
               )
                   : vm.errorMessage != null
                   ? Center(
@@ -456,8 +471,8 @@ class _EmergencyProfileCardViewState
                   child: Text(
                     vm.errorMessage!,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.red,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: colorScheme.error,
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                     ),

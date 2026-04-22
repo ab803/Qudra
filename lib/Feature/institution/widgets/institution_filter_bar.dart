@@ -22,7 +22,7 @@ class InstitutionFilterBar extends StatelessWidget {
       child: Row(
         children: List.generate(filterLabels.length, (index) {
           final label = filterLabels[index];
-          final visualData = _getChipVisualData(label);
+          final visualData = _getChipVisualData(label, context);
 
           return Padding(
             padding: EdgeInsets.only(
@@ -42,7 +42,7 @@ class InstitutionFilterBar extends StatelessWidget {
   }
 
   // This method returns the visual style config for each filter chip.
-  _ChipVisualData _getChipVisualData(String chipLabel) {
+  _ChipVisualData _getChipVisualData(String chipLabel, BuildContext context) {
     switch (chipLabel) {
       case 'Mobility':
         return const _ChipVisualData(
@@ -60,9 +60,9 @@ class InstitutionFilterBar extends StatelessWidget {
           accentColor: Appcolors.cardTeal,
         );
       default:
-        return const _ChipVisualData(
+        return _ChipVisualData(
           icon: Icons.dashboard_customize_rounded,
-          accentColor: Colors.black87,
+          accentColor: Theme.of(context).colorScheme.onSurface,
         );
     }
   }
@@ -86,9 +86,12 @@ class _InstitutionFilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColor = isSelected ? Colors.black : Colors.white;
-    final textColor = isSelected ? Colors.white : Colors.black87;
-    final iconColor = isSelected ? Colors.white : accentColor;
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+    final backgroundColor = isSelected ? colorScheme.onSurface : theme.cardColor;
+    final textColor = isSelected ? colorScheme.surface : colorScheme.onSurface;
+    final iconColor = isSelected ? colorScheme.surface : accentColor;
 
     return Material(
       color: Colors.transparent,
@@ -107,14 +110,14 @@ class _InstitutionFilterChip extends StatelessWidget {
             color: backgroundColor,
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: isSelected
-                  ? Colors.black
-                  : Colors.black.withOpacity(0.05),
+              color: isSelected ? colorScheme.onSurface : theme.dividerColor,
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(
-                  isSelected ? 0.10 : 0.04,
+                color: theme.shadowColor.withOpacity(
+                  isSelected
+                      ? (isDark ? 0.30 : 0.10)
+                      : (isDark ? 0.18 : 0.05),
                 ),
                 blurRadius: isSelected ? 14 : 10,
                 offset: const Offset(0, 4),

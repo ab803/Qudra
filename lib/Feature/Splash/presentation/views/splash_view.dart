@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:qudra_0/core/Styles/AppColors.dart';
 import '../widgets/Loader.dart';
 import '../widgets/SplashLogo.dart';
 import '../widgets/Tagline.dart';
@@ -15,24 +13,15 @@ class SplashView extends StatefulWidget {
 
 class _SplashViewState extends State<SplashView>
     with TickerProviderStateMixin {
-
   // Controller that manages animations and navigation
   late SplashController controller;
 
   @override
-
   void initState() {
     super.initState();
-
     controller = SplashController(vsync: this, context: context);
     controller.init();
-
-    Future.delayed(const Duration(seconds: 3), () {
-      context.go('/login');
-    });
   }
-
-
 
   @override
   void dispose() {
@@ -43,43 +32,38 @@ class _SplashViewState extends State<SplashView>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       body: Container(
         width: double.infinity,
-
         // Background gradient (currently same color repeated)
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Appcolors.backgroundColor,
-              Appcolors.backgroundColor,
-              Appcolors.backgroundColor,
+              theme.scaffoldBackgroundColor,
+              theme.cardColor,
+              theme.scaffoldBackgroundColor,
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
         ),
-
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
             // Animated logo
             SplashLogo(
               scale: controller.logoScale,
               opacity: controller.logoOpacity,
             ),
-
             const SizedBox(height: 40),
-
             // Animated tagline text
             SplashTagline(
               slide: controller.textSlide,
               opacity: controller.textOpacity,
             ),
-
             const SizedBox(height: 50),
-
             // Animated loading dots
             SplashLoader(controller: controller.dotsController),
           ],

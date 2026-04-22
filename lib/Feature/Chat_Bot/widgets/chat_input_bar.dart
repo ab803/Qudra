@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qudra_0/core/Styles/AppColors.dart';
 
 class ChatInputBar extends StatelessWidget {
   final TextEditingController controller;
@@ -13,8 +12,13 @@ class ChatInputBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final onSurface = theme.colorScheme.onSurface;
+    final primary = theme.colorScheme.primary;
+    final onPrimary = theme.colorScheme.onPrimary;
+
     return Container(
-      color: Colors.white,
+      color: theme.scaffoldBackgroundColor,
       padding: const EdgeInsets.fromLTRB(16, 8, 12, 16),
       child: Row(
         children: [
@@ -26,11 +30,11 @@ class ChatInputBar extends StatelessWidget {
               textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(
                 hintText: 'Type a message...',
-                hintStyle: TextStyle(color: Colors.grey.shade500),
-                contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 12),
+                hintStyle: TextStyle(color: onSurface.withOpacity(0.5)),
+                contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 filled: true,
-                fillColor: const Color(0xFFF4F5F7),
+                fillColor: theme.cardColor,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(24),
                   borderSide: BorderSide.none,
@@ -46,12 +50,15 @@ class ChatInputBar extends StatelessWidget {
             child: Container(
               width: 46,
               height: 46,
-              decoration: const BoxDecoration(
-                color: Appcolors.primaryColor,
+              decoration: BoxDecoration(
+                color: primary,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.send_rounded,
-                  color: Colors.white, size: 20),
+              child: Icon(
+                Icons.send_rounded,
+                color: onPrimary,
+                size: 20,
+              ),
             ),
           ),
         ],

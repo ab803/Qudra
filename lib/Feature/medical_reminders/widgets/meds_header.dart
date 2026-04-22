@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:qudra_0/core/Styles/AppTextsyles.dart';
-import 'package:qudra_0/core/Styles/AppColors.dart';
 
 class MedsHeader extends StatelessWidget {
   const MedsHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -16,10 +16,11 @@ class MedsHeader extends StatelessWidget {
           children: [
             Text(
               'Medical Reminders',
-              style: AppTextStyles.title.copyWith(
+              style: theme.textTheme.titleLarge?.copyWith(
                 fontSize: 28,
-                color: Appcolors.primaryColor,
+                color: theme.colorScheme.primary,
                 height: 1.05,
+                fontWeight: FontWeight.w800,
               ),
             ),
           ],

@@ -7,12 +7,14 @@ class DisabilityProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: theme.dividerColor),
       ),
       child: Column(
         children: [
@@ -22,11 +24,14 @@ class DisabilityProfileCard extends StatelessWidget {
                 width: 30,
                 height: 30,
                 decoration: BoxDecoration(
-                  color: Appcolors.backgroundColor,
+                  color: theme.scaffoldBackgroundColor,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.accessibility_new_rounded,
-                    size: 18, color: Appcolors.primaryColor),
+                child: Icon(
+                  Icons.accessibility_new_rounded,
+                  size: 18,
+                  color: theme.colorScheme.primary,
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -34,7 +39,7 @@ class DisabilityProfileCard extends StatelessWidget {
                   'Disability Profile',
                   style: AppTextStyles.subtitle.copyWith(
                     fontWeight: FontWeight.w800,
-                    color: Appcolors.primaryColor,
+                    color: theme.textTheme.titleMedium?.color,
                   ),
                 ),
               ),
@@ -53,7 +58,7 @@ class DisabilityProfileCard extends StatelessWidget {
             child: Text(
               'This information helps us tailor accessibility features specifically for you.',
               style: AppTextStyles.body.copyWith(
-                color: Appcolors.secondaryColor,
+                color: theme.textTheme.bodyMedium?.color,
                 fontSize: 12.5,
                 height: 1.25,
               ),
@@ -64,9 +69,9 @@ class DisabilityProfileCard extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Appcolors.backgroundColor,
+              color: theme.scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.shade200),
+              border: Border.all(color: theme.dividerColor),
             ),
             child: Row(
               children: [
@@ -74,12 +79,15 @@ class DisabilityProfileCard extends StatelessWidget {
                   width: 34,
                   height: 34,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: theme.cardColor,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.grey.shade200),
+                    border: Border.all(color: theme.dividerColor),
                   ),
-                  child: const Icon(Icons.visibility_outlined,
-                      color: Appcolors.primaryColor, size: 18),
+                  child: Icon(
+                    Icons.visibility_outlined,
+                    color: theme.colorScheme.primary,
+                    size: 18,
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
@@ -89,7 +97,7 @@ class DisabilityProfileCard extends StatelessWidget {
                       Text(
                         'Visual Impairment',
                         style: AppTextStyles.body.copyWith(
-                          color: Appcolors.primaryColor,
+                          color: theme.textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w800,
                           height: 1.0,
                         ),
@@ -98,7 +106,7 @@ class DisabilityProfileCard extends StatelessWidget {
                       Text(
                         'Low vision mode active',
                         style: AppTextStyles.body.copyWith(
-                          color: Appcolors.secondaryColor,
+                          color: theme.textTheme.bodyMedium?.color,
                           fontSize: 12,
                           height: 1.0,
                         ),

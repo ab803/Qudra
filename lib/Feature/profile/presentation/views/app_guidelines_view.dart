@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/Styles/AppColors.dart';
 import '../../../../core/Styles/AppTextsyles.dart';
 import 'package:go_router/go_router.dart';
 
@@ -8,19 +7,27 @@ class AppGuidelinesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Appcolors.primaryColor),
+          icon: Icon(
+            Icons.arrow_back,
+            color: theme.appBarTheme.foregroundColor,
+          ),
           onPressed: () => context.go('/profile'),
         ),
         title: Text(
           'App Guidelines',
-          style: AppTextStyles.title.copyWith(fontSize: 18),
+          style: AppTextStyles.title.copyWith(
+            fontSize: 18,
+            color: theme.textTheme.titleLarge?.color,
+          ),
         ),
         centerTitle: true,
       ),
@@ -28,8 +35,8 @@ class AppGuidelinesView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Divider(
-              color: Appcolors.backgroundColor,
+            Divider(
+              color: theme.dividerColor,
               thickness: 1,
               height: 1,
             ),
@@ -43,6 +50,7 @@ class AppGuidelinesView extends StatelessWidget {
                     style: AppTextStyles.title.copyWith(
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
+                      color: theme.textTheme.titleLarge?.color,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -51,7 +59,7 @@ class AppGuidelinesView extends StatelessWidget {
                     style: AppTextStyles.body.copyWith(
                       fontSize: 15,
                       height: 1.5,
-                      color: const Color(0xFF6B7280),
+                      color: theme.textTheme.bodyMedium?.color,
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -59,18 +67,19 @@ class AppGuidelinesView extends StatelessWidget {
                   // Search Bar
                   Container(
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF3F4F6),
+                      color: theme.cardColor,
                       borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: theme.dividerColor),
                     ),
                     child: TextField(
                       decoration: InputDecoration(
                         hintText: 'Search for help...',
                         hintStyle: AppTextStyles.body.copyWith(
-                          color: const Color(0xFF9CA3AF),
+                          color: theme.inputDecorationTheme.hintStyle?.color,
                         ),
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.search,
-                          color: Color(0xFF9CA3AF),
+                          color: theme.inputDecorationTheme.hintStyle?.color,
                         ),
                         border: InputBorder.none,
                         contentPadding: const EdgeInsets.symmetric(
@@ -87,13 +96,13 @@ class AppGuidelinesView extends StatelessWidget {
                     scrollDirection: Axis.horizontal,
                     child: Row(
                       children: [
-                        _buildFilterChip('All Topics', true),
+                        _buildFilterChip(context, 'All Topics', true),
                         const SizedBox(width: 12),
-                        _buildFilterChip('Accessibility', false),
+                        _buildFilterChip(context, 'Accessibility', false),
                         const SizedBox(width: 12),
-                        _buildFilterChip('Chatbot', false),
+                        _buildFilterChip(context, 'Chatbot', false),
                         const SizedBox(width: 12),
-                        _buildFilterChip('Health', false),
+                        _buildFilterChip(context, 'Health', false),
                       ],
                     ),
                   ),
@@ -101,34 +110,35 @@ class AppGuidelinesView extends StatelessWidget {
 
                   // Guideline Cards
                   _buildGuidelineCard(
+                    context,
                     icon: Icons.smart_toy,
                     title: 'Using the AI Chatbot',
                     description:
-                        'Tap the message icon in the bottom menu. You can ask health-related questions or get help with app navigation.',
+                    'Tap the message icon in the bottom menu. You can ask health-related questions or get help with app navigation.',
                   ),
                   const SizedBox(height: 16),
-
                   _buildGuidelineCard(
+                    context,
                     icon: Icons.notifications_active,
                     title: 'Setting Medical Reminders',
                     description:
-                        'Go to the Health tab and select \'Medications\'. Tap the plus (+) icon to add a new schedule and set your notification preferences.',
+                    'Go to the Health tab and select \'Medications\'. Tap the plus (+) icon to add a new schedule and set your notification preferences.',
                   ),
                   const SizedBox(height: 16),
-
                   _buildGuidelineCard(
+                    context,
                     icon: Icons.visibility,
                     title: 'Visual Accessibility',
                     description:
-                        'Enable high-contrast mode or increase font size in Settings > Accessibility. Qudra supports screen readers across all screens.',
+                    'Enable high-contrast mode or increase font size in Settings > Accessibility. Qudra supports screen readers across all screens.',
                   ),
                   const SizedBox(height: 16),
-
                   _buildGuidelineCard(
+                    context,
                     icon: Icons.emergency,
                     title: 'SOS Features',
                     description:
-                        'Configure emergency contacts in your profile. You can trigger an alert by triple-tapping the power button while Qudra is open.',
+                    'Configure emergency contacts in your profile. You can trigger an alert by triple-tapping the power button while Qudra is open.',
                   ),
                   const SizedBox(height: 32),
 
@@ -137,14 +147,18 @@ class AppGuidelinesView extends StatelessWidget {
                     width: double.infinity,
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF3F4F6),
+                      color: theme.cardColor,
                       borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: theme.dividerColor),
                     ),
                     child: Column(
                       children: [
                         Text(
                           'Still need help?',
-                          style: AppTextStyles.title.copyWith(fontSize: 16),
+                          style: AppTextStyles.title.copyWith(
+                            fontSize: 16,
+                            color: theme.textTheme.titleLarge?.color,
+                          ),
                         ),
                         const SizedBox(height: 12),
                         Text(
@@ -153,7 +167,7 @@ class AppGuidelinesView extends StatelessWidget {
                           style: AppTextStyles.body.copyWith(
                             fontSize: 14,
                             height: 1.5,
-                            color: const Color(0xFF6B7280),
+                            color: theme.textTheme.bodyMedium?.color,
                           ),
                         ),
                         const SizedBox(height: 20),
@@ -162,8 +176,8 @@ class AppGuidelinesView extends StatelessWidget {
                           child: ElevatedButton(
                             onPressed: () {},
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black,
-                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              padding:
+                              const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -173,7 +187,7 @@ class AppGuidelinesView extends StatelessWidget {
                               'Contact Support',
                               style: AppTextStyles.button.copyWith(
                                 fontSize: 16,
-                                color: Colors.white,
+                                color: theme.colorScheme.onPrimary,
                               ),
                             ),
                           ),
@@ -191,35 +205,49 @@ class AppGuidelinesView extends StatelessWidget {
     );
   }
 
-  Widget _buildFilterChip(String label, bool isSelected) {
+  Widget _buildFilterChip(BuildContext context, String label, bool isSelected) {
+    final theme = Theme.of(context);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       decoration: BoxDecoration(
-        color: isSelected ? Colors.black : const Color(0xFFF3F4F6),
+        color: isSelected
+            ? theme.colorScheme.primary
+            : theme.cardColor,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isSelected
+              ? theme.colorScheme.primary
+              : theme.dividerColor,
+        ),
       ),
       child: Text(
         label,
         style: TextStyle(
           fontSize: 14,
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-          color: isSelected ? Colors.white : const Color(0xFF4B5563),
+          color: isSelected
+              ? theme.colorScheme.onPrimary
+              : theme.textTheme.bodyMedium?.color,
         ),
       ),
     );
   }
 
-  Widget _buildGuidelineCard({
-    required IconData icon,
-    required String title,
-    required String description,
-  }) {
+  Widget _buildGuidelineCard(
+      BuildContext context, {
+        required IconData icon,
+        required String title,
+        required String description,
+      }) {
+    final theme = Theme.of(context);
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFF3F4F6), width: 1.5),
+        border: Border.all(color: theme.dividerColor, width: 1.5),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -227,24 +255,34 @@ class AppGuidelinesView extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: const Color(0xFFF3F4F6),
+              color: theme.scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: Colors.black, size: 24),
+            child: Icon(
+              icon,
+              color: theme.colorScheme.primary,
+              size: 24,
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: AppTextStyles.title.copyWith(fontSize: 16)),
+                Text(
+                  title,
+                  style: AppTextStyles.title.copyWith(
+                    fontSize: 16,
+                    color: theme.textTheme.titleLarge?.color,
+                  ),
+                ),
                 const SizedBox(height: 6),
                 Text(
                   description,
                   style: AppTextStyles.body.copyWith(
                     fontSize: 14,
                     height: 1.5,
-                    color: const Color(0xFF6B7280),
+                    color: theme.textTheme.bodyMedium?.color,
                   ),
                 ),
               ],

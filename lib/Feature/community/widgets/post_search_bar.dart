@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/Styles/AppColors.dart';
 
 class PostSearchBar extends StatelessWidget {
   final ValueChanged<String>? onChanged;
@@ -8,16 +7,22 @@ class PostSearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final onSurface = theme.colorScheme.onSurface;
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 18),
       width: MediaQuery.of(context).size.width * 0.9,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.cardColor,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: theme.dividerColor),
         boxShadow: [
           BoxShadow(
-            color: Appcolors.primaryColor.withOpacity(0.03),
+            color: theme.shadowColor.withOpacity(
+              theme.brightness == Brightness.dark ? 0.08 : 0.04,
+            ),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -25,11 +30,16 @@ class PostSearchBar extends StatelessWidget {
       ),
       child: TextField(
         onChanged: onChanged,
-        decoration: const InputDecoration(
+        decoration: InputDecoration(
           hintText: 'Search posts',
-          hintStyle: TextStyle(color: Appcolors.secondaryColor),
+          hintStyle: TextStyle(
+            color: onSurface.withOpacity(0.6),
+          ),
           border: InputBorder.none,
-          icon: Icon(Icons.search, color: Appcolors.secondaryColor),
+          icon: Icon(
+            Icons.search,
+            color: onSurface.withOpacity(0.6),
+          ),
         ),
       ),
     );
