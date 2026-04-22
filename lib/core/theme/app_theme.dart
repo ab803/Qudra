@@ -151,56 +151,57 @@ class AppTheme {
   static ThemeData get darkTheme {
     const colorScheme = ColorScheme(
       brightness: Brightness.dark,
-      primary: Colors.white,
-      onPrimary: Color(0xFF0F172A),
-      secondary: Color(0xFF94A3B8),
-      onSecondary: Color(0xFF0F172A),
+      primary: Color(0xFFFFFFFF),
+      onPrimary: Color(0xFF000000),
+      secondary: Color(0xFFBDBDBD),
+      onSecondary: Color(0xFF000000),
       error: Appcolors.EmergancyColor,
       onError: Colors.white,
-      surface: Color(0xFF111827),
-      onSurface: Color(0xFFF9FAFB),
+      surface: Color(0xFF121212),
+      onSurface: Color(0xFFF5F5F5),
     );
 
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: const Color(0xFF0F172A),
-      cardColor: const Color(0xFF111827),
-      dividerColor: const Color(0xFF334155),
+
+      scaffoldBackgroundColor: const Color(0xFF000000),
+      cardColor: const Color(0xFF121212),
+      dividerColor: const Color(0xFF2A2A2A),
 
       appBarTheme: const AppBarTheme(
         elevation: 0,
         centerTitle: false,
         backgroundColor: Colors.transparent,
-        foregroundColor: Color(0xFFF9FAFB),
+        foregroundColor: Color(0xFFF5F5F5),
         surfaceTintColor: Colors.transparent,
       ),
 
       cardTheme: CardThemeData(
-        color: const Color(0xFF111827),
+        color: const Color(0xFF121212),
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: Color(0xFF334155)),
+          side: const BorderSide(color: Color(0xFF2A2A2A)),
         ),
       ),
 
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: const Color(0xFF1E293B),
-        hintStyle: const TextStyle(color: Color(0xFF94A3B8)),
+        fillColor: const Color(0xFF121212),
+        hintStyle: const TextStyle(color: Color(0xFF9E9E9E)),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 14,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Color(0xFF334155)),
+          borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Color(0xFF334155)),
+          borderSide: const BorderSide(color: Color(0xFF2A2A2A)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
@@ -228,7 +229,7 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           elevation: 0,
           backgroundColor: Colors.white,
-          foregroundColor: const Color(0xFF0F172A),
+          foregroundColor: Colors.black,
           padding: const EdgeInsets.symmetric(
             horizontal: 18,
             vertical: 14,
@@ -242,7 +243,7 @@ class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: colorScheme.onSurface,
-          side: const BorderSide(color: Color(0xFF475569)),
+          side: const BorderSide(color: Color(0xFF3A3A3A)),
           padding: const EdgeInsets.symmetric(
             horizontal: 18,
             vertical: 14,
@@ -257,39 +258,39 @@ class AppTheme {
         headlineSmall: TextStyle(
           fontSize: 24,
           fontWeight: FontWeight.bold,
-          color: Color(0xFFF9FAFB),
+          color: Color(0xFFF5F5F5),
         ),
         titleLarge: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.w700,
-          color: Color(0xFFF9FAFB),
+          color: Color(0xFFF5F5F5),
         ),
         titleMedium: TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: Color(0xFFE5E7EB),
+          color: Color(0xFFEAEAEA),
         ),
         bodyLarge: TextStyle(
           fontSize: 16,
-          color: Color(0xFFE5E7EB),
+          color: Color(0xFFEAEAEA),
         ),
         bodyMedium: TextStyle(
           fontSize: 14,
-          color: Color(0xFFCBD5E1),
+          color: Color(0xFFBDBDBD),
         ),
         bodySmall: TextStyle(
           fontSize: 12,
-          color: Color(0xFF94A3B8),
+          color: Color(0xFF9E9E9E),
         ),
         labelLarge: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w600,
-          color: Color(0xFF0F172A),
+          color: Color(0xFF000000),
         ),
       ),
 
       iconTheme: const IconThemeData(
-        color: Color(0xFFF9FAFB),
+        color: Color(0xFFF5F5F5),
       ),
     );
   }
