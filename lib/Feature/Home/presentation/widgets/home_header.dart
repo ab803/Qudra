@@ -46,27 +46,7 @@ class HomeHeader extends StatelessWidget {
               ],
             ),
 
-            // Dark mode button placeholder
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: theme.cardColor,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(
-                      theme.brightness == Brightness.dark ? 0.16 : 0.05,
-                    ),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.nightlight_round,
-                color: theme.colorScheme.primary,
-              ),
-            ),
+
           ],
         );
       },
