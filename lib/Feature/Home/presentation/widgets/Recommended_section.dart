@@ -20,7 +20,6 @@ class _RecommendedSectionState extends State<RecommendedSection> {
   Future<List<InstitutionModel>>? _future;
   String? _loadedDisabilityType;
 
-  // This method reloads recommendations only when the user's disability type becomes available or changes.
   void _ensureRecommendationsLoaded(String disabilityType) {
     if (_future != null && _loadedDisabilityType == disabilityType) {
       return;
@@ -58,7 +57,7 @@ class _RecommendedSectionState extends State<RecommendedSection> {
             if (user == null) {
               if (state is AuthRestoring || state is AuthLoading) {
                 return const SizedBox(
-                  height: 220,
+                  height: 230,
                   child: Center(
                     child: CircularProgressIndicator(),
                   ),
@@ -66,7 +65,7 @@ class _RecommendedSectionState extends State<RecommendedSection> {
               }
 
               return SizedBox(
-                height: 220,
+                height: 230,
                 child: Center(
                   child: Text(
                     'No recommendations available right now',
@@ -76,11 +75,10 @@ class _RecommendedSectionState extends State<RecommendedSection> {
               );
             }
 
-            // This block ensures recommendations are loaded only after the real user profile becomes available.
             _ensureRecommendationsLoaded(user.disabilityType);
 
             return SizedBox(
-              height: 220,
+              height: 230,
               child: FutureBuilder<List<InstitutionModel>>(
                 future: _future,
                 builder: (context, snapshot) {
@@ -118,14 +116,11 @@ class _RecommendedSectionState extends State<RecommendedSection> {
                       final institution = institutions[index];
                       return SizedBox(
                         width: cardWidth,
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 4),
-                          child: InstitutionCard(
-                            institution: institution,
-                            onViewDetails: () {
-                              context.push('/institution/${institution.id}');
-                            },
-                          ),
+                        child: InstitutionCard(
+                          institution: institution,
+                          onViewDetails: () {
+                            context.push('/institution/${institution.id}');
+                          },
                         ),
                       );
                     },
