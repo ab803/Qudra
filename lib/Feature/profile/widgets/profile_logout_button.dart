@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/Styles/AppColors.dart';
+import 'package:qudra_0/core/Styles/AppColors.dart';
 import '../../Auth/ViewModel/auth_cubit.dart';
 import '../../Auth/ViewModel/auth_state.dart';
 
@@ -33,7 +33,7 @@ class ProfileLogoutButton extends StatelessWidget {
           final dangerColor = Appcolors.EmergancyColor;
 
           return Container(
-            width: double.infinity,
+            width: 350,
             height: 60,
             decoration: BoxDecoration(
               color: dangerColor.withOpacity(
