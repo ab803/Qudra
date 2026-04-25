@@ -89,60 +89,90 @@ class _InstitutionFilterChip extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
-    final backgroundColor = isSelected ? colorScheme.onSurface : theme.cardColor;
-    final textColor = isSelected ? colorScheme.surface : colorScheme.onSurface;
-    final iconColor = isSelected ? colorScheme.surface : accentColor;
+    final isAllChip = label == 'All';
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(24),
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          curve: Curves.easeOut,
-          constraints: const BoxConstraints(minHeight: 46),
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 11,
-          ),
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: isSelected ? colorScheme.onSurface : theme.dividerColor,
+    final Color backgroundColor = isSelected
+        ? (isAllChip ? Colors.white : accentColor)
+        : theme.cardColor;
+
+    final Color textColor = isSelected
+        ? (isAllChip ? Colors.black : Colors.white)
+        : colorScheme.onSurface;
+
+    final Color iconColor = isSelected
+        ? (isAllChip ? Colors.black : Colors.white)
+        : accentColor;
+
+    final Color borderColor = isSelected
+        ? (isAllChip ? Colors.white : accentColor)
+        : theme.dividerColor;
+
+    final Color shadowColor = isSelected
+        ? (isAllChip ? Colors.black : accentColor)
+        : theme.shadowColor;
+
+    return AnimatedScale(
+      scale: isSelected ? 1.02 : 1.0,
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeOut,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: shadowColor.withOpacity(
+                isSelected
+                    ? (isAllChip
+                    ? (isDark ? 0.18 : 0.08)
+                    : (isDark ? 0.30 : 0.14))
+                    : (isDark ? 0.16 : 0.04),
+              ),
+              blurRadius: isSelected ? 14 : 8,
+              offset: const Offset(0, 4),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: theme.shadowColor.withOpacity(
-                  isSelected
-                      ? (isDark ? 0.30 : 0.10)
-                      : (isDark ? 0.18 : 0.05),
-                ),
-                blurRadius: isSelected ? 14 : 10,
-                offset: const Offset(0, 4),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(24),
+            onTap: onTap,
+            splashColor: accentColor.withOpacity(0.10),
+            highlightColor: accentColor.withOpacity(0.06),
+            child: Container(
+              constraints: const BoxConstraints(minHeight: 46),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 11,
               ),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                icon,
-                size: 18,
-                color: iconColor,
+              decoration: BoxDecoration(
+                color: backgroundColor,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: borderColor),
               ),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.w700,
-                  height: 1.1,
-                  color: textColor,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    icon,
+                    size: 18,
+                    color: iconColor,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w700,
+                      height: 1.1,
+                      color: textColor,
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

@@ -18,7 +18,7 @@ class InstitutionStickyFilterDelegate extends SliverPersistentHeaderDelegate {
   double get minExtent => 68;
 
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
-    return false;
+  bool shouldRebuild(covariant InstitutionStickyFilterDelegate oldDelegate) {
+    return oldDelegate.child != child;
   }
 }
