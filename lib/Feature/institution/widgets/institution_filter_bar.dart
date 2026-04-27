@@ -92,19 +92,19 @@ class _InstitutionFilterChip extends StatelessWidget {
     final isAllChip = label == 'All';
 
     final Color backgroundColor = isSelected
-        ? (isAllChip ? Colors.white : accentColor)
+        ? (isAllChip ? accentColor : accentColor)
         : theme.cardColor;
 
     final Color textColor = isSelected
-        ? (isAllChip ? Colors.black : Colors.white)
+        ? (isAllChip ? colorScheme.onPrimary : colorScheme.onPrimary)
         : colorScheme.onSurface;
 
     final Color iconColor = isSelected
-        ? (isAllChip ? Colors.black : Colors.white)
+        ? (isAllChip ? colorScheme.onPrimary : colorScheme.onPrimary)
         : accentColor;
 
     final Color borderColor = isSelected
-        ? (isAllChip ? Colors.white : accentColor)
+        ? (isAllChip ? theme.dividerColor : accentColor)
         : theme.dividerColor;
 
     final Color shadowColor = isSelected

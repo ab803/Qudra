@@ -20,6 +20,21 @@ class _RecommendedSectionState extends State<RecommendedSection> {
   Future<List<InstitutionModel>>? _future;
   String? _loadedDisabilityType;
 
+  // This controller enables a snapping carousel-style PageView for home recommendations.
+  late final PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(viewportFraction: 0.94);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
   void _ensureRecommendationsLoaded(String disabilityType) {
     if (_future != null && _loadedDisabilityType == disabilityType) {
       return;
@@ -35,8 +50,9 @@ class _RecommendedSectionState extends State<RecommendedSection> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final screenWidth = MediaQuery.of(context).size.width;
-    final cardWidth = screenWidth > 420 ? 360.0 : screenWidth * 0.88;
+
+    // This block defines a compact home-only viewport height that matches the compact card design.
+    const double recommendedCardHeight = 252;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -57,7 +73,7 @@ class _RecommendedSectionState extends State<RecommendedSection> {
             if (user == null) {
               if (state is AuthRestoring || state is AuthLoading) {
                 return const SizedBox(
-                  height: 230,
+                  height: recommendedCardHeight,
                   child: Center(
                     child: CircularProgressIndicator(),
                   ),
@@ -65,7 +81,7 @@ class _RecommendedSectionState extends State<RecommendedSection> {
               }
 
               return SizedBox(
-                height: 230,
+                height: recommendedCardHeight,
                 child: Center(
                   child: Text(
                     'No recommendations available right now',
@@ -78,7 +94,7 @@ class _RecommendedSectionState extends State<RecommendedSection> {
             _ensureRecommendationsLoaded(user.disabilityType);
 
             return SizedBox(
-              height: 230,
+              height: recommendedCardHeight,
               child: FutureBuilder<List<InstitutionModel>>(
                 future: _future,
                 builder: (context, snapshot) {
@@ -107,17 +123,19 @@ class _RecommendedSectionState extends State<RecommendedSection> {
                     );
                   }
 
-                  return ListView.separated(
-                    scrollDirection: Axis.horizontal,
+                  // This block replaces the horizontal list with a snapping PageView for a cleaner professional layout.
+                  return PageView.builder(
+                    controller: _pageController,
                     itemCount: institutions.length,
-                    separatorBuilder: (context, index) =>
-                    const SizedBox(width: 16),
                     itemBuilder: (context, index) {
                       final institution = institutions[index];
-                      return SizedBox(
-                        width: cardWidth,
+                      return Padding(
+                        padding: EdgeInsets.only(
+                          right: index == institutions.length - 1 ? 0 : 12,
+                        ),
                         child: InstitutionCard(
                           institution: institution,
+                          isCompact: true,
                           onViewDetails: () {
                             context.push('/institution/${institution.id}');
                           },

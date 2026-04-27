@@ -18,9 +18,20 @@ class ServiceTile extends StatelessWidget {
     return 'EGP ${service.price.toStringAsFixed(2)}';
   }
 
+  // This helper returns a cleaned availability notes value for display.
+  String? _normalizedAvailabilityNotes() {
+    final value = service.availabilityNotes?.trim();
+    if (value == null || value.isEmpty) {
+      return null;
+    }
+    return value;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final availabilityNotes = _normalizedAvailabilityNotes();
 
     return Container(
       width: double.infinity,
@@ -70,6 +81,57 @@ class ServiceTile extends StatelessWidget {
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurface.withOpacity(0.72),
                 height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
+
+          // This block renders the availability notes when the institution provides them.
+          if (availabilityNotes != null) ...[
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: colorScheme.primary.withOpacity(
+                  theme.brightness == Brightness.dark ? 0.16 : 0.08,
+                ),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: colorScheme.primary.withOpacity(0.18),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.schedule_outlined,
+                    size: 18,
+                    color: colorScheme.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Availability Notes',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            color: colorScheme.primary,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          availabilityNotes,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            height: 1.45,
+                            color: theme.textTheme.bodyMedium?.color,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 12),
