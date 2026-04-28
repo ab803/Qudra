@@ -1,5 +1,4 @@
 import 'package:qudra_0/core/Services/supabase/AuthService.dart';
-
 import '../../../core/Models/people_with_disabilityModel.dart';
 import '../../../core/Services/supabase/peopleWithDisabilityService.dart';
 import 'AuthRepo.dart';
@@ -10,7 +9,8 @@ class PeopleWithDisabilityRepositoryImpl
   final AuthService reset;
 
   PeopleWithDisabilityRepositoryImpl({
-    required PeopleWithDisabilityService service, required this.reset,
+    required PeopleWithDisabilityService service,
+    required this.reset,
   }) : _service = service;
 
   // ─────────────────────────────────────────
@@ -28,14 +28,14 @@ class PeopleWithDisabilityRepositoryImpl
     required int age,
   }) async {
     return await _service.register(
-      fullName:          fullName,
-      phone:             phone,
-      email:             email,
-      password:          password,
-      disabilityType:    disabilityType,
+      fullName: fullName,
+      phone: phone,
+      email: email,
+      password: password,
+      disabilityType: disabilityType,
       responsiblePerson: responsiblePerson,
-      gender:            gender,
-      age:               age,
+      gender: gender,
+      age: age,
     );
   }
 
@@ -49,10 +49,16 @@ class PeopleWithDisabilityRepositoryImpl
     required String newPassword,
   }) async {
     await reset.resetPassword(
-      email:       email,
-      token:       token,
+      email: email,
+      token: token,
       newPassword: newPassword,
     );
+  }
+
+  // This method checks whether the email already exists in the user app table.
+  @override
+  Future<bool> isEmailRegistered(String email) async {
+    return await _service.isEmailRegistered(email);
   }
 
   // ─────────────────────────────────────────
@@ -86,20 +92,20 @@ class PeopleWithDisabilityRepositoryImpl
   Future<void> updateProfile({
     required String id,
     String? fullName,
-    String? phone,        // ✅ fixed: was int? — must match model (String)
+    String? phone, // ✅ fixed: was int? — must match model (String)
     String? disabilityType,
     String? responsiblePerson,
     String? gender,
     int? age,
   }) async {
     await _service.updateProfile(
-      id:                id,
-      fullName:          fullName,
-      phone:             phone,
-      disabilityType:    disabilityType,
+      id: id,
+      fullName: fullName,
+      phone: phone,
+      disabilityType: disabilityType,
       responsiblePerson: responsiblePerson,
-      gender:            gender,
-      age:               age,
+      gender: gender,
+      age: age,
     );
   }
 

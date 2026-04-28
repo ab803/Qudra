@@ -170,21 +170,41 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                       ),
                     ),
                     const SizedBox(height: 18),
-                    Text(
-                      institution.name,
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                    if ((institution.description ?? '').trim().isNotEmpty) ...[
+                      Text(
+                        'About',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      institution.institutionType,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontSize: 15,
+                      const SizedBox(height: 8),
+                      Text(
+                        institution.description!.trim(),
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontSize: 15,
+                          height: 1.5,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
+                      const SizedBox(height: 16),
+                    ] else ...[
+                      Text(
+                        'About',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'No institution description available yet.',
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          fontSize: 15,
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
 
                     // Rating + button (unchanged)
                     Row(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/Styles/AppIcons.dart';
+import '../../../core/widgets/adaptive_logo.dart';
 
 class CommunityAppBar extends StatelessWidget {
   const CommunityAppBar({super.key});
@@ -18,9 +18,9 @@ class CommunityAppBar extends StatelessWidget {
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
             ),
-            child: Center(
-              child: Image.asset(
-                Appicons.logo,
+            child: const Center(
+              // This block renders the correct community logo asset for the active theme.
+              child: AdaptiveLogo(
                 width: 40,
                 height: 40,
               ),

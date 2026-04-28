@@ -17,21 +17,40 @@ class AuthCubit extends Cubit<AuthState> {
         _authService = getIt<AuthService>(),
         super(AuthInitial());
 
+  // This helper returns the institution portal warning used across auth flows.
+  String get _institutionPortalMessage =>
+      'This account belongs to the institution portal. Please use the institution app instead.';
+
+  // This helper returns the user app missing-profile warning after login.
+  String get _missingUserProfileMessage =>
+      'This account is not registered in the user app. Please sign up first.';
+
   // ─────────────────────────────────────────
   // LOAD CURRENT USER ON APP START
   // ─────────────────────────────────────────
   Future<void> loadCurrentUser() async {
     try {
       emit(AuthRestoring());
-      final profile = await _repository.getCurrentProfile();
 
+      final profile = await _repository.getCurrentProfile();
       if (profile != null) {
         currentUser = profile;
         emit(LoginSuccess(user: profile));
-      } else {
-        currentUser = null;
-        emit(AuthInitial());
+        return;
       }
+
+      // This block signs out persisted institution sessions to prevent entering the user app with invalid profile data.
+      final authUserId = _authService.currentUser?.id;
+      if (authUserId != null) {
+        final isInstitutionAccount =
+        await _authService.isInstitutionAccountById(authUserId);
+        if (isInstitutionAccount) {
+          await _authService.logout();
+        }
+      }
+
+      currentUser = null;
+      emit(AuthInitial());
     } catch (e) {
       currentUser = null;
       emit(AuthFailure(errorMessage: e.toString()));
@@ -52,7 +71,33 @@ class AuthCubit extends Cubit<AuthState> {
     required int age,
   }) async {
     emit(AuthLoading());
+
     try {
+      // This block prevents creating a user app account with an email that already belongs to a user app profile.
+      final isUserEmailRegistered = await _repository.isEmailRegistered(email);
+      if (isUserEmailRegistered) {
+        emit(
+          AuthFailure(
+            errorMessage:
+            'This email is already registered. Please log in instead.',
+          ),
+        );
+        return;
+      }
+
+      // This block prevents creating a user app account with an email that already belongs to an institution account.
+      final isInstitutionEmailRegistered =
+      await _authService.isInstitutionEmailRegistered(email);
+      if (isInstitutionEmailRegistered) {
+        emit(
+          AuthFailure(
+            errorMessage:
+            'This email is already registered as an institution account. Please use the institution app instead.',
+          ),
+        );
+        return;
+      }
+
       final person = await _repository.register(
         fullName: fullName,
         phone: phone,
@@ -70,7 +115,6 @@ class AuthCubit extends Cubit<AuthState> {
       emit(AuthFailure(errorMessage: e.toString()));
     }
   }
-
 
   Future<void> updateProfile({
     required String id,
@@ -115,17 +159,34 @@ class AuthCubit extends Cubit<AuthState> {
     required String password,
   }) async {
     emit(AuthLoading());
+
     try {
       await _authService.login(email: email, password: password);
 
       final profile = await _repository.getCurrentProfile();
-      if (profile == null) {
-        emit(AuthFailure(errorMessage: 'Profile not found'));
+      if (profile != null) {
+        currentUser = profile; // ✅ خزّن المستخدم
+        emit(LoginSuccess(user: profile));
         return;
       }
 
-      currentUser = profile; // ✅ خزّن المستخدم
-      emit(LoginSuccess(user: profile));
+      // This block detects institution accounts after a successful auth login and prevents them from entering the user app.
+      final authUserId = _authService.currentUser?.id;
+      if (authUserId != null) {
+        final isInstitutionAccount =
+        await _authService.isInstitutionAccountById(authUserId);
+
+        if (isInstitutionAccount) {
+          await _authService.logout();
+          currentUser = null;
+          emit(AuthFailure(errorMessage: _institutionPortalMessage));
+          return;
+        }
+      }
+
+      await _authService.logout();
+      currentUser = null;
+      emit(AuthFailure(errorMessage: _missingUserProfileMessage));
     } catch (e) {
       emit(AuthFailure(errorMessage: e.toString()));
     }
@@ -136,6 +197,7 @@ class AuthCubit extends Cubit<AuthState> {
   // ─────────────────────────────────────────
   Future<void> forgotPassword({required String email}) async {
     emit(AuthLoading());
+
     try {
       await _authService.forgotPassword(email: email);
       emit(ForgotPasswordSuccess(email: email));
@@ -153,6 +215,7 @@ class AuthCubit extends Cubit<AuthState> {
     required String newPassword,
   }) async {
     emit(AuthLoading());
+
     try {
       await _repository.resetPassword(
         email: email,
@@ -170,6 +233,7 @@ class AuthCubit extends Cubit<AuthState> {
   // ─────────────────────────────────────────
   Future<void> logout() async {
     emit(AuthLoading());
+
     try {
       await _authService.logout();
       currentUser = null; // ✅ فضّي المستخدم عند logout

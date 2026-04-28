@@ -21,6 +21,9 @@ abstract class IPeopleWithDisabilityRepository {
     required String newPassword,
   });
 
+  // This method checks whether the email already exists in the user app table.
+  Future<bool> isEmailRegistered(String email);
+
   // ─────────────────────────────────────────
   // PROFILE
   // ─────────────────────────────────────────
@@ -31,7 +34,7 @@ abstract class IPeopleWithDisabilityRepository {
   Future<void> updateProfile({
     required String id,
     String? fullName,
-    String? phone,       // ✅ fixed: was int? — must match model (String)
+    String? phone, // ✅ fixed: was int? — must match model (String)
     String? disabilityType,
     String? responsiblePerson,
     String? gender,

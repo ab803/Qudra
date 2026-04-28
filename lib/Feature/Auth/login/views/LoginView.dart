@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/widgets/adaptive_logo.dart';
 import '../../ViewModel/auth_cubit.dart';
 import '../../ViewModel/auth_state.dart';
 import '../../widgets/AuthActionButton.dart'; // AuthButton
@@ -34,18 +35,51 @@ class _LogInViewState extends State<LogInView> {
     );
   }
 
+  // This helper converts raw auth failures into friendly user-facing login messages.
+  String _buildFriendlyLoginError(String rawMessage) {
+    final message = rawMessage.toLowerCase();
+
+    // This block preserves the institution portal message returned from the auth cubit.
+    if (message.contains('institution portal')) {
+      return 'This account belongs to the institution portal. Please use the institution app instead.';
+    }
+
+    if (message.contains('invalid login credentials') ||
+        message.contains('invalid_credentials') ||
+        message.contains('email not confirmed') ||
+        message.contains('user not found') ||
+        message.contains('invalid email or password')) {
+      return 'This email is not registered or the password is incorrect. Please check your details or create a new account first.';
+    }
+
+    if (message.contains('network') ||
+        message.contains('socket') ||
+        message.contains('timeout') ||
+        message.contains('connection')) {
+      return 'Unable to connect right now. Please check your internet connection and try again.';
+    }
+
+    if (message.contains('too many requests') ||
+        message.contains('rate limit')) {
+      return 'Too many login attempts. Please wait a moment and try again.';
+    }
+
+    return 'Login failed. Please try again.';
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is LoginSuccess) {
           context.go('/home');
         } else if (state is AuthFailure) {
+          // This block shows a friendly login error instead of the raw backend message.
+          final friendlyMessage = _buildFriendlyLoginError(state.errorMessage);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.errorMessage),
+              content: Text(friendlyMessage),
               backgroundColor: theme.colorScheme.error,
               behavior: SnackBarBehavior.floating,
             ),
@@ -64,13 +98,10 @@ class _LogInViewState extends State<LogInView> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 20),
-
-                  // ✅ correct widget name
-                  Image.asset('assets/images/Qudra logo.png', width: 140),
-
+                  // This block renders the correct logo asset for the active theme.
+                  const AdaptiveLogo(width: 140),
                   const SizedBox(height: 24),
                   const SizedBox(height: 8),
-
                   Text(
                     '"With you to discover your ability"',
                     style: TextStyle(
@@ -79,9 +110,7 @@ class _LogInViewState extends State<LogInView> {
                       color: theme.textTheme.bodyMedium?.color,
                     ),
                   ),
-
                   const SizedBox(height: 40),
-
                   // ── Card ────────────────────────────────────
                   Container(
                     padding: const EdgeInsets.all(24),
@@ -109,7 +138,6 @@ class _LogInViewState extends State<LogInView> {
                           ),
                         ),
                         const SizedBox(height: 24),
-
                         // ✅ correct widget name
                         CustomTextField(
                           controller: _emailController,
@@ -130,12 +158,10 @@ class _LogInViewState extends State<LogInView> {
                             return null;
                           },
                         ),
-
                         // ✅ correct widget name
                         PasswordField(
                           controller: _passwordController,
                         ),
-
                         // Forgot Password
                         Align(
                           alignment: Alignment.centerRight,
@@ -144,8 +170,7 @@ class _LogInViewState extends State<LogInView> {
                             style: TextButton.styleFrom(
                               padding: EdgeInsets.zero,
                               minimumSize: Size.zero,
-                              tapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             ),
                             child: Text(
                               'Forgot Password?',
@@ -157,9 +182,7 @@ class _LogInViewState extends State<LogInView> {
                             ),
                           ),
                         ),
-
                         const SizedBox(height: 24),
-
                         // ✅ isLoading handled inside AuthButton via BlocBuilder
                         AuthButton(
                           label: 'Login',
@@ -173,9 +196,7 @@ class _LogInViewState extends State<LogInView> {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 32),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -199,7 +220,6 @@ class _LogInViewState extends State<LogInView> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 40),
                 ],
               ),

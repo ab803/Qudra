@@ -26,34 +26,47 @@ class PeopleWithDisabilityService {
   }) async {
     try {
       // Step 1: Create auth user
-      final authResponse = await _authService.signUp( // ✅ instance call
+      final authResponse = await _authService.signUp(
         email: email,
         password: password,
       );
-
       if (authResponse.user == null) {
         throw Exception('Registration failed: No user returned');
       }
 
       // Step 2: Save profile to table
       final person = PeopleWithDisabilityModel(
-        id:                authResponse.user!.id,
-        createdAt:         DateTime.now(),
-        fullName:          fullName,
-        phone:             phone,
-        email:             email,
-        disabilityType:    disabilityType,
-        password:          password,
+        id: authResponse.user!.id,
+        createdAt: DateTime.now(),
+        fullName: fullName,
+        phone: phone,
+        email: email,
+        disabilityType: disabilityType,
+        password: password,
         responsiblePerson: responsiblePerson,
-        gender:            gender,
-        age:               age,
+        gender: gender,
+        age: age,
       );
 
       await _supabase.from(_table).upsert(person.toJson());
-
       return person;
     } catch (e) {
       throw Exception('Registration error: $e');
+    }
+  }
+
+  // This method checks whether the email already exists in the user app table.
+  Future<bool> isEmailRegistered(String email) async {
+    try {
+      final data = await _supabase
+          .from(_table)
+          .select('id')
+          .eq('email', email)
+          .maybeSingle();
+
+      return data != null;
+    } catch (e) {
+      throw Exception('Failed to check email registration: $e');
     }
   }
 
@@ -62,15 +75,16 @@ class PeopleWithDisabilityService {
   // ─────────────────────────────────────────
   Future<PeopleWithDisabilityModel?> getCurrentProfile() async {
     try {
-      final userId = _authService.currentUser?.id; // ✅ instance call
+      final userId = _authService.currentUser?.id;
       if (userId == null) return null;
 
       final data = await _supabase
           .from(_table)
           .select()
           .eq('id', userId)
-          .single();
+          .maybeSingle();
 
+      if (data == null) return null;
       return PeopleWithDisabilityModel.fromJson(data);
     } catch (e) {
       throw Exception('Failed to get profile: $e');
@@ -83,7 +97,6 @@ class PeopleWithDisabilityService {
   Future<List<PeopleWithDisabilityModel>> getAll() async {
     try {
       final data = await _supabase.from(_table).select();
-
       return (data as List)
           .map((e) => PeopleWithDisabilityModel.fromJson(e))
           .toList();
@@ -123,13 +136,14 @@ class PeopleWithDisabilityService {
   }) async {
     try {
       final updates = <String, dynamic>{};
-
-      if (fullName != null)          updates['full_name']          = fullName;
-      if (phone != null)             updates['phone']              = phone;
-      if (disabilityType != null)    updates['disability_type']    = disabilityType;
-      if (responsiblePerson != null) updates['responsible_person'] = responsiblePerson;
-      if (gender != null)            updates['gender']             = gender;
-      if (age != null)               updates['age']                = age;
+      if (fullName != null) updates['full_name'] = fullName;
+      if (phone != null) updates['phone'] = phone;
+      if (disabilityType != null) updates['disability_type'] = disabilityType;
+      if (responsiblePerson != null) {
+        updates['responsible_person'] = responsiblePerson;
+      }
+      if (gender != null) updates['gender'] = gender;
+      if (age != null) updates['age'] = age;
 
       await _supabase.from(_table).update(updates).eq('id', id);
     } catch (e) {
@@ -143,7 +157,7 @@ class PeopleWithDisabilityService {
   Future<void> delete(String id) async {
     try {
       await _supabase.from(_table).delete().eq('id', id);
-      await _authService.logout(); // ✅ instance call
+      await _authService.logout();
     } catch (e) {
       throw Exception('Failed to delete record: $e');
     }

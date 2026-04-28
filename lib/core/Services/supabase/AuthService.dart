@@ -26,9 +26,41 @@ class AuthService {
   }) async {
     try {
       return await _supabase.auth.signInWithPassword(
-          email: email, password: password);
+        email: email,
+        password: password,
+      );
     } on AuthException catch (e) {
       throw Exception('Login failed: ${e.message}');
+    }
+  }
+
+  // This method checks whether the current auth user belongs to the institutions table.
+  Future<bool> isInstitutionAccountById(String userId) async {
+    try {
+      final data = await _supabase
+          .from('institutions')
+          .select('id')
+          .eq('id', userId)
+          .maybeSingle();
+
+      return data != null;
+    } catch (e) {
+      throw Exception('Failed to verify institution account: $e');
+    }
+  }
+
+  // This method checks whether an email is already registered as an institution account.
+  Future<bool> isInstitutionEmailRegistered(String email) async {
+    try {
+      final data = await _supabase
+          .from('institutions')
+          .select('id')
+          .eq('email', email)
+          .maybeSingle();
+
+      return data != null;
+    } catch (e) {
+      throw Exception('Failed to check institution email: $e');
     }
   }
 
@@ -47,7 +79,7 @@ class AuthService {
   }
 
   // ─────────────────────────────────────────
-  // RESET PASSWORD  (verify token + set new password)
+  // RESET PASSWORD (verify token + set new password)
   // ─────────────────────────────────────────
   Future<void> resetPassword({
     required String email,
