@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../../core/Styles/AppColors.dart';
 import '../../../../core/Styles/AppTextsyles.dart';
 
@@ -14,17 +15,17 @@ class CategorySection extends StatelessWidget {
     final categories = [
       {
         'icon': Icons.accessible,
-        'label': 'Physical',
+        'label': context.tr('physical'),
         'color': Appcolors.cardOrange,
       },
       {
         'icon': Icons.visibility,
-        'label': 'Visual',
+        'label': context.tr('visual'),
         'color': Appcolors.rateColor,
       },
       {
         'icon': Icons.hearing,
-        'label': 'Hearing',
+        'label': context.tr('hearing'),
         'color': Appcolors.cardTeal,
       },
     ];
@@ -36,7 +37,7 @@ class CategorySection extends StatelessWidget {
         Row(
           children: [
             Text(
-              'Categories',
+              context.tr('categories'),
               style: AppTextStyles.title.copyWith(
                 fontSize: 18,
                 color: theme.textTheme.titleLarge?.color,

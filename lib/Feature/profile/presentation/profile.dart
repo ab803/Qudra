@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qudra_0/Feature/profile/widgets/LanguageSwitchTile.dart';
 import '../../../core/theme/theme_cubit.dart';
 import '../../Auth/ViewModel/auth_cubit.dart';
 import '../../Auth/ViewModel/auth_state.dart';
@@ -303,7 +304,13 @@ class ProfileView extends StatelessWidget {
                       ],
                     ),
                   ),
+
+                  const Divider(),
+
+                  const LanguageSwitchTile(), // ✅ HERE
                   const SizedBox(height: 28),
+
+
 
                   const ProfileLogoutButton(),
                   const SizedBox(height: 26),

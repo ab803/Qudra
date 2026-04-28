@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../../core/Styles/AppTextsyles.dart';
 import '../../../Auth/ViewModel/auth_cubit.dart';
 import '../../../Auth/ViewModel/auth_state.dart';
@@ -29,7 +30,7 @@ class HomeHeader extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Welcome',
+                  context.tr('welcome'),
                   style: AppTextStyles.title.copyWith(
                     color: theme.textTheme.titleLarge?.color,
                   ),
@@ -38,7 +39,7 @@ class HomeHeader extends StatelessWidget {
 
                 // Show real user first name
                 Text(
-                  'Hello, $firstName',
+                  '${context.tr('hello')} $firstName',
                   style: AppTextStyles.subtitle.copyWith(
                     color: theme.textTheme.bodyLarge?.color,
                   ),

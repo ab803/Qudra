@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 
 class CustomSearchBar extends StatefulWidget {
   const CustomSearchBar({super.key});
@@ -58,7 +59,7 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
         onSubmitted: (_) => _submitSearch(),
         style: theme.textTheme.bodyLarge,
         decoration: InputDecoration(
-          hintText: 'Search institutions or guidelines...',
+          hintText: context.tr('search_hint'),
           hintStyle: TextStyle(color: iconColor),
           border: InputBorder.none,
           icon: Icon(Icons.search, color: iconColor),

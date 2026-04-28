@@ -5,6 +5,7 @@
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
   audioplayers_windows
+  flutter_localization
   flutter_timezone
   geolocator_windows
   share_plus
