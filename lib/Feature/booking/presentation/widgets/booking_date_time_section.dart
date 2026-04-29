@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 
-// This widget renders the date and time pickers used in the booking checkout screen.
 class BookingDateTimeSection extends StatelessWidget {
   final DateTime? selectedDate;
   final String? selectedTime;
@@ -15,9 +15,8 @@ class BookingDateTimeSection extends StatelessWidget {
     required this.onSelectTime,
   });
 
-  // This helper formats the selected booking date for the UI.
-  String _formatDate(DateTime? date) {
-    if (date == null) return 'Select a date';
+  String _formatDate(BuildContext context, DateTime? date) {
+    if (date == null) return context.tr('booking_select_date');
     final day = date.day.toString().padLeft(2, '0');
     final month = date.month.toString().padLeft(2, '0');
     final year = date.year.toString();
@@ -31,30 +30,25 @@ class BookingDateTimeSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // This block renders the title above the date and time selectors.
         Text(
-          'Booking Details',
+          context.tr('booking_datetime_section_title'),
           style: theme.textTheme.titleMedium?.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w800,
           ),
         ),
         const SizedBox(height: 14),
-
-        // This block renders the date selector tile.
         _PickerTile(
           icon: Icons.calendar_month_outlined,
-          title: 'Preferred Date',
-          value: _formatDate(selectedDate),
+          title: context.tr('booking_preferred_date'),
+          value: _formatDate(context, selectedDate),
           onTap: onSelectDate,
         ),
         const SizedBox(height: 12),
-
-        // This block renders the time selector tile.
         _PickerTile(
           icon: Icons.access_time_outlined,
-          title: 'Preferred Time',
-          value: selectedTime ?? 'Select a time',
+          title: context.tr('booking_preferred_time'),
+          value: selectedTime ?? context.tr('booking_select_time'),
           onTap: onSelectTime,
         ),
       ],
@@ -62,7 +56,6 @@ class BookingDateTimeSection extends StatelessWidget {
   }
 }
 
-// This widget renders a single tap-able picker tile for date or time input.
 class _PickerTile extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -94,7 +87,8 @@ class _PickerTile extends StatelessWidget {
           border: Border.all(color: theme.dividerColor),
           boxShadow: [
             BoxShadow(
-              color: theme.shadowColor.withOpacity(isDark ? 0.22 : 0.06),
+              color: theme.shadowColor
+                  .withOpacity(isDark ? 0.22 : 0.06),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -115,10 +109,7 @@ class _PickerTile extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    value,
-                    style: theme.textTheme.bodyMedium,
-                  ),
+                  Text(value, style: theme.textTheme.bodyMedium),
                 ],
               ),
             ),

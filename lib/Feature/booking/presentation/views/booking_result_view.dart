@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../../core/Utilies/getit.dart';
 import '../../models/booking_model.dart';
 import '../../models/booking_payment_model.dart';
@@ -8,10 +9,7 @@ import '../../services/booking_service.dart';
 class BookingResultView extends StatefulWidget {
   final String bookingId;
 
-  const BookingResultView({
-    super.key,
-    required this.bookingId,
-  });
+  const BookingResultView({super.key, required this.bookingId});
 
   @override
   State<BookingResultView> createState() => _BookingResultViewState();
@@ -26,30 +24,26 @@ class _BookingResultViewState extends State<BookingResultView> {
     _future = getIt<BookingService>().getBookingSnapshot(widget.bookingId);
   }
 
-  String _paymentMethodLabel(String? method) {
+  // Returns localized payment method label — reuses existing booking keys.
+  String _paymentMethodLabel(BuildContext context, String? method) {
     switch (method) {
-      case 'card':
-        return 'Card';
-      case 'wallet':
-        return 'Wallet';
-      case 'cash_at_institution':
-        return 'Cash at Institution';
-      default:
-        return 'Unknown';
+      case 'card':   return context.tr('booking_method_card_title');
+      case 'wallet': return context.tr('booking_method_wallet_title');
+      case 'cash_at_institution': return context.tr('booking_method_cash_title');
+      default: return context.tr('booking_result_unknown');
     }
   }
 
-  String _prettyStatus(String value) {
-    if (value.trim().isEmpty) return 'Unknown';
-    return value
-        .replaceAll('_', ' ')
-        .split(' ')
-        .map(
-          (part) => part.isEmpty
-          ? part
-          : '${part[0].toUpperCase()}${part.substring(1)}',
-    )
-        .join(' ');
+  // Returns localized booking/payment status using existing status keys.
+  String _localizeStatus(BuildContext context, String value) {
+    switch (value.trim().toLowerCase()) {
+      case 'confirmed':       return context.tr('status_confirmed');
+      case 'success':         return context.tr('status_success');
+      case 'failed':          return context.tr('status_failed');
+      case 'pending_payment': return context.tr('status_pending_payment');
+      case 'pending':         return context.tr('status_pending');
+      default:                return value;
+    }
   }
 
   _ResultPresentation _buildPresentation(
@@ -61,8 +55,8 @@ class _BookingResultViewState extends State<BookingResultView> {
 
     if (booking == null) {
       return _ResultPresentation(
-        title: 'Booking Not Found',
-        message: 'We could not load this booking right now.',
+        title: context.tr('booking_result_not_found_title'),
+        message: context.tr('booking_result_not_found_message'),
         icon: Icons.help_outline,
         accent: onSurface,
       );
@@ -73,19 +67,18 @@ class _BookingResultViewState extends State<BookingResultView> {
     (payment?.paymentStatus ?? booking.paymentStatus).toLowerCase();
 
     if (bookingStatus == 'confirmed') {
-      return const _ResultPresentation(
-        title: 'Booking Confirmed',
-        message: 'Your booking was confirmed successfully.',
+      return _ResultPresentation(
+        title: context.tr('booking_result_confirmed_title'),
+        message: context.tr('booking_result_confirmed_message'),
         icon: Icons.check_circle_outline,
         accent: Colors.green,
       );
     }
 
     if (bookingStatus == 'pending_payment' || paymentStatus == 'pending') {
-      return const _ResultPresentation(
-        title: 'Still Processing',
-        message:
-        'Paymob has returned you to the app, but the final callback has not finished updating the booking yet. You can check again shortly from Home.',
+      return _ResultPresentation(
+        title: context.tr('booking_result_processing_title'),
+        message: context.tr('booking_result_processing_message'),
         icon: Icons.hourglass_top_rounded,
         accent: Colors.orange,
       );
@@ -93,44 +86,35 @@ class _BookingResultViewState extends State<BookingResultView> {
 
     if (bookingStatus == 'cancelled') {
       return _ResultPresentation(
-        title: 'Booking Cancelled',
-        message: 'The payment session was cancelled or voided.',
+        title: context.tr('booking_result_cancelled_title'),
+        message: context.tr('booking_result_cancelled_message'),
         icon: Icons.remove_circle_outline,
         accent: onSurface,
       );
     }
 
-    return const _ResultPresentation(
-      title: 'Booking Failed',
-      message: 'The payment was not completed successfully.',
+    return _ResultPresentation(
+      title: context.tr('booking_result_failed_title'),
+      message: context.tr('booking_result_failed_message'),
       icon: Icons.error_outline,
       accent: Colors.red,
     );
   }
 
-  // ✅ Updated:
-  // Always go to Home from the result screen instead of popping back
-  // to any previous booking-related screen.
-  void _goHome() {
-    context.go('/home');
-  }
+  void _goHome() => context.go('/home');
 
-  // ✅ Updated:
-  // Handle Android/system back and force navigation to Home.
   Future<bool> _handleBackNavigation() async {
     _goHome();
     return false;
   }
 
-  // ✅ Updated:
-  // Custom app bar back button that always goes to Home.
-  PreferredSizeWidget _buildAppBar() {
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       leading: IconButton(
         icon: const Icon(Icons.arrow_back),
         onPressed: _goHome,
       ),
-      title: const Text('Booking Result'),
+      title: Text(context.tr('booking_result_title')),
     );
   }
 
@@ -147,9 +131,7 @@ class _BookingResultViewState extends State<BookingResultView> {
             onWillPop: _handleBackNavigation,
             child: Scaffold(
               body: Center(
-                child: CircularProgressIndicator(
-                  color: colorScheme.primary,
-                ),
+                child: CircularProgressIndicator(color: colorScheme.primary),
               ),
             ),
           );
@@ -159,7 +141,7 @@ class _BookingResultViewState extends State<BookingResultView> {
           return WillPopScope(
             onWillPop: _handleBackNavigation,
             child: Scaffold(
-              appBar: _buildAppBar(),
+              appBar: _buildAppBar(context),
               body: SafeArea(
                 child: Center(
                   child: Padding(
@@ -167,14 +149,11 @@ class _BookingResultViewState extends State<BookingResultView> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          Icons.error_outline,
-                          size: 48,
-                          color: colorScheme.error,
-                        ),
+                        Icon(Icons.error_outline,
+                            size: 48, color: colorScheme.error),
                         const SizedBox(height: 16),
                         Text(
-                          'Could not load booking result right now.',
+                          context.tr('booking_result_load_error'),
                           textAlign: TextAlign.center,
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w800,
@@ -191,8 +170,6 @@ class _BookingResultViewState extends State<BookingResultView> {
                           width: double.infinity,
                           height: 56,
                           child: ElevatedButton(
-                            // ✅ Updated:
-                            // Bottom action now goes to Home.
                             onPressed: _goHome,
                             style: ElevatedButton.styleFrom(
                               shape: RoundedRectangleBorder(
@@ -200,7 +177,7 @@ class _BookingResultViewState extends State<BookingResultView> {
                               ),
                             ),
                             child: Text(
-                              'Back to Home',
+                              context.tr('booking_result_back_home'),
                               style: theme.textTheme.labelLarge?.copyWith(
                                 fontWeight: FontWeight.w800,
                                 fontSize: 17,
@@ -224,7 +201,7 @@ class _BookingResultViewState extends State<BookingResultView> {
         return WillPopScope(
           onWillPop: _handleBackNavigation,
           child: Scaffold(
-            appBar: _buildAppBar(),
+            appBar: _buildAppBar(context),
             body: SafeArea(
               child: Center(
                 child: SingleChildScrollView(
@@ -238,11 +215,8 @@ class _BookingResultViewState extends State<BookingResultView> {
                           color: presentation.accent.withOpacity(0.08),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
-                          presentation.icon,
-                          size: 46,
-                          color: presentation.accent,
-                        ),
+                        child: Icon(presentation.icon,
+                            size: 46, color: presentation.accent),
                       ),
                       const SizedBox(height: 24),
                       Text(
@@ -270,40 +244,47 @@ class _BookingResultViewState extends State<BookingResultView> {
                           decoration: BoxDecoration(
                             color: theme.cardColor,
                             borderRadius: BorderRadius.circular(22),
-                            border: Border.all(
-                              color: theme.dividerColor,
-                            ),
+                            border: Border.all(color: theme.dividerColor),
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _ResultRow(
-                                label: 'Booking ID',
+                                label: context.tr('booking_result_label_id'),
                                 value: booking.id,
                               ),
                               _ResultRow(
-                                label: 'Booking Status',
-                                value: _prettyStatus(booking.bookingStatus),
+                                label: context
+                                    .tr('booking_result_label_booking_status'),
+                                value: _localizeStatus(
+                                    context, booking.bookingStatus),
                               ),
                               _ResultRow(
-                                label: 'Payment Method',
-                                value: _paymentMethodLabel(booking.paymentMethod),
+                                label: context
+                                    .tr('booking_result_label_payment_method'),
+                                value: _paymentMethodLabel(
+                                    context, booking.paymentMethod),
                               ),
                               _ResultRow(
-                                label: 'Payment Status',
-                                value: _prettyStatus(
-                                  payment?.paymentStatus ?? booking.paymentStatus,
+                                label: context
+                                    .tr('booking_result_label_payment_status'),
+                                value: _localizeStatus(
+                                  context,
+                                  payment?.paymentStatus ??
+                                      booking.paymentStatus,
                                 ),
                               ),
                               _ResultRow(
-                                label: 'Requested Date',
+                                label:
+                                context.tr('booking_result_label_date'),
                                 value: booking.requestedDate
                                     .toIso8601String()
                                     .split('T')
                                     .first,
                               ),
                               _ResultRow(
-                                label: 'Requested Time',
+                                label:
+                                context.tr('booking_result_label_time'),
                                 value: booking.requestedTime,
                               ),
                             ],
@@ -314,8 +295,6 @@ class _BookingResultViewState extends State<BookingResultView> {
                         width: double.infinity,
                         height: 56,
                         child: ElevatedButton(
-                          // ✅ Updated:
-                          // Bottom action always goes to Home.
                           onPressed: _goHome,
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
@@ -323,7 +302,7 @@ class _BookingResultViewState extends State<BookingResultView> {
                             ),
                           ),
                           child: Text(
-                            'Back to Home',
+                            context.tr('booking_result_back_home'),
                             style: theme.textTheme.labelLarge?.copyWith(
                               fontWeight: FontWeight.w800,
                               fontSize: 17,
@@ -361,15 +340,11 @@ class _ResultRow extends StatelessWidget {
   final String label;
   final String value;
 
-  const _ResultRow({
-    required this.label,
-    required this.value,
-  });
+  const _ResultRow({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(
@@ -379,16 +354,12 @@ class _ResultRow extends StatelessWidget {
             width: 120,
             child: Text(
               '$label:',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
+              style: theme.textTheme.bodyMedium
+                  ?.copyWith(fontWeight: FontWeight.w700),
             ),
           ),
           Expanded(
-            child: Text(
-              value,
-              style: theme.textTheme.bodyMedium,
-            ),
+            child: Text(value, style: theme.textTheme.bodyMedium),
           ),
         ],
       ),

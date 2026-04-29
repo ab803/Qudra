@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../institution/models/institution_model.dart';
 import '../../../institution/models/service_model.dart';
 import '../../viewmodel/booking_cubit.dart';
 import '../../viewmodel/booking_state.dart';
 import '../widgets/booking_summary_card.dart';
 
-// This screen starts the online wallet payment flow after the user confirms the booking summary.
 class BookingWalletView extends StatefulWidget {
   final InstitutionModel institution;
   final InstitutionServiceModel service;
@@ -30,23 +30,17 @@ class BookingWalletView extends StatefulWidget {
 }
 
 class _BookingWalletViewState extends State<BookingWalletView> {
-  // This helper opens the Paymob wallet checkout URL and moves the user to the processing screen.
   Future<void> _openCheckoutAndProceed(
       String bookingId,
       String checkoutUrl,
       ) async {
     final uri = Uri.parse(checkoutUrl);
-    final launched = await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication,
-    );
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
 
     if (!launched) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Could not open the payment checkout page.'),
-        ),
+        SnackBar(content: Text(context.tr('booking_checkout_error'))),
       );
       return;
     }
@@ -54,13 +48,10 @@ class _BookingWalletViewState extends State<BookingWalletView> {
     if (!mounted) return;
     context.pushReplacement(
       '/booking/processing',
-      extra: {
-        'bookingId': bookingId,
-      },
+      extra: {'bookingId': bookingId},
     );
   }
 
-  // This helper sends the booking request using the wallet payment method.
   void _payWithWallet() {
     context.read<BookingCubit>().createBookingSession(
       serviceId: widget.service.id,
@@ -77,45 +68,29 @@ class _BookingWalletViewState extends State<BookingWalletView> {
     return BlocConsumer<BookingCubit, BookingState>(
       listener: (context, state) async {
         if (state is BookingSessionCreated) {
-          await _openCheckoutAndProceed(
-            state.bookingId,
-            state.checkoutUrl,
-          );
+          await _openCheckoutAndProceed(state.bookingId, state.checkoutUrl);
         }
-
         if (state is BookingError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage),
-            ),
+            SnackBar(content: Text(state.errorMessage)),
           );
         }
-
         if (state is BookingConfirmed) {
-          // ✅ Updated: keep the result route contract consistent by sending bookingId only.
           context.pushReplacement(
             '/booking/result',
-            extra: {
-              'bookingId': state.booking.id,
-            },
+            extra: {'bookingId': state.booking.id},
           );
         }
-
         if (state is BookingFailed) {
           final bookingId = state.booking?.id;
           if (bookingId != null) {
-            // ✅ Updated: keep the result route contract consistent by sending bookingId only.
             context.pushReplacement(
               '/booking/result',
-              extra: {
-                'bookingId': bookingId,
-              },
+              extra: {'bookingId': bookingId},
             );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage),
-              ),
+              SnackBar(content: Text(state.errorMessage)),
             );
           }
         }
@@ -127,7 +102,7 @@ class _BookingWalletViewState extends State<BookingWalletView> {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Wallet Payment'),
+            title: Text(context.tr('booking_wallet_title')),
           ),
           body: SafeArea(
             child: SingleChildScrollView(
@@ -149,12 +124,10 @@ class _BookingWalletViewState extends State<BookingWalletView> {
                     decoration: BoxDecoration(
                       color: theme.cardColor,
                       borderRadius: BorderRadius.circular(22),
-                      border: Border.all(
-                        color: theme.dividerColor,
-                      ),
+                      border: Border.all(color: theme.dividerColor),
                     ),
                     child: Text(
-                      'When you press pay, Paymob test checkout will open so you can continue with the wallet payment flow.',
+                      context.tr('booking_wallet_info'),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         height: 1.5,
                         fontSize: 15,
@@ -182,7 +155,7 @@ class _BookingWalletViewState extends State<BookingWalletView> {
                         ),
                       )
                           : Text(
-                        'Pay with Wallet',
+                        context.tr('booking_pay_with_wallet'),
                         style: theme.textTheme.labelLarge?.copyWith(
                           fontWeight: FontWeight.w800,
                           fontSize: 17,

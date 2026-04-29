@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../feedback/widgets/institution_rating_summary.dart';
 import '../models/institution_model.dart';
 
@@ -13,19 +14,12 @@ class InstitutionCard extends StatelessWidget {
     required this.onViewDetails,
   });
 
-  // This method opens the institution location link in an external maps app.
   Future<void> _openLocationLink(BuildContext context) async {
     final uri = Uri.parse(institution.location);
-    final didLaunch = await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication,
-    );
-
+    final didLaunch = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!didLaunch && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Unable to open the location link.'),
-        ),
+        SnackBar(content: Text(context.tr('institution_open_location_error'))),
       );
     }
   }
@@ -51,23 +45,21 @@ class InstitutionCard extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(20),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header row
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: colorScheme.onSurface.withOpacity(isDark ? 0.08 : 0.06),
+                  color: colorScheme.onSurface
+                      .withOpacity(isDark ? 0.08 : 0.06),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  Icons.business,
-                  color: colorScheme.onSurface,
-                  size: 24,
-                ),
+                child: Icon(Icons.business,
+                    color: colorScheme.onSurface, size: 24),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -84,9 +76,8 @@ class InstitutionCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       institution.institutionType,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontSize: 13,
-                      ),
+                      style: theme.textTheme.bodySmall
+                          ?.copyWith(fontSize: 13),
                     ),
                   ],
                 ),
@@ -94,19 +85,14 @@ class InstitutionCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-
-          // Address / location
-          if (institution.address != null && institution.address!.isNotEmpty)
+          if (institution.address != null &&
+              institution.address!.isNotEmpty)
             Text(
               institution.address!,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                fontSize: 14,
-                height: 1.4,
-              ),
+              style: theme.textTheme.bodyMedium
+                  ?.copyWith(fontSize: 14, height: 1.4),
             ),
           const SizedBox(height: 3),
-
-          // This block renders a lightweight location action to keep the card compact.
           InkWell(
             borderRadius: BorderRadius.circular(12),
             onTap: () => _openLocationLink(context),
@@ -115,32 +101,25 @@ class InstitutionCard extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    Icons.location_on_outlined,
-                    size: 16,
-                    color: colorScheme.primary,
-                  ),
+                  Icon(Icons.location_on_outlined,
+                      size: 16, color: colorScheme.primary),
                   const SizedBox(width: 6),
                   Text(
-                    'Open in Maps',
+                    context.tr('institution_open_in_maps'),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontSize: 13,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(width: 6),
-                  Icon(
-                    Icons.open_in_new_rounded,
-                    size: 15,
-                    color: theme.textTheme.bodySmall?.color,
-                  ),
+                  Icon(Icons.open_in_new_rounded,
+                      size: 15,
+                      color: theme.textTheme.bodySmall?.color),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 14),
-
-          // Footer row: rating summary on the left and details button on the right.
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -148,27 +127,24 @@ class InstitutionCard extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: InstitutionRatingSummary(
-                    institutionId: institution.id,
-                  ),
+                      institutionId: institution.id),
                 ),
               ),
               const SizedBox(width: 12),
-              ElevatedButton(
-                onPressed: onViewDetails,
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+              Flexible(
+                child: ElevatedButton(
+                  onPressed: onViewDetails,
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    elevation: 0,
                   ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 12,
-                  ),
-                  elevation: 0,
-                ),
-                child: const Text(
-                  'View Details',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                  child: Text(
+                    context.tr('institution_view_details'),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
               ),

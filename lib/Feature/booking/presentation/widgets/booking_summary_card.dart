@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../institution/models/institution_model.dart';
 import '../../../institution/models/service_model.dart';
 
-// This widget shows a compact summary of the institution and selected service.
 class BookingSummaryCard extends StatelessWidget {
   final InstitutionModel institution;
   final InstitutionServiceModel service;
@@ -19,18 +19,16 @@ class BookingSummaryCard extends StatelessWidget {
     this.notes,
   });
 
-  // This helper formats the selected booking date into dd/MM/yyyy.
-  String _formatDate(DateTime? date) {
-    if (date == null) return 'Not selected';
+  String _formatDate(BuildContext context, DateTime? date) {
+    if (date == null) return context.tr('booking_summary_not_selected');
     final day = date.day.toString().padLeft(2, '0');
     final month = date.month.toString().padLeft(2, '0');
     final year = date.year.toString();
     return '$day/$month/$year';
   }
 
-  // This helper formats the service price or marks it as free.
-  String _formatPrice() {
-    if (service.isFree) return 'Free';
+  String _formatPrice(BuildContext context) {
+    if (service.isFree) return context.tr('service_free');
     return 'EGP ${service.price.toStringAsFixed(2)}';
   }
 
@@ -58,14 +56,14 @@ class BookingSummaryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // This block shows the institution name and selected service.
           Row(
             children: [
               Container(
                 width: 46,
                 height: 46,
                 decoration: BoxDecoration(
-                  color: colorScheme.onSurface.withOpacity(isDark ? 0.08 : 0.05),
+                  color: colorScheme.onSurface
+                      .withOpacity(isDark ? 0.08 : 0.05),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(Icons.business, color: colorScheme.onSurface),
@@ -96,27 +94,31 @@ class BookingSummaryCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-
-          // This block shows booking-related summary rows.
-          _InfoRow(label: 'Category', value: service.category),
-          _InfoRow(label: 'Price', value: _formatPrice()),
           _InfoRow(
-            label: 'Duration',
+            label: context.tr('booking_summary_category'),
+            value: service.category,
+          ),
+          _InfoRow(
+            label: context.tr('booking_summary_price'),
+            value: _formatPrice(context),
+          ),
+          _InfoRow(
+            label: context.tr('booking_summary_duration'),
             value: '${service.durationMinutes} min',
           ),
           _InfoRow(
-            label: 'Date',
-            value: _formatDate(requestedDate),
+            label: context.tr('booking_summary_date'),
+            value: _formatDate(context, requestedDate),
           ),
           _InfoRow(
-            label: 'Time',
-            value: requestedTime ?? 'Not selected',
+            label: context.tr('booking_summary_time'),
+            value: requestedTime ?? context.tr('booking_summary_not_selected'),
           ),
           _InfoRow(
-            label: 'Notes',
+            label: context.tr('booking_summary_notes'),
             value: (notes != null && notes!.trim().isNotEmpty)
                 ? notes!.trim()
-                : 'No additional notes',
+                : context.tr('booking_summary_no_notes'),
           ),
         ],
       ),
@@ -124,15 +126,11 @@ class BookingSummaryCard extends StatelessWidget {
   }
 }
 
-// This widget renders a single summary row inside the booking card.
 class _InfoRow extends StatelessWidget {
   final String label;
   final String value;
 
-  const _InfoRow({
-    required this.label,
-    required this.value,
-  });
+  const _InfoRow({required this.label, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -155,9 +153,7 @@ class _InfoRow extends StatelessWidget {
           Expanded(
             child: Text(
               value,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                height: 1.4,
-              ),
+              style: theme.textTheme.bodyMedium?.copyWith(height: 1.4),
             ),
           ),
         ],

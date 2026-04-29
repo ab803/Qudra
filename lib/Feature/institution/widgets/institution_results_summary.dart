@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 
-// This widget shows a short summary of the current search and chip filter results.
 class InstitutionResultsSummary extends StatelessWidget {
   final int count;
   final String query;
-  final String selectedFilter;
+  final String selectedFilter; // English key
 
   const InstitutionResultsSummary({
     super.key,
@@ -18,17 +18,34 @@ class InstitutionResultsSummary extends StatelessWidget {
     final theme = Theme.of(context);
     final hasQuery = query.isNotEmpty;
     final hasChipFilter = selectedFilter != 'All';
+    final isOne = count == 1;
+
+    final localizedFilter = hasChipFilter
+        ? context.tr('filter_${selectedFilter.toLowerCase()}')
+        : '';
 
     String label;
 
     if (!hasQuery && !hasChipFilter) {
-      label = 'Showing $count institution${count == 1 ? '' : 's'}';
+      label = context
+          .tr(isOne ? 'results_showing_all_one' : 'results_showing_all_many')
+          .replaceAll('{count}', '$count');
     } else if (hasQuery && !hasChipFilter) {
-      label = 'Showing $count result${count == 1 ? '' : 's'} for "$query"';
+      label = context
+          .tr(isOne ? 'results_showing_query_one' : 'results_showing_query_many')
+          .replaceAll('{count}', '$count')
+          .replaceAll('{query}', query);
     } else if (!hasQuery && hasChipFilter) {
-      label = 'Showing $count institution${count == 1 ? '' : 's'} in $selectedFilter';
+      label = context
+          .tr(isOne ? 'results_showing_filter_one' : 'results_showing_filter_many')
+          .replaceAll('{count}', '$count')
+          .replaceAll('{filter}', localizedFilter);
     } else {
-      label = 'Showing $count result${count == 1 ? '' : 's'} for "$query" in $selectedFilter';
+      label = context
+          .tr(isOne ? 'results_showing_both_one' : 'results_showing_both_many')
+          .replaceAll('{count}', '$count')
+          .replaceAll('{query}', query)
+          .replaceAll('{filter}', localizedFilter);
     }
 
     return Padding(

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../institution/models/institution_model.dart';
 import '../../../institution/models/service_model.dart';
 import '../../viewmodel/booking_cubit.dart';
 import '../../viewmodel/booking_state.dart';
 import '../widgets/booking_summary_card.dart';
 
-// This screen confirms the booking immediately and marks the payment as due at the institution.
 class BookingCashView extends StatelessWidget {
   final InstitutionModel institution;
   final InstitutionServiceModel service;
@@ -24,7 +24,6 @@ class BookingCashView extends StatelessWidget {
     this.notes,
   });
 
-  // This helper starts the direct cash booking confirmation flow.
   void _confirmCashBooking(BuildContext context) {
     context.read<BookingCubit>().createBookingSession(
       serviceId: service.id,
@@ -40,45 +39,28 @@ class BookingCashView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<BookingCubit, BookingState>(
       listener: (context, state) {
-        // ✅ Updated:
-        // Navigate to the result route using bookingId only,
-        // because /booking/result expects { 'bookingId': ... } in state.extra.
         if (state is BookingConfirmed) {
           context.pushReplacement(
             '/booking/result',
-            extra: {
-              'bookingId': state.booking.id,
-            },
+            extra: {'bookingId': state.booking.id},
           );
         }
-
-        // ✅ Updated:
-        // Keep the same route contract on failed states too.
-        // If no booking id exists, show the error locally instead of crashing the route.
         if (state is BookingFailed) {
           final bookingId = state.booking?.id;
           if (bookingId != null) {
             context.pushReplacement(
               '/booking/result',
-              extra: {
-                'bookingId': bookingId,
-              },
+              extra: {'bookingId': bookingId},
             );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.errorMessage),
-              ),
+              SnackBar(content: Text(state.errorMessage)),
             );
           }
         }
-
-        // This block shows unexpected booking errors in a snackbar.
         if (state is BookingError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.errorMessage),
-            ),
+            SnackBar(content: Text(state.errorMessage)),
           );
         }
       },
@@ -89,7 +71,7 @@ class BookingCashView extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Cash at Institution'),
+            title: Text(context.tr('booking_cash_title')),
           ),
           body: SafeArea(
             child: SingleChildScrollView(
@@ -97,7 +79,6 @@ class BookingCashView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // This block shows the booking summary before cash confirmation.
                   BookingSummaryCard(
                     institution: institution,
                     service: service,
@@ -106,20 +87,16 @@ class BookingCashView extends StatelessWidget {
                     notes: notes,
                   ),
                   const SizedBox(height: 20),
-
-                  // This block explains the cash-at-institution payment rule.
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
                       color: theme.cardColor,
                       borderRadius: BorderRadius.circular(22),
-                      border: Border.all(
-                        color: theme.dividerColor,
-                      ),
+                      border: Border.all(color: theme.dividerColor),
                     ),
                     child: Text(
-                      'Your booking will be confirmed immediately, and payment will be collected at the institution.',
+                      context.tr('booking_cash_info'),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         height: 1.5,
                         fontSize: 15,
@@ -127,14 +104,13 @@ class BookingCashView extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-
-                  // This block confirms the cash booking directly without opening Paymob.
                   SizedBox(
                     width: double.infinity,
                     height: 56,
                     child: ElevatedButton(
-                      onPressed:
-                      isLoading ? null : () => _confirmCashBooking(context),
+                      onPressed: isLoading
+                          ? null
+                          : () => _confirmCashBooking(context),
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(18),
@@ -150,7 +126,7 @@ class BookingCashView extends StatelessWidget {
                         ),
                       )
                           : Text(
-                        'Confirm Booking',
+                        context.tr('booking_confirm'),
                         style: theme.textTheme.labelLarge?.copyWith(
                           fontWeight: FontWeight.w800,
                           fontSize: 17,

@@ -28,6 +28,12 @@ class CategorySection extends StatelessWidget {
         'label': context.tr('hearing'),
         'color': Appcolors.cardTeal,
       },
+      {
+        'icon': Icons.computer,
+        'label': context.tr('cognitive'),
+        'color': Appcolors.cardBlue,
+      },
+
     ];
 
     return Column(

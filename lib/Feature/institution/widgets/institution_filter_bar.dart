@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import 'package:qudra_0/core/Styles/AppColors.dart';
 
-// This widget renders the institutions disability filter chips row.
 class InstitutionFilterBar extends StatelessWidget {
   final String selectedFilter;
   final ValueChanged<String> onFilterSelected;
@@ -12,28 +12,42 @@ class InstitutionFilterBar extends StatelessWidget {
     required this.onFilterSelected,
   });
 
+  // English keys — stored as selectedFilter values, never change.
+  static const List<String> _filterKeys = [
+    'All', 'Mobility', 'Vision', 'Hearing', 'Cognitive', 'Other',
+  ];
+
+  // Maps each key to its translation key.
+  static const Map<String, String> _translationKeys = {
+    'All':      'filter_all',
+    'Mobility': 'filter_mobility',
+    'Vision':   'filter_vision',
+    'Hearing':  'filter_hearing',
+    'Cognitive':'filter_cognitive',
+    'Other':    'filter_other',
+  };
+
   @override
   Widget build(BuildContext context) {
-    const filterLabels = ['All', 'Mobility', 'Vision', 'Hearing'];
-
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
-        children: List.generate(filterLabels.length, (index) {
-          final label = filterLabels[index];
-          final visualData = _getChipVisualData(label, context);
+        children: List.generate(_filterKeys.length, (index) {
+          final key = _filterKeys[index];
+          final label = context.tr(_translationKeys[key]!);
+          final visualData = _getChipVisualData(key, context);
 
           return Padding(
             padding: EdgeInsets.only(
-              right: index == filterLabels.length - 1 ? 0 : 10,
+              right: index == _filterKeys.length - 1 ? 0 : 10,
             ),
             child: _InstitutionFilterChip(
               label: label,
               icon: visualData.icon,
               accentColor: visualData.accentColor,
-              isSelected: selectedFilter == label,
-              onTap: () => onFilterSelected(label),
+              isSelected: selectedFilter == key,
+              onTap: () => onFilterSelected(key), // always pass the English key
             ),
           );
         }),
@@ -41,9 +55,8 @@ class InstitutionFilterBar extends StatelessWidget {
     );
   }
 
-  // This method returns the visual style config for each filter chip.
-  _ChipVisualData _getChipVisualData(String chipLabel, BuildContext context) {
-    switch (chipLabel) {
+  _ChipVisualData _getChipVisualData(String key, BuildContext context) {
+    switch (key) {
       case 'Mobility':
         return const _ChipVisualData(
           icon: Icons.accessible_rounded,
@@ -68,7 +81,6 @@ class InstitutionFilterBar extends StatelessWidget {
   }
 }
 
-// This widget renders a single filter chip with icon and label.
 class _InstitutionFilterChip extends StatelessWidget {
   final String label;
   final IconData icon;
@@ -102,10 +114,7 @@ class _InstitutionFilterChip extends StatelessWidget {
           duration: const Duration(milliseconds: 180),
           curve: Curves.easeOut,
           constraints: const BoxConstraints(minHeight: 46),
-          padding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 11,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
           decoration: BoxDecoration(
             color: backgroundColor,
             borderRadius: BorderRadius.circular(24),
@@ -127,11 +136,7 @@ class _InstitutionFilterChip extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                icon,
-                size: 18,
-                color: iconColor,
-              ),
+              Icon(icon, size: 18, color: iconColor),
               const SizedBox(width: 8),
               Text(
                 label,
@@ -150,13 +155,8 @@ class _InstitutionFilterChip extends StatelessWidget {
   }
 }
 
-// This helper model stores the icon and accent color for each filter chip.
 class _ChipVisualData {
   final IconData icon;
   final Color accentColor;
-
-  const _ChipVisualData({
-    required this.icon,
-    required this.accentColor,
-  });
+  const _ChipVisualData({required this.icon, required this.accentColor});
 }

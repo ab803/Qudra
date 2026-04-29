@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../viewmodel/booking_cubit.dart';
 import '../../viewmodel/booking_state.dart';
 
-// This screen keeps checking the booking status after returning from checkout.
 class BookingProcessingView extends StatefulWidget {
   final String bookingId;
 
-  const BookingProcessingView({
-    super.key,
-    required this.bookingId,
-  });
+  const BookingProcessingView({super.key, required this.bookingId});
 
   @override
   State<BookingProcessingView> createState() => _BookingProcessingViewState();
@@ -20,10 +17,6 @@ class BookingProcessingView extends StatefulWidget {
 class _BookingProcessingViewState extends State<BookingProcessingView>
     with WidgetsBindingObserver {
   bool _hasNavigated = false;
-
-  // ✅ Updated:
-  // This flag makes sure the abandon/fail-on-return logic runs only once
-  // when the user comes back from the external Paymob checkout.
   bool _handledCheckoutReturn = false;
 
   @override
@@ -31,7 +24,9 @@ class _BookingProcessingViewState extends State<BookingProcessingView>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<BookingCubit>().waitForFinalBookingStatus(widget.bookingId);
+      context
+          .read<BookingCubit>()
+          .waitForFinalBookingStatus(widget.bookingId);
     });
   }
 
@@ -43,9 +38,6 @@ class _BookingProcessingViewState extends State<BookingProcessingView>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // ✅ Updated:
-    // When the app resumes from the external checkout,
-    // resolve the returned checkout state immediately.
     if (state == AppLifecycleState.resumed &&
         mounted &&
         !_hasNavigated &&
@@ -62,9 +54,7 @@ class _BookingProcessingViewState extends State<BookingProcessingView>
     _hasNavigated = true;
     context.go(
       '/booking/result',
-      extra: {
-        'bookingId': widget.bookingId,
-      },
+      extra: {'bookingId': widget.bookingId},
     );
   }
 
@@ -84,7 +74,7 @@ class _BookingProcessingViewState extends State<BookingProcessingView>
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Processing'),
+          title: Text(context.tr('booking_processing_title')),
         ),
         body: SafeArea(
           child: Center(
@@ -103,7 +93,7 @@ class _BookingProcessingViewState extends State<BookingProcessingView>
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'Checking payment result...',
+                    context.tr('booking_processing_checking'),
                     textAlign: TextAlign.center,
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w900,
@@ -111,11 +101,9 @@ class _BookingProcessingViewState extends State<BookingProcessingView>
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    'Please wait while we verify your booking with Paymob and refresh the final booking status.',
+                    context.tr('booking_processing_description'),
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      height: 1.5,
-                    ),
+                    style: theme.textTheme.bodyMedium?.copyWith(height: 1.5),
                   ),
                 ],
               ),

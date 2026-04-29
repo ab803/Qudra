@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../services/feedback_service.dart';
 
-// This dialog allows the current user to rate an institution with stars only.
-// If the user rated the institution before, the dialog loads the previous rating
-// and allows updating it.
 class RateInstitutionDialog extends StatefulWidget {
   final String institutionId;
   final String institutionName;
@@ -30,7 +28,6 @@ class _RateInstitutionDialogState extends State<RateInstitutionDialog> {
     _loadExistingRating();
   }
 
-  // This method loads the current user's existing rating for the institution.
   Future<void> _loadExistingRating() async {
     try {
       final existingRating =
@@ -50,12 +47,11 @@ class _RateInstitutionDialogState extends State<RateInstitutionDialog> {
     }
   }
 
-  // This method submits or updates the user's institution rating.
   Future<void> _submitRating() async {
     if (_selectedRating == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select a rating first.'),
+        SnackBar(
+          content: Text(context.tr('please_select_rating')),
         ),
       );
       return;
@@ -88,7 +84,6 @@ class _RateInstitutionDialogState extends State<RateInstitutionDialog> {
     }
   }
 
-  // This widget builds a simple interactive 1-5 star row.
   Widget _buildStarRow(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -110,7 +105,9 @@ class _RateInstitutionDialogState extends State<RateInstitutionDialog> {
           iconSize: 38,
           icon: Icon(
             isSelected ? Icons.star_rounded : Icons.star_border_rounded,
-            color: isSelected ? colorScheme.primary : theme.textTheme.bodySmall?.color,
+            color: isSelected
+                ? colorScheme.primary
+                : theme.textTheme.bodySmall?.color,
           ),
         );
       }),
@@ -140,15 +137,17 @@ class _RateInstitutionDialogState extends State<RateInstitutionDialog> {
             : Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // This block shows the dialog title and institution context.
+            /// Title
             Text(
-              'Rate Institution',
+              context.tr('rate_institution'),
               style: theme.textTheme.titleLarge?.copyWith(
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
               ),
             ),
             const SizedBox(height: 8),
+
+            /// Institution name
             Text(
               widget.institutionName,
               textAlign: TextAlign.center,
@@ -157,20 +156,27 @@ class _RateInstitutionDialogState extends State<RateInstitutionDialog> {
                 fontWeight: FontWeight.w600,
               ),
             ),
+
             const SizedBox(height: 24),
 
-            // This block shows the interactive stars row.
+            /// Stars
             _buildStarRow(context),
+
             const SizedBox(height: 16),
+
+            /// Rating text
             Text(
               _selectedRating == 0
-                  ? 'Select your rating'
-                  : 'Your rating: $_selectedRating / 5',
+                  ? context.tr('select_your_rating')
+                  : context.tr(
+                'your_rating',
+              ).replaceAll('{}', '$_selectedRating'),
               style: theme.textTheme.bodyMedium,
             ),
+
             const SizedBox(height: 28),
 
-            // This block shows submit and cancel actions.
+            /// Buttons
             Row(
               children: [
                 Expanded(
@@ -186,9 +192,9 @@ class _RateInstitutionDialogState extends State<RateInstitutionDialog> {
                       ),
                       minimumSize: const Size.fromHeight(52),
                     ),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
+                    child: Text(
+                      context.tr('cancel'),
+                      style: const TextStyle(
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -197,7 +203,8 @@ class _RateInstitutionDialogState extends State<RateInstitutionDialog> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: _isSubmitting ? null : _submitRating,
+                    onPressed:
+                    _isSubmitting ? null : _submitRating,
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -211,13 +218,16 @@ class _RateInstitutionDialogState extends State<RateInstitutionDialog> {
                       height: 20,
                       child: CircularProgressIndicator(
                         strokeWidth: 2.3,
-                        valueColor: AlwaysStoppedAnimation<Color>(
+                        valueColor:
+                        AlwaysStoppedAnimation<Color>(
                           colorScheme.onPrimary,
                         ),
                       ),
                     )
                         : Text(
-                      _selectedRating == 0 ? 'Submit' : 'Save Rating',
+                      _selectedRating == 0
+                          ? context.tr('submit')
+                          : context.tr('save_rating'),
                       style: const TextStyle(
                         fontWeight: FontWeight.w700,
                       ),

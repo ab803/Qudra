@@ -69,7 +69,7 @@ class _RecommendedSectionState extends State<RecommendedSection> {
                 height: 230,
                 child: Center(
                   child: Text(
-                    'No recommendations available right now',
+                    context.tr('no_recommendations_available'),
                     style: theme.textTheme.bodyMedium,
                   ),
                 ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../feedback/widgets/institution_rating_summary.dart';
 import '../../feedback/widgets/rate_institution_dialog.dart';
 import '../viewmodel/institution_cubit.dart';
@@ -11,10 +12,7 @@ import '../widgets/service_tile.dart';
 class InstitutionDetailsView extends StatefulWidget {
   final String institutionId;
 
-  const InstitutionDetailsView({
-    super.key,
-    required this.institutionId,
-  });
+  const InstitutionDetailsView({super.key, required this.institutionId});
 
   @override
   State<InstitutionDetailsView> createState() =>
@@ -43,31 +41,24 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
         institutionName: institutionName,
       ),
     );
-
     if (didSubmit == true && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Institution rating submitted successfully.'),
+        SnackBar(
+          content: Text(context.tr('rating_submitted_success')),
         ),
       );
-      setState(() {
-        // Rebuild to refresh rating summary
-      });
+      setState(() {});
     }
   }
 
-  // This method opens the institution location link in an external maps app.
   Future<void> _openLocationLink(String locationUrl) async {
     final uri = Uri.parse(locationUrl);
-    final didLaunch = await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication,
-    );
-
+    final didLaunch =
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!didLaunch && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Unable to open the location link.'),
+        SnackBar(
+          content: Text(context.tr('institution_open_location_error')),
         ),
       );
     }
@@ -83,7 +74,7 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
-          'Institution Details',
+          context.tr('institution_details_title'),
           style: theme.textTheme.titleLarge,
         ),
       ),
@@ -91,20 +82,14 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
         child: BlocBuilder<InstitutionCubit, InstitutionState>(
           builder: (context, state) {
             if (state is InstitutionLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
+              return const Center(child: CircularProgressIndicator());
             }
-
             if (state is InstitutionError) {
               return Center(
-                child: Text(
-                  state.errorMessage,
-                  style: theme.textTheme.bodyMedium,
-                ),
+                child: Text(state.errorMessage,
+                    style: theme.textTheme.bodyMedium),
               );
             }
-
             if (state is InstitutionDetailsLoaded) {
               final institution = state.institution;
               final services = state.services;
@@ -123,8 +108,8 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                         border: Border.all(color: theme.dividerColor),
                         boxShadow: [
                           BoxShadow(
-                            color:
-                            theme.shadowColor.withOpacity(isDark ? 0.30 : 0.08),
+                            color: theme.shadowColor.withOpacity(
+                                isDark ? 0.30 : 0.08),
                             blurRadius: 12,
                             offset: const Offset(0, 4),
                           ),
@@ -136,15 +121,12 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                             width: 56,
                             height: 56,
                             decoration: BoxDecoration(
-                              color:
-                              colorScheme.onSurface.withOpacity(isDark ? 0.08 : 0.05),
+                              color: colorScheme.onSurface
+                                  .withOpacity(isDark ? 0.08 : 0.05),
                               shape: BoxShape.circle,
                             ),
-                            child: Icon(
-                              Icons.business,
-                              size: 28,
-                              color: colorScheme.onSurface,
-                            ),
+                            child: Icon(Icons.business,
+                                size: 28, color: colorScheme.onSurface),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
@@ -153,16 +135,15 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                               children: [
                                 Text(
                                   institution.name,
-                                  style: theme.textTheme.titleLarge?.copyWith(
+                                  style:
+                                  theme.textTheme.titleLarge?.copyWith(
                                     fontSize: 22,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
-                                Text(
-                                  institution.institutionType,
-                                  style: theme.textTheme.bodyMedium,
-                                ),
+                                Text(institution.institutionType,
+                                    style: theme.textTheme.bodyMedium),
                               ],
                             ),
                           ),
@@ -180,70 +161,66 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                     const SizedBox(height: 6),
                     Text(
                       institution.institutionType,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontSize: 15,
-                      ),
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(fontSize: 15),
                     ),
                     const SizedBox(height: 16),
-
-                    // Rating + button (unchanged)
                     Row(
                       children: [
                         Expanded(
                           child: InstitutionRatingSummary(
                             key: ValueKey(
-                              'institution-summary-${institution.id}',
-                            ),
+                                'institution-summary-${institution.id}'),
                             institutionId: institution.id,
                           ),
                         ),
                         const SizedBox(width: 12),
                         ElevatedButton(
-                          onPressed: () {
-                            _openRateInstitutionDialog(
-                              institutionId: institution.id,
-                              institutionName: institution.name,
-                            );
-                          },
+                          onPressed: () => _openRateInstitutionDialog(
+                            institutionId: institution.id,
+                            institutionName: institution.name,
+                          ),
                           style: ElevatedButton.styleFrom(
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
                             elevation: 0,
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 18,
-                              vertical: 12,
-                            ),
+                                horizontal: 18, vertical: 12),
                           ),
-                          child: const Text(
-                            'Rate Institution',
-                            style: TextStyle(fontWeight: FontWeight.w700),
+                          child: Text(
+                            context.tr('institution_rate'),
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w700),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 18),
                     _InfoRow(
-                      label: 'Address',
-                      value: institution.address ?? 'Not provided',
+                      label: context.tr('institution_address'),
+                      value: institution.address ??
+                          context.tr('institution_not_provided'),
                     ),
                     _InfoRow(
-                      label: 'Location',
-                      value: 'Open in Maps',
+                      label: context.tr('institution_location'),
+                      value: context.tr('institution_open_in_maps'),
                       isAction: true,
-                      onTap: () => _openLocationLink(institution.location),
+                      onTap: () =>
+                          _openLocationLink(institution.location),
                     ),
                     _InfoRow(
-                      label: 'Phone',
-                      value: institution.phone ?? 'Not provided',
+                      label: context.tr('institution_phone'),
+                      value: institution.phone ??
+                          context.tr('institution_not_provided'),
                     ),
                     _InfoRow(
-                      label: 'Email',
+                      label: context.tr('institution_email'),
                       value: institution.email,
                     ),
                     const SizedBox(height: 22),
                     Text(
-                      'Services',
+                      context.tr('institution_services_title'),
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -252,7 +229,7 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                     const SizedBox(height: 14),
                     if (services.isEmpty)
                       Text(
-                        'No active services available right now',
+                        context.tr('institution_no_services'),
                         style: theme.textTheme.bodyMedium,
                       ),
                     ...services.map(
@@ -273,7 +250,6 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                 ),
               );
             }
-
             return const SizedBox.shrink();
           },
         ),
@@ -310,9 +286,8 @@ class _InfoRow extends StatelessWidget {
             width: 80,
             child: Text(
               '$label:',
-              style: theme.textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+              style: theme.textTheme.bodyLarge
+                  ?.copyWith(fontWeight: FontWeight.bold),
             ),
           ),
           Expanded(
@@ -325,11 +300,8 @@ class _InfoRow extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      Icons.location_on_outlined,
-                      size: 16,
-                      color: colorScheme.primary,
-                    ),
+                    Icon(Icons.location_on_outlined,
+                        size: 16, color: colorScheme.primary),
                     const SizedBox(width: 6),
                     Text(
                       value,
@@ -341,18 +313,14 @@ class _InfoRow extends StatelessWidget {
                     Icon(
                       Icons.open_in_new_rounded,
                       size: 15,
-                      color: theme.textTheme.bodySmall?.color?.withOpacity(
-                        isDark ? 0.9 : 1,
-                      ),
+                      color: theme.textTheme.bodySmall?.color
+                          ?.withOpacity(isDark ? 0.9 : 1),
                     ),
                   ],
                 ),
               ),
             )
-                : Text(
-              value,
-              style: theme.textTheme.bodyLarge,
-            ),
+                : Text(value, style: theme.textTheme.bodyLarge),
           ),
         ],
       ),

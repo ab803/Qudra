@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../models/service_model.dart';
 
-// This widget renders a service card inside institution details and exposes a booking action.
 class ServiceTile extends StatelessWidget {
   final InstitutionServiceModel service;
   final VoidCallback? onBookNow;
 
-  const ServiceTile({
-    super.key,
-    required this.service,
-    this.onBookNow,
-  });
+  const ServiceTile({super.key, required this.service, this.onBookNow});
 
-  // This helper formats the service price label.
-  String _formatPrice() {
-    if (service.isFree) return 'Free';
+  String _formatPrice(BuildContext context) {
+    if (service.isFree) return context.tr('service_free');
     return 'EGP ${service.price.toStringAsFixed(2)}';
   }
 
@@ -43,7 +38,6 @@ class ServiceTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // This block renders the service name and category.
           Text(
             service.name,
             style: theme.textTheme.titleMedium?.copyWith(
@@ -61,8 +55,6 @@ class ServiceTile extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-
-          // This block renders the optional service description.
           if (service.description != null &&
               service.description!.trim().isNotEmpty) ...[
             Text(
@@ -74,24 +66,21 @@ class ServiceTile extends StatelessWidget {
             ),
             const SizedBox(height: 12),
           ],
-
-          // This block renders service metadata chips.
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [
-              _TagChip(text: _formatPrice(), dark: true),
+              _TagChip(text: _formatPrice(context), dark: true),
               _TagChip(text: '${service.durationMinutes} min'),
-              _TagChip(text: service.locationMode.replaceAll('_', ' ')),
-              _TagChip(text: service.bookingType.replaceAll('_', ' ')),
-              ...service.supportedDisabilities.map(
-                    (item) => _TagChip(text: item, light: true),
-              ),
+              _TagChip(
+                  text: service.locationMode.replaceAll('_', ' ')),
+              _TagChip(
+                  text: service.bookingType.replaceAll('_', ' ')),
+              ...service.supportedDisabilities
+                  .map((item) => _TagChip(text: item, light: true)),
             ],
           ),
           const SizedBox(height: 16),
-
-          // This block renders the booking action at the bottom of the service card.
           SizedBox(
             width: double.infinity,
             height: 48,
@@ -103,7 +92,7 @@ class ServiceTile extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Book Now',
+                context.tr('service_book_now'),
                 style: theme.textTheme.labelLarge?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),
@@ -116,17 +105,13 @@ class ServiceTile extends StatelessWidget {
   }
 }
 
-// This widget renders a reusable service metadata chip.
+// _TagChip is unchanged (no hardcoded strings)
 class _TagChip extends StatelessWidget {
   final String text;
   final bool light;
   final bool dark;
 
-  const _TagChip({
-    required this.text,
-    this.light = false,
-    this.dark = false,
-  });
+  const _TagChip({required this.text, this.light = false, this.dark = false});
 
   @override
   Widget build(BuildContext context) {
@@ -146,9 +131,7 @@ class _TagChip extends StatelessWidget {
         theme.brightness == Brightness.dark ? 0.16 : 0.08,
       );
       textColor = colorScheme.primary;
-      border = Border.all(
-        color: colorScheme.primary.withOpacity(0.18),
-      );
+      border = Border.all(color: colorScheme.primary.withOpacity(0.18));
     } else {
       bgColor = colorScheme.onSurface.withOpacity(
         theme.brightness == Brightness.dark ? 0.10 : 0.05,

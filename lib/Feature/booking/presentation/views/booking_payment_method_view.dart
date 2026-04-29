@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../institution/models/institution_model.dart';
 import '../../../institution/models/service_model.dart';
 import '../widgets/booking_payment_method_tile.dart';
 import '../widgets/booking_summary_card.dart';
 
-// This screen lets the user choose the payment method after entering booking details.
 class BookingPaymentMethodView extends StatefulWidget {
   final InstitutionModel institution;
   final InstitutionServiceModel service;
@@ -30,18 +30,14 @@ class BookingPaymentMethodView extends StatefulWidget {
 class _BookingPaymentMethodViewState extends State<BookingPaymentMethodView> {
   String _selectedMethod = 'card';
 
-  // This helper builds the route payload _shared between the method-specific booking screens.
-  Map<String, dynamic> _buildExtra() {
-    return {
-      'institution': widget.institution,
-      'service': widget.service,
-      'requestedDate': widget.requestedDate,
-      'requestedTime': widget.requestedTime,
-      'notes': widget.notes,
-    };
-  }
+  Map<String, dynamic> _buildExtra() => {
+    'institution': widget.institution,
+    'service': widget.service,
+    'requestedDate': widget.requestedDate,
+    'requestedTime': widget.requestedTime,
+    'notes': widget.notes,
+  };
 
-  // This helper opens the correct payment screen for the selected booking payment method.
   void _continue() {
     switch (_selectedMethod) {
       case 'card':
@@ -62,7 +58,7 @@ class _BookingPaymentMethodViewState extends State<BookingPaymentMethodView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Payment Method'),
+        title: Text(context.tr('booking_payment_method_title')),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -70,7 +66,6 @@ class _BookingPaymentMethodViewState extends State<BookingPaymentMethodView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // This block shows the current booking summary above payment selection.
               BookingSummaryCard(
                 institution: widget.institution,
                 service: widget.service,
@@ -79,59 +74,38 @@ class _BookingPaymentMethodViewState extends State<BookingPaymentMethodView> {
                 notes: widget.notes,
               ),
               const SizedBox(height: 20),
-
-              // This block shows the payment method title.
               Text(
-                'Choose Payment Method',
+                context.tr('booking_choose_method'),
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.w800,
                 ),
               ),
               const SizedBox(height: 14),
-
-              // This block renders the card option.
               BookingPaymentMethodTile(
                 icon: Icons.credit_card_outlined,
-                title: 'Card',
-                subtitle: 'Pay securely using Paymob test checkout.',
+                title: context.tr('booking_method_card_title'),
+                subtitle: context.tr('booking_method_card_subtitle'),
                 selected: _selectedMethod == 'card',
-                onTap: () {
-                  setState(() {
-                    _selectedMethod = 'card';
-                  });
-                },
+                onTap: () => setState(() => _selectedMethod = 'card'),
               ),
               const SizedBox(height: 12),
-
-              // This block renders the wallet option.
               BookingPaymentMethodTile(
                 icon: Icons.account_balance_wallet_outlined,
-                title: 'Wallet',
-                subtitle: 'Pay using a supported mobile wallet via Paymob.',
+                title: context.tr('booking_method_wallet_title'),
+                subtitle: context.tr('booking_method_wallet_subtitle'),
                 selected: _selectedMethod == 'wallet',
-                onTap: () {
-                  setState(() {
-                    _selectedMethod = 'wallet';
-                  });
-                },
+                onTap: () => setState(() => _selectedMethod = 'wallet'),
               ),
               const SizedBox(height: 12),
-
-              // This block renders the cash option.
               BookingPaymentMethodTile(
                 icon: Icons.payments_outlined,
-                title: 'Cash at Institution',
-                subtitle: 'Confirm the booking now and pay at the institution.',
+                title: context.tr('booking_method_cash_title'),
+                subtitle: context.tr('booking_method_cash_subtitle'),
                 selected: _selectedMethod == 'cash_at_institution',
-                onTap: () {
-                  setState(() {
-                    _selectedMethod = 'cash_at_institution';
-                  });
-                },
+                onTap: () =>
+                    setState(() => _selectedMethod = 'cash_at_institution'),
               ),
               const SizedBox(height: 24),
-
-              // This block opens the selected payment method flow.
               SizedBox(
                 width: double.infinity,
                 height: 56,
@@ -143,7 +117,7 @@ class _BookingPaymentMethodViewState extends State<BookingPaymentMethodView> {
                     ),
                   ),
                   child: Text(
-                    'Continue',
+                    context.tr('booking_continue'),
                     style: theme.textTheme.labelLarge?.copyWith(
                       fontWeight: FontWeight.w800,
                       fontSize: 17,
