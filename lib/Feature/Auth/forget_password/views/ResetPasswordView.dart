@@ -55,7 +55,8 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
               behavior: SnackBarBehavior.floating,
             ),
           );
-          // ✅ Go to login after successful reset
+
+          // This block navigates to the login screen after a successful password reset.
           context.go('/login');
         } else if (state is AuthFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -78,6 +79,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
               Icons.arrow_back,
               color: theme.appBarTheme.foregroundColor,
             ),
+            // This block always returns the user to the forgot password screen.
             onPressed: () => context.go('/forget'),
           ),
           title: Text(

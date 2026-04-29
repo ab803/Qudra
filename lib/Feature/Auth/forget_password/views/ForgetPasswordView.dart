@@ -115,14 +115,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                       height: 1.5,
                     ),
                   ),
-                  const SizedBox(height: 32),
-                  Text(
-                    'Email Address',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+
                   const SizedBox(height: 12),
                   CustomTextField(
                     controller: _emailController,

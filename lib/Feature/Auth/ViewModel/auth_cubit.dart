@@ -215,13 +215,17 @@ class AuthCubit extends Cubit<AuthState> {
     required String newPassword,
   }) async {
     emit(AuthLoading());
-
     try {
       await _repository.resetPassword(
         email: email,
         token: token,
         newPassword: newPassword,
       );
+
+      // This block clears the recovery session so the user can return to the login screen normally.
+      await _authService.logout();
+      currentUser = null;
+
       emit(ResetPasswordSuccess());
     } catch (e) {
       emit(AuthFailure(errorMessage: e.toString()));
