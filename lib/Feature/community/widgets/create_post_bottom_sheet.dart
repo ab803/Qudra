@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../viewmodel/community_viewmodel.dart';
 
 class CreatePostBottomSheet extends StatefulWidget {
@@ -37,7 +38,7 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            widget.viewModel.errorMessage ?? 'Failed to publish post',
+            widget.viewModel.errorMessage ?? context.tr('failed_publish_post'),
           ),
         ),
       );
@@ -66,7 +67,7 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
               children: [
                 Center(
                   child: Text(
-                    'Create Post',
+                    context.tr('create_post_title'),
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -80,7 +81,7 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
                   minLines: 4,
                   textInputAction: TextInputAction.newline,
                   decoration: InputDecoration(
-                    hintText: 'Share something with the community...',
+                    hintText: context.tr('post_hint'),
                     hintStyle: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurface.withOpacity(0.5),
                     ),
@@ -104,10 +105,10 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Post content cannot be empty';
+                      return context.tr('post_empty_error');
                     }
                     if (value.trim().length < 3) {
-                      return 'Post content is too short';
+                      return context.tr('post_too_short_error');
                     }
                     return null;
                   },
@@ -133,7 +134,7 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
                       ),
                     )
                         : Text(
-                      'Publish Post',
+                      context.tr('publish_post'),
                       style: theme.textTheme.labelLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../core/Services/Localization/language_cubit.dart';
 import '../../../core/Services/Localization/language_state.dart';
 
@@ -74,7 +75,7 @@ class LanguageSwitchTile extends StatelessWidget {
 
               RadioListTile<String>(
                 title: Text(
-                  "System Default",
+                  context.tr("system_default"),
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: theme.textTheme.bodyLarge?.color,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../models/community_comment_model.dart';
 import '../models/community_post_model.dart';
 import '../viewmodel/community_viewmodel.dart';
@@ -51,7 +52,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            widget.viewModel.errorMessage ?? 'Failed to add comment',
+            widget.viewModel.errorMessage ?? context.tr('failed_add_comment'),
           ),
         ),
       );
@@ -83,8 +84,8 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
     if (!mounted) return;
     if (updated == true) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Comment updated successfully'),
+         SnackBar(
+          content: Text(context.tr('comment_updated_success')),
         ),
       );
     }
@@ -97,19 +98,19 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Delete Comment'),
-          content: const Text(
-            'Are you sure you want to delete this comment?',
+          title:  Text(context.tr('delete_comment_title')),
+          content:  Text(
+            context.tr('delete_comment_confirm'),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext, false),
-              child: const Text('Cancel'),
+              child:  Text(context.tr('cancel')),
             ),
             TextButton(
               onPressed: () => Navigator.pop(dialogContext, true),
               child: Text(
-                'Delete',
+                context.tr('delete'),
                 style: TextStyle(color: colorScheme.error),
               ),
             ),
@@ -128,15 +129,15 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
     if (!mounted) return;
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Comment deleted successfully'),
+         SnackBar(
+          content: Text(context.tr('comment_deleted_success')),
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            widget.viewModel.errorMessage ?? 'Failed to delete comment',
+            widget.viewModel.errorMessage ?? context.tr('failed_delete_comment'),
           ),
         ),
       );
@@ -162,7 +163,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
             children: [
               ListTile(
                 leading: const Icon(Icons.edit_outlined),
-                title: const Text('Edit Comment'),
+                title:  Text(context.tr('edit_comment_title')),
                 onTap: () {
                   Navigator.pop(sheetContext, 'edit');
                 },
@@ -173,7 +174,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                   color: colorScheme.error,
                 ),
                 title: Text(
-                  'Delete Comment',
+                  context.tr('delete_comment_title'),
                   style: TextStyle(color: colorScheme.error),
                 ),
                 onTap: () {
@@ -232,7 +233,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                   ),
                   Center(
                     child: Text(
-                      'Comments',
+                      context.tr('comments_title'),
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -250,7 +251,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                         : comments.isEmpty
                         ? Center(
                       child: Text(
-                        'No comments yet',
+                        context.tr('no_comments'),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color:
                           colorScheme.onSurface.withOpacity(0.68),
@@ -293,7 +294,7 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                             minLines: 1,
                             maxLines: 4,
                             decoration: InputDecoration(
-                              hintText: 'Write a comment...',
+                              hintText: context.tr('write_comment_hint'),
                               hintStyle: theme.textTheme.bodyMedium?.copyWith(
                                 color: colorScheme.onSurface.withOpacity(0.5),
                               ),
@@ -326,10 +327,10 @@ class _CommentsBottomSheetState extends State<CommentsBottomSheet> {
                             ),
                             validator: (value) {
                               if (value == null || value.trim().isEmpty) {
-                                return 'Comment cannot be empty';
+                                return context.tr('comment_empty_error');
                               }
                               if (value.trim().length < 2) {
-                                return 'Comment is too short';
+                                return context.tr('comment_too_short_error');
                               }
                               return null;
                             },

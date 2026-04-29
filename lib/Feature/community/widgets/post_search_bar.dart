@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 
 class PostSearchBar extends StatelessWidget {
   final ValueChanged<String>? onChanged;
@@ -31,15 +32,10 @@ class PostSearchBar extends StatelessWidget {
       child: TextField(
         onChanged: onChanged,
         decoration: InputDecoration(
-          hintText: 'Search posts',
-          hintStyle: TextStyle(
-            color: onSurface.withOpacity(0.6),
-          ),
+          hintText: context.tr('search_posts'),
+          hintStyle: TextStyle(color: onSurface.withOpacity(0.6)),
           border: InputBorder.none,
-          icon: Icon(
-            Icons.search,
-            color: onSurface.withOpacity(0.6),
-          ),
+          icon: Icon(Icons.search, color: onSurface.withOpacity(0.6)),
         ),
       ),
     );

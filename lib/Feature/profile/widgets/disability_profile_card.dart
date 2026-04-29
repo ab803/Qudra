@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import 'package:qudra_0/core/Styles/AppColors.dart';
 import 'package:qudra_0/core/Styles/AppTextsyles.dart';
 
@@ -36,7 +37,7 @@ class DisabilityProfileCard extends StatelessWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  'Disability Profile',
+                  context.tr("disability_profile"),
                   style: AppTextStyles.subtitle.copyWith(
                     fontWeight: FontWeight.w800,
                     color: theme.textTheme.titleMedium?.color,
@@ -44,7 +45,7 @@ class DisabilityProfileCard extends StatelessWidget {
                 ),
               ),
               Text(
-                'Edit',
+                context.tr("edit"),
                 style: AppTextStyles.body.copyWith(
                   color: Appcolors.cardBlue,
                   fontWeight: FontWeight.w700,
@@ -56,7 +57,7 @@ class DisabilityProfileCard extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              'This information helps us tailor accessibility features specifically for you.',
+              context.tr("disability_description"),
               style: AppTextStyles.body.copyWith(
                 color: theme.textTheme.bodyMedium?.color,
                 fontSize: 12.5,
@@ -95,7 +96,7 @@ class DisabilityProfileCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Visual Impairment',
+                        context.tr("visual_impairment"),
                         style: AppTextStyles.body.copyWith(
                           color: theme.textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w800,
@@ -104,7 +105,7 @@ class DisabilityProfileCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Low vision mode active',
+                        context.tr("low_vision_mode"),
                         style: AppTextStyles.body.copyWith(
                           color: theme.textTheme.bodyMedium?.color,
                           fontSize: 12,

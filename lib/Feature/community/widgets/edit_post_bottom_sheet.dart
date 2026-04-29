@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../models/community_post_model.dart';
 import '../viewmodel/community_viewmodel.dart';
 
@@ -47,7 +48,7 @@ class _EditPostBottomSheetState extends State<EditPostBottomSheet> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            widget.viewModel.errorMessage ?? 'Failed to update post',
+            widget.viewModel.errorMessage ?? context.tr('failed_update_post'),
           ),
         ),
       );
@@ -76,7 +77,7 @@ class _EditPostBottomSheetState extends State<EditPostBottomSheet> {
               children: [
                 Center(
                   child: Text(
-                    'Edit Post',
+                    context.tr('edit_post_title'),
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -90,7 +91,7 @@ class _EditPostBottomSheetState extends State<EditPostBottomSheet> {
                   minLines: 4,
                   textInputAction: TextInputAction.newline,
                   decoration: InputDecoration(
-                    hintText: 'Update your post...',
+                    hintText: context.tr('update_post_hint'),
                     hintStyle: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurface.withOpacity(0.5),
                     ),
@@ -114,10 +115,10 @@ class _EditPostBottomSheetState extends State<EditPostBottomSheet> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Post content cannot be empty';
+                      return context.tr('post_empty_error');
                     }
                     if (value.trim().length < 3) {
-                      return 'Post content is too short';
+                      return context.tr('post_too_short_error');
                     }
                     return null;
                   },
@@ -143,7 +144,7 @@ class _EditPostBottomSheetState extends State<EditPostBottomSheet> {
                       ),
                     )
                         : Text(
-                      'Save Changes',
+                      context.tr('save_changes'),
                       style: theme.textTheme.labelLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),

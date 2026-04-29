@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../core/Styles/AppIcons.dart';
 
 class CommunityAppBar extends StatelessWidget {
@@ -15,21 +16,15 @@ class CommunityAppBar extends StatelessWidget {
           Container(
             width: 40,
             height: 40,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-            ),
+            decoration: const BoxDecoration(shape: BoxShape.circle),
             child: Center(
-              child: Image.asset(
-                Appicons.logo,
-                width: 40,
-                height: 40,
-              ),
+              child: Image.asset(Appicons.logo, width: 40, height: 40),
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Community Feed',
+              context.tr('community_feed'),
               style: theme.textTheme.titleLarge?.copyWith(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../services/community_post_service.dart';
 import '../viewmodel/community_viewmodel.dart';
 import '../widgets/comments_bottom_sheet.dart';
@@ -35,83 +36,57 @@ class _CommunityViewState extends State<CommunityView> {
 
   Future<void> _openCreatePostSheet() async {
     final theme = Theme.of(context);
-
     final created = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       backgroundColor:
       theme.bottomSheetTheme.backgroundColor ?? theme.scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(24),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (_) {
-        return CreatePostBottomSheet(
-          viewModel: _viewModel,
-        );
-      },
+      builder: (_) => CreatePostBottomSheet(viewModel: _viewModel),
     );
 
     if (!mounted) return;
     if (created == true) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Post published successfully'),
-        ),
+        SnackBar(content: Text(context.tr('post_published_success'))),
       );
     }
   }
 
   Future<void> _openCommentsSheet(CommunityPostModel post) async {
     final theme = Theme.of(context);
-
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor:
       theme.bottomSheetTheme.backgroundColor ?? theme.scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(24),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (_) {
-        return CommentsBottomSheet(
-          post: post,
-          viewModel: _viewModel,
-        );
-      },
+      builder: (_) =>
+          CommentsBottomSheet(post: post, viewModel: _viewModel),
     );
   }
 
   Future<void> _openEditPostSheet(CommunityPostModel post) async {
     final theme = Theme.of(context);
-
     final updated = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       backgroundColor:
       theme.bottomSheetTheme.backgroundColor ?? theme.scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(24),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (_) {
-        return EditPostBottomSheet(
-          post: post,
-          viewModel: _viewModel,
-        );
-      },
+      builder: (_) => EditPostBottomSheet(post: post, viewModel: _viewModel),
     );
 
     if (!mounted) return;
     if (updated == true) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Post updated successfully'),
-        ),
+        SnackBar(content: Text(context.tr('post_updated_success'))),
       );
     }
   }
@@ -122,48 +97,38 @@ class _CommunityViewState extends State<CommunityView> {
 
     final confirm = await showDialog<bool>(
       context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text('Delete Post'),
-          content: const Text(
-            'Are you sure you want to delete this post?',
+      builder: (dialogContext) => AlertDialog(
+        title: Text(context.tr('delete_post_title')),
+        content: Text(context.tr('delete_post_confirm')),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(context.tr('cancel')),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext, false),
-              child: const Text('Cancel'),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(
+              context.tr('delete'),
+              style: TextStyle(color: colorScheme.error),
             ),
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext, true),
-              child: Text(
-                'Delete',
-                style: TextStyle(color: colorScheme.error),
-              ),
-            ),
-          ],
-        );
-      },
+          ),
+        ],
+      ),
     );
 
     if (confirm != true) return;
     final success = await _viewModel.deletePost(post.id);
     if (!mounted) return;
 
-    if (success) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Post deleted successfully'),
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          success
+              ? context.tr('post_deleted_success')
+              : _viewModel.errorMessage ?? context.tr('failed_delete_post'),
         ),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            _viewModel.errorMessage ?? 'Failed to delete post',
-          ),
-        ),
-      );
-    }
+      ),
+    );
   }
 
   Future<void> _openPostOptions(CommunityPostModel post) async {
@@ -175,38 +140,28 @@ class _CommunityViewState extends State<CommunityView> {
       backgroundColor:
       theme.bottomSheetTheme.backgroundColor ?? theme.cardColor,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(20),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (sheetContext) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.edit_outlined),
+              title: Text(context.tr('edit_post_title')),
+              onTap: () => Navigator.pop(sheetContext, 'edit'),
+            ),
+            ListTile(
+              leading:
+              Icon(Icons.delete_outline, color: colorScheme.error),
+              title: Text(
+                context.tr('delete_post_title'),
+                style: TextStyle(color: colorScheme.error),
+              ),
+              onTap: () => Navigator.pop(sheetContext, 'delete'),
+            ),
+          ],
         ),
       ),
-      builder: (sheetContext) {
-        return SafeArea(
-          child: Wrap(
-            children: [
-              ListTile(
-                leading: const Icon(Icons.edit_outlined),
-                title: const Text('Edit Post'),
-                onTap: () {
-                  Navigator.pop(sheetContext, 'edit');
-                },
-              ),
-              ListTile(
-                leading: Icon(
-                  Icons.delete_outline,
-                  color: colorScheme.error,
-                ),
-                title: Text(
-                  'Delete Post',
-                  style: TextStyle(color: colorScheme.error),
-                ),
-                onTap: () {
-                  Navigator.pop(sheetContext, 'delete');
-                },
-              ),
-            ],
-          ),
-        );
-      },
     );
 
     if (!mounted) return;
@@ -232,24 +187,16 @@ class _CommunityViewState extends State<CommunityView> {
               children: [
                 const CommunityAppBar(),
                 const SizedBox(height: 8),
-
-                // ✅ Search bar is now wired to the view model.
                 PostSearchBar(
-                  onChanged: (value) {
-                    _viewModel.updateSearchQuery(value);
-                  },
+                  onChanged: _viewModel.updateSearchQuery,
                 ),
                 const SizedBox(height: 4),
                 FilterChips(
                   selectedTab: _viewModel.selectedTab,
-                  onTabSelected: (value) {
-                    _viewModel.setSelectedTab(value);
-                  },
+                  onTabSelected: _viewModel.setSelectedTab,
                 ),
                 const SizedBox(height: 4),
-                Expanded(
-                  child: _buildBody(),
-                ),
+                Expanded(child: _buildBody()),
               ],
             ),
           ),
@@ -270,13 +217,12 @@ class _CommunityViewState extends State<CommunityView> {
 
     if (_viewModel.isLoading && _viewModel.displayedPosts.isEmpty) {
       return Center(
-        child: CircularProgressIndicator(
-          color: colorScheme.primary,
-        ),
+        child: CircularProgressIndicator(color: colorScheme.primary),
       );
     }
 
-    if (_viewModel.errorMessage != null && _viewModel.displayedPosts.isEmpty) {
+    if (_viewModel.errorMessage != null &&
+        _viewModel.displayedPosts.isEmpty) {
       return Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -286,17 +232,13 @@ class _CommunityViewState extends State<CommunityView> {
               Text(
                 _viewModel.errorMessage!,
                 textAlign: TextAlign.center,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.error,
-                  fontSize: 14,
-                ),
+                style: theme.textTheme.bodyMedium
+                    ?.copyWith(color: colorScheme.error, fontSize: 14),
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () {
-                  _viewModel.refreshCurrentTab();
-                },
-                child: const Text('Retry'),
+                onPressed: _viewModel.refreshCurrentTab,
+                child: Text(context.tr('retry')),
               ),
             ],
           ),
@@ -307,7 +249,7 @@ class _CommunityViewState extends State<CommunityView> {
     if (_viewModel.displayedPosts.isEmpty) {
       return Center(
         child: Text(
-          'No posts found',
+          context.tr('no_posts_found'),
           style: theme.textTheme.bodyLarge?.copyWith(
             fontSize: 16,
             color: colorScheme.onSurface.withOpacity(0.68),
@@ -336,25 +278,17 @@ class _CommunityViewState extends State<CommunityView> {
             commentsCount: post.commentsCount,
             isLiked: post.isLikedByCurrentUser,
             showMoreButton: isOwner,
-            onMoreTap: isOwner
-                ? () {
-              _openPostOptions(post);
-            }
-                : null,
+            onMoreTap: isOwner ? () => _openPostOptions(post) : null,
             onLikeTap: () async {
               await _viewModel.toggleLike(post);
               if (!mounted) return;
               if (_viewModel.errorMessage != null) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(_viewModel.errorMessage!),
-                  ),
+                  SnackBar(content: Text(_viewModel.errorMessage!)),
                 );
               }
             },
-            onCommentTap: () {
-              _openCommentsSheet(post);
-            },
+            onCommentTap: () => _openCommentsSheet(post),
           );
         },
       ),
