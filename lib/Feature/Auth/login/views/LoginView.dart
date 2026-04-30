@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qudra_0/core/Services/Localization/LocalizationService.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../ViewModel/auth_cubit.dart';
 import '../../ViewModel/auth_state.dart';
-import '../../widgets/AuthActionButton.dart'; // AuthButton
+import '../../widgets/AuthActionButton.dart';
 import '../../widgets/CustomTextField.dart';
-import '../../widgets/passwordField.dart'; // CustomTextField
+import '../../widgets/passwordField.dart';
 
 class LogInView extends StatefulWidget {
   const LogInView({super.key});
@@ -65,14 +67,13 @@ class _LogInViewState extends State<LogInView> {
                 children: [
                   const SizedBox(height: 20),
 
-                  // ✅ correct widget name
                   Image.asset('assets/images/Qudra logo.png', width: 140),
 
                   const SizedBox(height: 24),
                   const SizedBox(height: 8),
 
                   Text(
-                    '"With you to discover your ability"',
+                    context.tr('tagline'),
                     style: TextStyle(
                       fontSize: 16,
                       fontStyle: FontStyle.italic,
@@ -102,7 +103,7 @@ class _LogInViewState extends State<LogInView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Welcome back',
+                          context.tr('welcome_back'),
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -110,31 +111,28 @@ class _LogInViewState extends State<LogInView> {
                         ),
                         const SizedBox(height: 24),
 
-                        // ✅ correct widget name
                         CustomTextField(
                           controller: _emailController,
-                          label: 'Email Address',
-                          hint: 'name@example.com',
+                          label: context.tr('email_address'),
+                          hint: context.tr('email_hint'),
                           keyboardType: TextInputType.emailAddress,
                           prefixIcon: Icon(
                             Icons.mail_outline,
-                            color: theme.inputDecorationTheme.hintStyle?.color,
+                            color:
+                            theme.inputDecorationTheme.hintStyle?.color,
                           ),
                           validator: (v) {
                             if (v == null || v.isEmpty) {
-                              return 'Email is required';
+                              return context.tr('email_required');
                             }
                             if (!v.contains('@')) {
-                              return 'Enter a valid email';
+                              return context.tr('email_invalid');
                             }
                             return null;
                           },
                         ),
 
-                        // ✅ correct widget name
-                        PasswordField(
-                          controller: _passwordController,
-                        ),
+                        PasswordField(controller: _passwordController, label: context.tr('password'),),
 
                         // Forgot Password
                         Align(
@@ -144,11 +142,10 @@ class _LogInViewState extends State<LogInView> {
                             style: TextButton.styleFrom(
                               padding: EdgeInsets.zero,
                               minimumSize: Size.zero,
-                              tapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             ),
                             child: Text(
-                              'Forgot Password?',
+                              context.tr('forgot_password_btn'),
                               style: TextStyle(
                                 color: theme.colorScheme.primary,
                                 fontWeight: FontWeight.bold,
@@ -160,9 +157,8 @@ class _LogInViewState extends State<LogInView> {
 
                         const SizedBox(height: 24),
 
-                        // ✅ isLoading handled inside AuthButton via BlocBuilder
                         AuthButton(
-                          label: 'Login',
+                          label: context.tr('log_in'),
                           onPressed: _onLoginPressed,
                           trailingIcon: Icon(
                             Icons.login,
@@ -180,7 +176,7 @@ class _LogInViewState extends State<LogInView> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Don't have an account? ",
+                        context.tr('no_account'),
                         style: TextStyle(
                           color: theme.textTheme.bodyMedium?.color,
                           fontSize: 16,
@@ -189,7 +185,7 @@ class _LogInViewState extends State<LogInView> {
                       GestureDetector(
                         onTap: () => context.go('/signUp'),
                         child: Text(
-                          'Sign Up',
+                          context.tr('sign_up'),
                           style: TextStyle(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,

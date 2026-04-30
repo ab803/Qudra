@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../ViewModel/auth_cubit.dart';
 import '../../ViewModel/auth_state.dart';
 import '../../widgets/CustomTextField.dart';
@@ -49,8 +50,8 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
       listener: (context, state) {
         if (state is ResetPasswordSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Password updated successfully!'),
+            SnackBar(
+              content: Text(context.tr('password_updated')),
               backgroundColor: Appcolors.successColor,
               behavior: SnackBarBehavior.floating,
             ),
@@ -81,7 +82,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
             onPressed: () => context.go('/forget'),
           ),
           title: Text(
-            'Reset Password',
+            context.tr('reset_password_title'),
             style: TextStyle(
               color: theme.appBarTheme.foregroundColor,
               fontWeight: FontWeight.bold,
@@ -114,7 +115,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                       children: [
                         // ── Instruction ────────────────────────────
                         Text(
-                          'Enter the verification code sent to your email and choose your new password.',
+                          context.tr('reset_password_instruction'),
                           textAlign: TextAlign.center,
                           style: theme.textTheme.bodyLarge?.copyWith(
                             height: 1.5,
@@ -129,12 +130,12 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                           keyboardType: TextInputType.number,
                           validator: (v) {
                             if (v == null || v.isEmpty) {
-                              return 'Token is required';
+                              return context.tr('token_required');
                             }
                             return null;
                           },
-                          label: 'Verification Token',
-                          hint: 'enter token',
+                          label: context.tr('verification_token'),
+                          hint: context.tr('token_hint'),
                         ),
                         const SizedBox(height: 24),
 
@@ -145,15 +146,15 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                           obscureText: _obscurePassword,
                           validator: (v) {
                             if (v == null || v.isEmpty) {
-                              return 'Password is required';
+                              return context.tr('password_required');
                             }
                             if (v.length < 6) {
-                              return 'Minimum 6 characters';
+                              return context.tr('min_6_chars');
                             }
                             return null;
                           },
-                          label: 'New password',
-                          hint: 'enter new password',
+                          label: context.tr('new_password'),
+                          hint: context.tr('new_password_hint'),
                           keyboardType: TextInputType.visiblePassword,
                         ),
                         const SizedBox(height: 24),
@@ -165,15 +166,15 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                           obscureText: _obscureConfirm,
                           validator: (v) {
                             if (v == null || v.isEmpty) {
-                              return 'Please confirm your password';
+                              return context.tr('confirm_password_required');
                             }
                             if (v != _passwordController.text) {
-                              return 'Passwords do not match';
+                              return context.tr('passwords_no_match');
                             }
                             return null;
                           },
-                          label: 'Confirm New Password',
-                          hint: 'confirm password',
+                          label: context.tr('confirm_password'),
+                          hint: context.tr('confirm_password_hint'),
                           keyboardType: TextInputType.visiblePassword,
                         ),
                       ],
@@ -209,7 +210,7 @@ class _ResetPasswordViewState extends State<ResetPasswordView> {
                           ),
                         )
                             : Text(
-                          'Update Password',
+                          context.tr('update_password'),
                           style: TextStyle(
                             color: theme.colorScheme.onPrimary,
                             fontSize: 18,

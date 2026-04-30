@@ -10,7 +10,7 @@ class PasswordField extends StatefulWidget {
   const PasswordField({
     super.key,
     required this.controller,
-    this.label = 'Password',
+    required this.label,
     this.hint = '••••••••',
     this.validator,
   });
