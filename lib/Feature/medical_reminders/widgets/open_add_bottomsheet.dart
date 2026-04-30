@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/LocalizationService.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../models/reminder_model.dart';
 
 Future<ReminderModel?> openAddBottomSheet(BuildContext context) async {
@@ -56,7 +58,7 @@ Future<ReminderModel?> openAddBottomSheet(BuildContext context) async {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Add Reminder',
+                      ctx.tr('add_reminder'),
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
@@ -66,13 +68,13 @@ Future<ReminderModel?> openAddBottomSheet(BuildContext context) async {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: titleCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Medicine Name',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: ctx.tr('medicine_name'),
+                        border: const OutlineInputBorder(),
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Please enter medicine name';
+                          return ctx.tr('enter_medicine_name');
                         }
                         return null;
                       },
@@ -80,13 +82,13 @@ Future<ReminderModel?> openAddBottomSheet(BuildContext context) async {
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: subCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Dose / Notes',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        labelText: ctx.tr('dose_notes'),
+                        border: const OutlineInputBorder(),
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Please enter dose / notes';
+                          return ctx.tr('enter_dose_notes');
                         }
                         return null;
                       },
@@ -95,7 +97,7 @@ Future<ReminderModel?> openAddBottomSheet(BuildContext context) async {
                     OutlinedButton.icon(
                       onPressed: pickTime,
                       icon: const Icon(Icons.access_time),
-                      label: Text(timeText ?? 'Pick Time'),
+                      label: Text(timeText ?? ctx.tr('pick_time')),
                     ),
                     if (timeError != null) ...[
                       const SizedBox(height: 8),
@@ -121,12 +123,13 @@ Future<ReminderModel?> openAddBottomSheet(BuildContext context) async {
                           ),
                         ),
                         onPressed: () {
-                          final isValid = formKey.currentState?.validate() ?? false;
+                          final isValid =
+                              formKey.currentState?.validate() ?? false;
                           if (!isValid) return;
 
                           if (timeText == null || timeText!.trim().isEmpty) {
                             setState(() {
-                              timeError = 'Please choose a reminder time';
+                              timeError = ctx.tr('choose_time');
                             });
                             return;
                           }
@@ -144,11 +147,9 @@ Future<ReminderModel?> openAddBottomSheet(BuildContext context) async {
 
                           Navigator.of(ctx).pop(model);
                         },
-                        child: const Text(
-                          'Save',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                          ),
+                        child: Text(
+                          context.tr('save'),
+                          style: const TextStyle(fontWeight: FontWeight.w700),
                         ),
                       ),
                     ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-
+import 'package:qudra_0/core/Services/Localization/LocalizationService.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../core/Styles/AppColors.dart';
-
 
 class A11ySegmentFilter extends StatelessWidget {
   const A11ySegmentFilter({super.key});
@@ -9,23 +9,23 @@ class A11ySegmentFilter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: const [
+      children: [
         _SegmentPill(
-          label: 'Visual',
+          label: context.tr('category_visual'),
           icon: Icons.visibility_outlined,
           selected: true,
           color: Appcolors.cardBlue,
         ),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         _SegmentPill(
-          label: 'Hearing',
+          label: context.tr('category_hearing'),
           icon: Icons.hearing_outlined,
           selected: false,
           color: Appcolors.cardPurple,
         ),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         _SegmentPill(
-          label: 'Physical',
+          label: context.tr('category_physical'),
           icon: Icons.accessibility_new_outlined,
           selected: false,
           color: Appcolors.cardOrange,
@@ -71,11 +71,7 @@ class _SegmentPill extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 18,
-              color: fg,
-            ),
+            Icon(icon, size: 18, color: fg),
             const SizedBox(width: 8),
             Text(
               label,

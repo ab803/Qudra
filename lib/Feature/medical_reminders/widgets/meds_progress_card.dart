@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/LocalizationService.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 
 class MedsProgressCard extends StatelessWidget {
   final int taken;
@@ -63,7 +65,7 @@ class MedsProgressCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
-                    "Today's Progress",
+                    context.tr('today_progress'),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: colorScheme.onPrimary,
                       fontSize: 12,

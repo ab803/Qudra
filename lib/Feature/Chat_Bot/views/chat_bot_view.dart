@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:qudra_0/core/Services/Localization/LocalizationService.dart'; // ✅ Added Localization Import
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
+
 import '../../../core/Models/ChatMessage.dart';
 import '../view model/chat_cubit.dart';
 import '../view model/chat_state.dart';
@@ -31,11 +34,12 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
   final _scrollController = ScrollController();
   final _textController = TextEditingController();
 
+  // ✅ Store translation keys instead of hardcoded strings
   static const _suggestions = [
-    ('Emergency help', Icons.emergency_outlined, true),
-    ('Nearby institutions', Icons.place_outlined, false),
-    ('Accessible transport', Icons.directions_bus_outlined, false),
-    ('My rights', Icons.gavel_outlined, false),
+    ('emergency_help', Icons.emergency_outlined, true),
+    ('nearby_institutions', Icons.place_outlined, false),
+    ('accessible_transport', Icons.directions_bus_outlined, false),
+    ('my_rights', Icons.gavel_outlined, false),
   ];
 
   @override
@@ -119,12 +123,12 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    for (final (label, icon, isCritical) in _suggestions) ...[
+                    for (final (key, icon, isCritical) in _suggestions) ...[
                       ChatSuggestionPill(
-                        label: label,
+                        label: context.tr(key), // ✅ Localized label
                         icon: icon,
                         isCritical: isCritical,
-                        onTap: () => _onSuggestion(label), // ✅ wired
+                        onTap: () => _onSuggestion(context.tr(key)), // ✅ Send localized text
                       ),
                       const SizedBox(width: 10),
                     ],
@@ -161,7 +165,7 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
         final msg = messages[i];
         return ChatMessageTile(
           isUser: msg.isUser,
-          name: msg.isUser ? 'You' : 'Qudra AI',
+          name: msg.isUser ? context.tr('you') : context.tr('ai_name'), // ✅ Localized names
           time: _formatTime(msg.time),
           text: msg.text,
         );
@@ -193,7 +197,7 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Qudra AI',
+            context.tr('ai_name'), // ✅ Localized AI name
             style: theme.textTheme.titleMedium?.copyWith(
               color: colorScheme.primary,
               fontWeight: FontWeight.w800,
@@ -213,7 +217,7 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
               ),
               const SizedBox(width: 6),
               Text(
-                'ONLINE',
+                context.tr('online'), // ✅ Localized status
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontSize: 11,
                   letterSpacing: 1.2,
@@ -227,10 +231,9 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
         ],
       ),
       actions: [
-        // ✅ Clear chat button
         IconButton(
           icon: Icon(Icons.refresh, color: colorScheme.primary),
-          tooltip: 'Clear chat',
+          tooltip: context.tr('clear_chat'), // ✅ Localized tooltip
           onPressed: () => context.read<ChatCubit>().clearChat(),
         ),
         IconButton(

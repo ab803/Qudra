@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:qudra_0/core/Services/Localization/LocalizationService.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../widgets/meds_header.dart';
 import '../../widgets/meds_progress_card.dart';
 import '../../widgets/meds_reminder_tile.dart';
@@ -24,6 +26,22 @@ class MedicalRemindersView extends StatelessWidget {
     return MaterialLocalizations.of(context).formatTimeOfDay(tod);
   }
 
+  /// Maps the raw English status string from the ViewModel to a translated
+  /// display label. The raw string is kept separately in [statusKey] so that
+  /// colour resolution in the tile stays locale-independent.
+  String? _translateStatus(BuildContext context, String? raw) {
+    switch (raw) {
+      case 'Taken today':
+        return context.tr('taken');
+      case 'Skipped today':
+        return context.tr('skip');
+      case 'Missed':
+        return context.tr('missed');
+      default:
+        return raw;
+    }
+  }
+
   ReminderViewData _toViewData(
       BuildContext context,
       MedicalRemindersViewModel vm,
@@ -32,13 +50,16 @@ class MedicalRemindersView extends StatelessWidget {
     final String? normalizedTime =
     m.time.trim().isEmpty ? null : _formatTimeForUi(context, m.time);
 
+    final String? rawStatus = vm.getStatusLabelForReminder(m.id);
+
     return ReminderViewData(
       id: m.id,
       title: m.title,
       subtitle: m.subtitle,
       timeText: normalizedTime,
       isEnabled: m.isEnabled,
-      statusLabel: vm.getStatusLabelForReminder(m.id),
+      statusKey: rawStatus,                          // raw, for colour lookup
+      statusLabel: _translateStatus(context, rawStatus), // translated, for display
     );
   }
 
@@ -52,21 +73,21 @@ class MedicalRemindersView extends StatelessWidget {
     nextRaw == null ? null : _formatTimeForUi(context, nextRaw);
 
     if (missed > 0 && nextFormatted != null) {
-      return '$missed missed • Next at $nextFormatted';
+      return '$missed ${context.tr('missed')} • ${context.tr('next_at')} $nextFormatted';
     }
     if (missed > 0) {
-      return '$missed missed';
+      return '$missed ${context.tr('missed')}';
     }
     if (nextFormatted != null) {
-      return 'Next at $nextFormatted';
+      return '${context.tr('next_at')} $nextFormatted';
     }
     if (vm.dueTodayCount == 0) {
-      return 'No doses scheduled';
+      return context.tr('no_doses_scheduled');
     }
     if (vm.takenTodayCount >= vm.dueTodayCount) {
-      return 'All doses completed';
+      return context.tr('all_doses_completed');
     }
-    return 'No upcoming doses';
+    return context.tr('no_upcoming_doses');
   }
 
   Future<void> _confirmDelete(
@@ -80,12 +101,12 @@ class MedicalRemindersView extends StatelessWidget {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Reminder?'),
-        content: Text('Delete "$title"?'),
+        title: Text(ctx.tr('delete_reminder')),
+        content: Text('${ctx.tr('delete')} "$title"?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
+            child: Text(ctx.tr('cancel')),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -93,7 +114,7 @@ class MedicalRemindersView extends StatelessWidget {
               foregroundColor: colorScheme.onError,
             ),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Delete'),
+            child: Text(ctx.tr('delete')),
           ),
         ],
       ),
@@ -109,15 +130,13 @@ class MedicalRemindersView extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final vm = context.watch<MedicalRemindersViewModel>();
-    final items = vm.reminders.map((m) => _toViewData(context, vm, m)).toList();
+    final items =
+    vm.reminders.map((m) => _toViewData(context, vm, m)).toList();
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: colorScheme.onSurface,
-          ),
+          icon: Icon(Icons.arrow_back_ios_new, color: colorScheme.onSurface),
           onPressed: () => Navigator.of(context).pop(),
         ),
         centerTitle: false,
@@ -127,9 +146,7 @@ class MedicalRemindersView extends StatelessWidget {
       body: SafeArea(
         child: vm.isLoading
             ? Center(
-          child: CircularProgressIndicator(
-            color: colorScheme.primary,
-          ),
+          child: CircularProgressIndicator(color: colorScheme.primary),
         )
             : ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 90),
@@ -139,7 +156,7 @@ class MedicalRemindersView extends StatelessWidget {
             MedsProgressCard(
               taken: vm.takenTodayCount,
               total: vm.dueTodayCount,
-              caption: 'Doses completed',
+              caption: context.tr('doses_completed'),
               footerText: _buildProgressFooter(context, vm),
               missedCount: vm.missedTodayCount,
             ),
@@ -147,15 +164,14 @@ class MedicalRemindersView extends StatelessWidget {
               const SizedBox(height: 12),
               Text(
                 vm.errorMessage!,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.error,
-                ),
+                style: theme.textTheme.bodyMedium
+                    ?.copyWith(color: colorScheme.error),
               ),
             ],
             const SizedBox(height: 18),
-            const MedsSectionTitle(
+            MedsSectionTitle(
               icon: Icons.wb_sunny_outlined,
-              label: 'Daily Reminders',
+              label: context.tr('daily_reminders'),
             ),
             const SizedBox(height: 12),
             if (items.isEmpty)
@@ -163,7 +179,7 @@ class MedicalRemindersView extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 24),
                 child: Center(
                   child: Text(
-                    'No reminders yet. Tap + to add one.',
+                    context.tr('no_reminders'),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurface.withOpacity(0.68),
                     ),
@@ -172,24 +188,21 @@ class MedicalRemindersView extends StatelessWidget {
               )
             else ...[
               const _SwipeDirectionLabels(),
-              ...List.generate(
-                items.length,
-                    (index) {
-                  final r = items[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: MedsReminderTile(
-                      data: r,
-                      showSwipeHint: index == 0,
-                      onToggle: (v) => vm.toggleEnabled(r.id, v),
-                      onLongPress: () =>
-                          _confirmDelete(context, r.id, r.title),
-                      onMarkTaken: () => vm.markTaken(r.id),
-                      onSkip: () => vm.skipDose(r.id),
-                    ),
-                  );
-                },
-              ),
+              ...List.generate(items.length, (index) {
+                final r = items[index];
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: MedsReminderTile(
+                    data: r,
+                    showSwipeHint: index == 0,
+                    onToggle: (v) => vm.toggleEnabled(r.id, v),
+                    onLongPress: () =>
+                        _confirmDelete(context, r.id, r.title),
+                    onMarkTaken: () => vm.markTaken(r.id),
+                    onSkip: () => vm.skipDose(r.id),
+                  ),
+                );
+              }),
             ],
           ],
         ),
@@ -200,7 +213,9 @@ class MedicalRemindersView extends StatelessWidget {
         onPressed: () async {
           final result = await openAddBottomSheet(context);
           if (result != null && context.mounted) {
-            await context.read<MedicalRemindersViewModel>().addReminder(result);
+            await context
+                .read<MedicalRemindersViewModel>()
+                .addReminder(result);
           }
         },
         child: const Icon(Icons.add),
@@ -209,14 +224,24 @@ class MedicalRemindersView extends StatelessWidget {
   }
 }
 
+// ---------------------------------------------------------------------------
+// Swipe direction hint labels
+// ---------------------------------------------------------------------------
+
 class _SwipeDirectionLabels extends StatelessWidget {
   const _SwipeDirectionLabels();
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final Color labelColor =
-    theme.colorScheme.onSurface.withOpacity(0.55);
+    final Color labelColor = theme.colorScheme.onSurface.withOpacity(0.55);
+
+    final labelStyle = theme.textTheme.bodySmall?.copyWith(
+      color: labelColor,
+      fontSize: 11.5,
+      fontWeight: FontWeight.w600,
+      height: 1.0,
+    );
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -224,51 +249,20 @@ class _SwipeDirectionLabels extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(
-                Icons.arrow_forward_ios_rounded,
-                size: 12,
-                color: labelColor,
-              ),
+              Icon(Icons.arrow_forward_ios_rounded, size: 12, color: labelColor),
               const SizedBox(width: 4),
-              Text(
-                'Taken',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: labelColor,
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w600,
-                  height: 1.0,
-                ),
-              ),
+              Text(context.tr('taken'), style: labelStyle),
             ],
           ),
           const Spacer(),
-          Text(
-            'Swipe',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: labelColor,
-              fontSize: 11.5,
-              fontWeight: FontWeight.w600,
-              height: 1.0,
-            ),
-          ),
+          Text(context.tr('swipe'), style: labelStyle),
           const Spacer(),
           Row(
             children: [
-              Text(
-                'Skip',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: labelColor,
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w600,
-                  height: 1.0,
-                ),
-              ),
+              Text(context.tr('skip'), style: labelStyle),
               const SizedBox(width: 4),
-              Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 12,
-                color: labelColor,
-              ),
+              Icon(Icons.arrow_back_ios_new_rounded,
+                  size: 12, color: labelColor),
             ],
           ),
         ],

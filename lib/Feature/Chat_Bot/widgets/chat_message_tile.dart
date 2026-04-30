@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ChatMessageTile extends StatelessWidget {
   final bool isUser;
-  final String name;
+  final String name; // ✅ This arrives already localized from ChatBotView
   final String time;
   final String text;
 
@@ -55,7 +55,8 @@ class ChatMessageTile extends StatelessWidget {
         theme.brightness == Brightness.dark ? 0.20 : 0.12,
       ),
       child: Text(
-        isUser ? 'U' : 'AI',
+        // ✅ Dynamically grabs the first letter of the localized name, e.g., 'Y' for You, 'أ' for أنت
+        isUser ? (name.isNotEmpty ? name[0] : 'U') : 'AI',
         style: TextStyle(
           color: isUser ? colorScheme.onPrimary : colorScheme.primary,
           fontWeight: FontWeight.bold,

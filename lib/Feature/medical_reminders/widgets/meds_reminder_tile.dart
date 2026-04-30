@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/LocalizationService.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
+
+// ---------------------------------------------------------------------------
+// View-data model
+// ---------------------------------------------------------------------------
 
 class ReminderViewData {
   final String id;
@@ -6,7 +12,14 @@ class ReminderViewData {
   final String subtitle;
   final String? timeText;
   final bool isEnabled;
+
+  /// Translated string shown in the status pill (e.g. "تم" / "Taken").
   final String? statusLabel;
+
+  /// Raw English key returned by the ViewModel – used only for colour lookup
+  /// so colours stay correct regardless of the active locale.
+  /// Expected values: 'Taken today' | 'Skipped today' | 'Missed' | null
+  final String? statusKey;
 
   ReminderViewData({
     required this.id,
@@ -15,8 +28,13 @@ class ReminderViewData {
     this.timeText,
     this.isEnabled = false,
     this.statusLabel,
+    this.statusKey,
   });
 }
+
+// ---------------------------------------------------------------------------
+// Tile widget
+// ---------------------------------------------------------------------------
 
 class MedsReminderTile extends StatefulWidget {
   final ReminderViewData data;
@@ -50,16 +68,10 @@ class _MedsReminderTileState extends State<MedsReminderTile>
   Future<void> _playSwipeHint() async {
     for (int i = 0; i < 3; i++) {
       if (!mounted) return;
-
       _controller.reset();
       await _controller.forward();
-
       if (!mounted) return;
-
-      // pause صغيرة بين كل مرة والتانية
-      if (i < 2) {
-        await Future.delayed(const Duration(milliseconds: 180));
-      }
+      if (i < 2) await Future.delayed(const Duration(milliseconds: 180));
     }
   }
 
@@ -103,7 +115,6 @@ class _MedsReminderTileState extends State<MedsReminderTile>
   @override
   void didUpdateWidget(covariant MedsReminderTile oldWidget) {
     super.didUpdateWidget(oldWidget);
-
     if (!oldWidget.showSwipeHint && widget.showSwipeHint) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         if (!mounted) return;
@@ -144,14 +155,14 @@ class _MedsReminderTileState extends State<MedsReminderTile>
         background: _SwipeBackground(
           color: Colors.green,
           icon: Icons.check_rounded,
-          label: 'Mark as taken',
+          label: context.tr('taken'),
           alignment: Alignment.centerLeft,
           padding: const EdgeInsets.only(left: 18),
         ),
         secondaryBackground: _SwipeBackground(
           color: Colors.orange,
           icon: Icons.skip_next_rounded,
-          label: 'Skip',
+          label: context.tr('skip'),
           alignment: Alignment.centerRight,
           padding: const EdgeInsets.only(right: 18),
         ),
@@ -209,7 +220,8 @@ class _MedsReminderTileState extends State<MedsReminderTile>
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 fontSize: 12.5,
                                 height: 1.1,
-                                color: colorScheme.onSurface.withOpacity(0.68),
+                                color:
+                                colorScheme.onSurface.withOpacity(0.68),
                               ),
                             ),
                           ),
@@ -220,7 +232,8 @@ class _MedsReminderTileState extends State<MedsReminderTile>
                               style: theme.textTheme.bodyMedium?.copyWith(
                                 fontSize: 12.5,
                                 height: 1.1,
-                                color: colorScheme.onSurface.withOpacity(0.68),
+                                color:
+                                colorScheme.onSurface.withOpacity(0.68),
                               ),
                             ),
                           ],
@@ -234,7 +247,8 @@ class _MedsReminderTileState extends State<MedsReminderTile>
                             vertical: 5,
                           ),
                           decoration: BoxDecoration(
-                            color: _statusBgColor(widget.data.statusLabel!),
+                            // colour is resolved from the raw English key
+                            color: _statusBgColor(widget.data.statusKey),
                             borderRadius: BorderRadius.circular(999),
                           ),
                           child: Text(
@@ -242,7 +256,7 @@ class _MedsReminderTileState extends State<MedsReminderTile>
                             style: TextStyle(
                               fontSize: 11.5,
                               fontWeight: FontWeight.w700,
-                              color: _statusTextColor(widget.data.statusLabel!),
+                              color: _statusTextColor(widget.data.statusKey),
                               height: 1.0,
                             ),
                           ),
@@ -258,7 +272,8 @@ class _MedsReminderTileState extends State<MedsReminderTile>
                   activeColor: colorScheme.onPrimary,
                   activeTrackColor: colorScheme.primary,
                   inactiveThumbColor: theme.cardColor,
-                  inactiveTrackColor: colorScheme.onSurface.withOpacity(0.18),
+                  inactiveTrackColor:
+                  colorScheme.onSurface.withOpacity(0.18),
                 ),
               ],
             ),
@@ -268,8 +283,9 @@ class _MedsReminderTileState extends State<MedsReminderTile>
     );
   }
 
-  static Color _statusBgColor(String label) {
-    switch (label) {
+  // Uses the raw English VM key – locale-independent colour resolution.
+  static Color _statusBgColor(String? key) {
+    switch (key) {
       case 'Taken today':
         return Colors.green.withOpacity(0.12);
       case 'Skipped today':
@@ -281,8 +297,8 @@ class _MedsReminderTileState extends State<MedsReminderTile>
     }
   }
 
-  static Color _statusTextColor(String label) {
-    switch (label) {
+  static Color _statusTextColor(String? key) {
+    switch (key) {
       case 'Taken today':
         return Colors.green.shade800;
       case 'Skipped today':
@@ -294,6 +310,10 @@ class _MedsReminderTileState extends State<MedsReminderTile>
     }
   }
 }
+
+// ---------------------------------------------------------------------------
+// Swipe background helper
+// ---------------------------------------------------------------------------
 
 class _SwipeBackground extends StatelessWidget {
   final Color color;

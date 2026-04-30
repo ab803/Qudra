@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:qudra_0/core/Services/Localization/LocalizationService.dart';
 import 'package:qudra_0/Feature/accessibility/viewModel/tips_rights_state.dart';
 import 'package:qudra_0/core/Models/tips&rightsModel.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../core/Styles/AppColors.dart';
 import '../viewModel/tips_rights_cubit.dart';
 
@@ -17,40 +19,42 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
   String _selectedFilter = 'all';
   String _searchQuery = '';
 
+  /// Labels and subtitles store translation keys — resolved with context.tr()
+  /// at display time so the const list is preserved.
   static const List<_CategoryMeta> _categories = [
     _CategoryMeta(
-      label: 'Visual',
+      labelKey: 'category_visual',
+      subtitleKey: 'subtitle_visual',
       type: 'visual',
       icon: Icons.visibility_outlined,
-      subtitle: 'Blindness, Low Vision, Color Blindness',
       color: Color(0xFF4A90D9),
     ),
     _CategoryMeta(
-      label: 'Hearing',
+      labelKey: 'category_hearing',
+      subtitleKey: 'subtitle_hearing',
       type: 'hearing',
       icon: Icons.hearing_outlined,
-      subtitle: 'Deafness, Hard of Hearing, Sign Language',
       color: Color(0xFF7B68EE),
     ),
     _CategoryMeta(
-      label: 'Physical',
+      labelKey: 'category_physical',
+      subtitleKey: 'subtitle_physical',
       type: 'physical',
       icon: Icons.accessibility_new_outlined,
-      subtitle: 'Mobility, Motor Disability, Wheelchair',
       color: Color(0xFF50C878),
     ),
     _CategoryMeta(
-      label: 'Cognitive',
+      labelKey: 'category_cognitive',
+      subtitleKey: 'subtitle_cognitive',
       type: 'cognitive',
       icon: Icons.psychology_outlined,
-      subtitle: 'Learning Disabilities, Neurodiversity',
       color: Color(0xFFF5A623),
     ),
     _CategoryMeta(
-      label: 'Other',
+      labelKey: 'category_other',
+      subtitleKey: 'subtitle_other',
       type: 'other',
       icon: Icons.more_horiz,
-      subtitle: 'Speech, Invisible Disabilities',
       color: Color(0xFFFF6B6B),
     ),
   ];
@@ -74,7 +78,9 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
       final matchesSearch = _searchQuery.isEmpty ||
           (tip.title?.toLowerCase().contains(_searchQuery.toLowerCase()) ??
               false) ||
-          (tip.description?.toLowerCase().contains(_searchQuery.toLowerCase()) ??
+          (tip.description
+              ?.toLowerCase()
+              .contains(_searchQuery.toLowerCase()) ??
               false);
       return matchesType && matchesSearch;
     }).toList();
@@ -133,7 +139,7 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
 
     return AppBar(
       title: Text(
-        'Accessibility Hub',
+        context.tr('accessibility_hub'),
         style: theme.textTheme.titleLarge?.copyWith(
           fontSize: 18,
           fontWeight: FontWeight.bold,
@@ -166,7 +172,7 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
         controller: _searchController,
         onChanged: (val) => setState(() => _searchQuery = val),
         decoration: InputDecoration(
-          hintText: 'Search rights, tips, resources...',
+          hintText: context.tr('search_hint_a11y'),
           hintStyle: theme.textTheme.bodyMedium?.copyWith(
             fontSize: 13,
             color: onSurface.withOpacity(0.38),
@@ -202,10 +208,7 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: Appcolors.primaryColor,
-              width: 1.5,
-            ),
+            borderSide: BorderSide(color: Appcolors.primaryColor, width: 1.5),
           ),
         ),
       ),
@@ -219,9 +222,11 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         scrollDirection: Axis.horizontal,
         children: [
-          _buildChip(label: 'All', value: 'all'),
-          _buildChip(label: 'Popular', value: 'popular'),
-          ..._categories.map((c) => _buildChip(label: c.label, value: c.type)),
+          _buildChip(label: context.tr('filter_all'), value: 'all'),
+          _buildChip(label: context.tr('filter_popular'), value: 'popular'),
+          ..._categories.map(
+                (c) => _buildChip(label: context.tr(c.labelKey), value: c.type),
+          ),
         ],
       ),
     );
@@ -262,28 +267,29 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
   }
 
   Widget _buildContent(BuildContext context, List<tipsRightsModel> allTips) {
-    // Single category
     if (_selectedFilter != 'all' && _selectedFilter != 'popular') {
-      final meta = _categories.firstWhere((c) => c.type == _selectedFilter);
+      final meta =
+      _categories.firstWhere((c) => c.type == _selectedFilter);
       final filtered = _filterTips(allTips, _selectedFilter);
       return _buildSingleCategory(context, meta, filtered);
     }
 
-    // Popular: sorted by newest
     if (_selectedFilter == 'popular') {
       final sorted = [...allTips]
         ..sort((a, b) =>
-            (b.createdAt ?? DateTime(0)).compareTo(a.createdAt ?? DateTime(0)));
+            (b.createdAt ?? DateTime(0))
+                .compareTo(a.createdAt ?? DateTime(0)));
       final searched = sorted
           .where((t) =>
       _searchQuery.isEmpty ||
-          (t.title?.toLowerCase().contains(_searchQuery.toLowerCase()) ??
+          (t.title
+              ?.toLowerCase()
+              .contains(_searchQuery.toLowerCase()) ??
               false))
           .toList();
       return _buildFlatList(context, searched);
     }
 
-    // All: grouped by category
     return RefreshIndicator(
       color: Theme.of(context).colorScheme.primary,
       onRefresh: () => context.read<RightstipsCubit>().loadAll(),
@@ -313,15 +319,13 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 24),
-
-        // Section header
         Row(
           children: [
             Icon(meta.icon, color: meta.color, size: 22),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                meta.label,
+                context.tr(meta.labelKey),
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -329,7 +333,7 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
               ),
             ),
             Text(
-              '${tips.length} items',
+              '${tips.length} ${context.tr('items_label')}',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: onSurface.withOpacity(0.6),
                 fontSize: 13,
@@ -340,7 +344,7 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
         ),
         const SizedBox(height: 4),
         Text(
-          meta.subtitle,
+          context.tr(meta.subtitleKey),
           style: theme.textTheme.bodySmall?.copyWith(
             color: onSurface.withOpacity(0.6),
             fontSize: 13,
@@ -357,7 +361,7 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
               border: Border.all(color: theme.dividerColor),
             ),
             child: Text(
-              'No resources yet',
+              context.tr('no_resources'),
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: onSurface.withOpacity(0.5),
@@ -371,7 +375,8 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: tips.length,
             separatorBuilder: (_, __) => const SizedBox(height: 12),
-            itemBuilder: (_, i) => _TipCard(tip: tips[i], accentColor: meta.color),
+            itemBuilder: (_, i) =>
+                _TipCard(tip: tips[i], accentColor: meta.color),
           ),
       ],
     );
@@ -396,7 +401,7 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  meta.label,
+                  context.tr(meta.labelKey),
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -404,7 +409,7 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
                 ),
               ),
               Text(
-                '${tips.length} items',
+                '${tips.length} ${context.tr('items_label')}',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: onSurface.withOpacity(0.6),
                   fontSize: 13,
@@ -414,7 +419,7 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
           ),
           const SizedBox(height: 4),
           Text(
-            meta.subtitle,
+            context.tr(meta.subtitleKey),
             style: theme.textTheme.bodySmall?.copyWith(
               color: onSurface.withOpacity(0.6),
               fontSize: 13,
@@ -426,7 +431,7 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 32),
                 child: Text(
-                  'No resources in this category',
+                  context.tr('no_resources_category'),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: onSurface.withOpacity(0.5),
                     fontSize: 14,
@@ -454,7 +459,7 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
     if (tips.isEmpty) {
       return Center(
         child: Text(
-          'No resources found',
+          context.tr('no_resources_found'),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.38),
             fontSize: 14,
@@ -484,11 +489,7 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.error_outline,
-              color: colorScheme.error,
-              size: 36,
-            ),
+            Icon(Icons.error_outline, color: colorScheme.error, size: 36),
             const SizedBox(height: 8),
             Text(
               message,
@@ -502,7 +503,7 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
             TextButton(
               onPressed: () => context.read<RightstipsCubit>().loadAll(),
               child: Text(
-                'Retry',
+                context.tr('retry'),
                 style: TextStyle(color: colorScheme.primary),
               ),
             ),
@@ -513,20 +514,26 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
   }
 }
 
-// ── Models & Widgets ─────────────────────────────────────────────────────────
+// ---------------------------------------------------------------------------
+// Models & Widgets
+// ---------------------------------------------------------------------------
 
 class _CategoryMeta {
-  final String label;
+  /// Translation key for the display label (e.g. 'category_visual').
+  final String labelKey;
+
+  /// Translation key for the subtitle (e.g. 'subtitle_visual').
+  final String subtitleKey;
+
   final String type;
   final IconData icon;
-  final String subtitle;
   final Color color;
 
   const _CategoryMeta({
-    required this.label,
+    required this.labelKey,
+    required this.subtitleKey,
     required this.type,
     required this.icon,
-    required this.subtitle,
     required this.color,
   });
 }

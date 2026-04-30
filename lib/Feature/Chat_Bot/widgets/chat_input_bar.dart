@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart'; // ✅ Added Localization Import
 
 class ChatInputBar extends StatelessWidget {
   final TextEditingController controller;
@@ -29,7 +30,7 @@ class ChatInputBar extends StatelessWidget {
               onSubmitted: (_) => onSend(),
               textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(
-                hintText: 'Type a message...',
+                hintText: context.tr('type_message'), // ✅ Localized hint text
                 hintStyle: TextStyle(color: onSurface.withOpacity(0.5)),
                 contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
