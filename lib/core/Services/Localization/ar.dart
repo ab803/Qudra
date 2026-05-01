@@ -652,4 +652,11 @@ final Map<String, String> ar = {
   "emergency_contact_make_primary_subtitle": "سيتم تمييزها كأول جهة اتصال للطوارئ.",
   "emergency_profile_intro_title": "معلوماتك\nالمنقذة للحياة",
   "emergency_profile_intro_subtitle": "هذه البيانات تساعد فرق الطوارئ أو مقدم الدعم المناسب للوصول إليك بسرعة وقت الحاجة.",
+  "institution_no_ratings": "لا توجد تقييمات",
+  "institution_no_ratings_yet": "لا توجد تقييمات بعد",
+  "institution_rating_summary_compact": "{average} • {count} تقييمات",
+  "institution_rating_summary_one": "{average} • {count} تقييم",
+  "institution_rating_summary_many": "{average} • {count} تقييمات",
+  "feedback_rating_range_error": "يجب أن يكون التقييم بين 1 و 5.",
+  "feedback_user_not_logged_in": "المستخدم غير مسجل الدخول.",
 };

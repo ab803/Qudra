@@ -679,4 +679,11 @@ final Map<String, String> en = <String, String>{
   "emergency_contact_make_primary_subtitle": "This contact will be marked as the first emergency contact.",
   "emergency_profile_intro_title": "Your life-saving\ninformation",
   "emergency_profile_intro_subtitle": "This information helps emergency teams or the right supporter reach you quickly when needed.",
+  "institution_no_ratings": "No ratings yet",
+"institution_rating_summary_compact": "{average} • {count} reviews",
+"institution_rating_summary_one": "{average} • {count} review",
+"institution_rating_summary_many": "{average} • {count} reviews",
+"feedback_rating_range_error": "Rating must be between 1 and 5.",
+"feedback_user_not_logged_in": "User is not logged in.",
+
 };

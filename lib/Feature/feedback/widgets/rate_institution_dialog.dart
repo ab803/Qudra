@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 import '../services/feedback_service.dart';
 
 // This dialog allows the current user to rate an institution with stars only.
@@ -20,6 +22,7 @@ class RateInstitutionDialog extends StatefulWidget {
 
 class _RateInstitutionDialogState extends State<RateInstitutionDialog> {
   final FeedbackService _feedbackService = FeedbackService();
+
   int _selectedRating = 0;
   bool _isLoadingInitialRating = true;
   bool _isSubmitting = false;
@@ -44,18 +47,29 @@ class _RateInstitutionDialogState extends State<RateInstitutionDialog> {
       });
     } catch (_) {
       if (!mounted) return;
+
       setState(() {
         _isLoadingInitialRating = false;
       });
     }
   }
 
+  // This helper formats caught service exceptions into a clean user-facing message.
+  String _extractErrorMessage(Object error) {
+    final raw = error.toString();
+    if (raw.startsWith('Exception: ')) {
+      return raw.replaceFirst('Exception: ', '');
+    }
+    return raw;
+  }
+
   // This method submits or updates the user's institution rating.
   Future<void> _submitRating() async {
     if (_selectedRating == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select a rating first.'),
+        SnackBar(
+          // This snackbar message is localized when no rating is selected.
+          content: Text(context.tr('please_select_rating')),
         ),
       );
       return;
@@ -75,13 +89,16 @@ class _RateInstitutionDialogState extends State<RateInstitutionDialog> {
       Navigator.of(context).pop(true);
     } catch (e) {
       if (!mounted) return;
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(e.toString()),
+          // This snackbar message shows the localized service error.
+          content: Text(_extractErrorMessage(e)),
         ),
       );
     } finally {
       if (!mounted) return;
+
       setState(() {
         _isSubmitting = false;
       });
@@ -110,7 +127,8 @@ class _RateInstitutionDialogState extends State<RateInstitutionDialog> {
           iconSize: 38,
           icon: Icon(
             isSelected ? Icons.star_rounded : Icons.star_border_rounded,
-            color: isSelected ? colorScheme.primary : theme.textTheme.bodySmall?.color,
+            color:
+            isSelected ? colorScheme.primary : theme.textTheme.bodySmall?.color,
           ),
         );
       }),
@@ -142,7 +160,7 @@ class _RateInstitutionDialogState extends State<RateInstitutionDialog> {
           children: [
             // This block shows the dialog title and institution context.
             Text(
-              'Rate Institution',
+              context.tr('rate_institution'),
               style: theme.textTheme.titleLarge?.copyWith(
                 fontSize: 22,
                 fontWeight: FontWeight.w800,
@@ -158,18 +176,19 @@ class _RateInstitutionDialogState extends State<RateInstitutionDialog> {
               ),
             ),
             const SizedBox(height: 24),
-
             // This block shows the interactive stars row.
             _buildStarRow(context),
             const SizedBox(height: 16),
             Text(
+              // This label is localized for both empty and selected rating states.
               _selectedRating == 0
-                  ? 'Select your rating'
-                  : 'Your rating: $_selectedRating / 5',
+                  ? context.tr('select_your_rating')
+                  : context
+                  .tr('your_rating')
+                  .replaceFirst('{}', _selectedRating.toString()),
               style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: 28),
-
             // This block shows submit and cancel actions.
             Row(
               children: [
@@ -186,9 +205,9 @@ class _RateInstitutionDialogState extends State<RateInstitutionDialog> {
                       ),
                       minimumSize: const Size.fromHeight(52),
                     ),
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
+                    child: Text(
+                      context.tr('cancel'),
+                      style: const TextStyle(
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -217,7 +236,10 @@ class _RateInstitutionDialogState extends State<RateInstitutionDialog> {
                       ),
                     )
                         : Text(
-                      _selectedRating == 0 ? 'Submit' : 'Save Rating',
+                      // This button label is localized for first submit vs update.
+                      _selectedRating == 0
+                          ? context.tr('submit')
+                          : context.tr('save_rating'),
                       style: const TextStyle(
                         fontWeight: FontWeight.w700,
                       ),

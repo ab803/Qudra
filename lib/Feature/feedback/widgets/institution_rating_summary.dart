@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 import '../services/feedback_service.dart';
 
 // This widget loads and displays the average rating and reviews count
@@ -25,27 +27,35 @@ class _InstitutionRatingSummaryState extends State<InstitutionRatingSummary> {
   @override
   void initState() {
     super.initState();
-
     // This block loads the institution rating summary only once
     // when the widget is first created.
     _summaryFuture =
         _feedbackService.getInstitutionRatingSummary(widget.institutionId);
   }
 
-  // This helper builds a short or full summary label based on the use case.
-  String _buildSummaryLabel({
-    required double average,
-    required int count,
-  }) {
+  // This helper builds a localized short or full summary label based on the use case.
+  String _buildSummaryLabel(
+      BuildContext context, {
+        required double average,
+        required int count,
+      }) {
     if (count == 0) {
-      return widget.compact ? 'No ratings' : 'No ratings yet';
+      return widget.compact
+          ? context.tr('institution_no_ratings')
+          : context.tr('institution_no_ratings_yet');
     }
 
-    if (widget.compact) {
-      return '${average.toStringAsFixed(1)} • $count reviews';
-    }
+    // This block chooses the localized summary key based on compact mode and count.
+    final key = widget.compact
+        ? 'institution_rating_summary_compact'
+        : (count == 1
+        ? 'institution_rating_summary_one'
+        : 'institution_rating_summary_many');
 
-    return '${average.toStringAsFixed(1)} • $count review${count == 1 ? '' : 's'}';
+    return context
+        .tr(key)
+        .replaceAll('{average}', average.toStringAsFixed(1))
+        .replaceAll('{count}', count.toString());
   }
 
   @override
@@ -86,9 +96,13 @@ class _InstitutionRatingSummaryState extends State<InstitutionRatingSummary> {
             const SizedBox(width: 4),
             Flexible(
               child: Text(
+                // This block shows a localized fallback label when loading the summary fails.
                 snapshot.hasError
-                    ? (widget.compact ? 'No ratings' : 'No ratings yet')
+                    ? (widget.compact
+                    ? context.tr('institution_no_ratings')
+                    : context.tr('institution_no_ratings_yet'))
                     : _buildSummaryLabel(
+                  context,
                   average: average,
                   count: count,
                 ),
