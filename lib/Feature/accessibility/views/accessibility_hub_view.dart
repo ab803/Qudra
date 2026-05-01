@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qudra_0/Feature/accessibility/viewModel/tips_rights_state.dart';
 import 'package:qudra_0/core/Models/tips&rightsModel.dart';
+import '../../../core/Services/Localization/translation_extension.dart';
 import '../../../core/Styles/AppColors.dart';
 import '../viewModel/tips_rights_cubit.dart';
 
@@ -19,38 +20,48 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
 
   static const List<_CategoryMeta> _categories = [
     _CategoryMeta(
-      label: 'Visual',
+      // This key is used to localize the visual category label.
+      label: 'category_visual',
       type: 'visual',
       icon: Icons.visibility_outlined,
-      subtitle: 'Blindness, Low Vision, Color Blindness',
+      // This key is used to localize the visual category subtitle.
+      subtitle: 'subtitle_visual',
       color: Color(0xFF4A90D9),
     ),
     _CategoryMeta(
-      label: 'Hearing',
+      // This key is used to localize the hearing category label.
+      label: 'category_hearing',
       type: 'hearing',
       icon: Icons.hearing_outlined,
-      subtitle: 'Deafness, Hard of Hearing, Sign Language',
+      // This key is used to localize the hearing category subtitle.
+      subtitle: 'subtitle_hearing',
       color: Color(0xFF7B68EE),
     ),
     _CategoryMeta(
-      label: 'Physical',
+      // This key is used to localize the physical category label.
+      label: 'category_physical',
       type: 'physical',
       icon: Icons.accessibility_new_outlined,
-      subtitle: 'Mobility, Motor Disability, Wheelchair',
+      // This key is used to localize the physical category subtitle.
+      subtitle: 'subtitle_physical',
       color: Color(0xFF50C878),
     ),
     _CategoryMeta(
-      label: 'Cognitive',
+      // This key is used to localize the cognitive category label.
+      label: 'category_cognitive',
       type: 'cognitive',
       icon: Icons.psychology_outlined,
-      subtitle: 'Learning Disabilities, Neurodiversity',
+      // This key is used to localize the cognitive category subtitle.
+      subtitle: 'subtitle_cognitive',
       color: Color(0xFFF5A623),
     ),
     _CategoryMeta(
-      label: 'Other',
+      // This key is used to localize the other category label.
+      label: 'category_other',
       type: 'other',
       icon: Icons.more_horiz,
-      subtitle: 'Speech, Invisible Disabilities',
+      // This key is used to localize the other category subtitle.
+      subtitle: 'subtitle_other',
       color: Color(0xFFFF6B6B),
     ),
   ];
@@ -104,6 +115,19 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
                     ),
                   );
                 }
+                if (state is RightstipsActionSuccess) {
+                  final colorScheme = Theme.of(context).colorScheme;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        state.message,
+                        style: TextStyle(color: colorScheme.onPrimary),
+                      ),
+                      backgroundColor: colorScheme.primary,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
               },
               builder: (context, state) {
                 if (state is RightstipsLoading) {
@@ -130,10 +154,10 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
 
   PreferredSizeWidget _buildAppBar() {
     final theme = Theme.of(context);
-
     return AppBar(
       title: Text(
-        'Accessibility Hub',
+        // This title is localized for the accessibility hub app bar.
+        context.tr('accessibility_hub'),
         style: theme.textTheme.titleLarge?.copyWith(
           fontSize: 18,
           fontWeight: FontWeight.bold,
@@ -159,14 +183,14 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
   Widget _buildSearchBar() {
     final theme = Theme.of(context);
     final onSurface = theme.colorScheme.onSurface;
-
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
       child: TextField(
         controller: _searchController,
         onChanged: (val) => setState(() => _searchQuery = val),
         decoration: InputDecoration(
-          hintText: 'Search rights, tips, resources...',
+          // This hint text is localized for the accessibility search field.
+          hintText: context.tr('search_hint_a11y'),
           hintStyle: theme.textTheme.bodyMedium?.copyWith(
             fontSize: 13,
             color: onSurface.withOpacity(0.38),
@@ -219,9 +243,23 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         scrollDirection: Axis.horizontal,
         children: [
-          _buildChip(label: 'All', value: 'all'),
-          _buildChip(label: 'Popular', value: 'popular'),
-          ..._categories.map((c) => _buildChip(label: c.label, value: c.type)),
+          _buildChip(
+            // This chip label is localized for showing all resources.
+            label: context.tr('filter_all'),
+            value: 'all',
+          ),
+          _buildChip(
+            // This chip label is localized for showing popular resources.
+            label: context.tr('filter_popular'),
+            value: 'popular',
+          ),
+          ..._categories.map(
+                (c) => _buildChip(
+              // This chip label is localized for each category.
+              label: context.tr(c.label),
+              value: c.type,
+            ),
+          ),
         ],
       ),
     );
@@ -308,7 +346,6 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
       ) {
     final theme = Theme.of(context);
     final onSurface = theme.colorScheme.onSurface;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -321,7 +358,8 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                meta.label,
+                // This category title is localized.
+                context.tr(meta.label),
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -329,7 +367,8 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
               ),
             ),
             Text(
-              '${tips.length} items',
+              // This count label is localized for the category item count.
+              '${tips.length} ${context.tr('items_label')}',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: onSurface.withOpacity(0.6),
                 fontSize: 13,
@@ -340,7 +379,8 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
         ),
         const SizedBox(height: 4),
         Text(
-          meta.subtitle,
+          // This category subtitle is localized.
+          context.tr(meta.subtitle),
           style: theme.textTheme.bodySmall?.copyWith(
             color: onSurface.withOpacity(0.6),
             fontSize: 13,
@@ -357,7 +397,8 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
               border: Border.all(color: theme.dividerColor),
             ),
             child: Text(
-              'No resources yet',
+              // This empty state text is localized when a category has no resources.
+              context.tr('no_resources'),
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: onSurface.withOpacity(0.5),
@@ -384,7 +425,6 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
       ) {
     final theme = Theme.of(context);
     final onSurface = theme.colorScheme.onSurface;
-
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
       child: Column(
@@ -396,7 +436,8 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
-                  meta.label,
+                  // This category title is localized.
+                  context.tr(meta.label),
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -404,7 +445,8 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
                 ),
               ),
               Text(
-                '${tips.length} items',
+                // This count label is localized for the single-category item count.
+                '${tips.length} ${context.tr('items_label')}',
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: onSurface.withOpacity(0.6),
                   fontSize: 13,
@@ -414,7 +456,8 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
           ),
           const SizedBox(height: 4),
           Text(
-            meta.subtitle,
+            // This category subtitle is localized.
+            context.tr(meta.subtitle),
             style: theme.textTheme.bodySmall?.copyWith(
               color: onSurface.withOpacity(0.6),
               fontSize: 13,
@@ -426,7 +469,8 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 32),
                 child: Text(
-                  'No resources in this category',
+                  // This empty state text is localized when the selected category has no resources.
+                  context.tr('no_resources_category'),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: onSurface.withOpacity(0.5),
                     fontSize: 14,
@@ -450,11 +494,11 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
 
   Widget _buildFlatList(BuildContext context, List<tipsRightsModel> tips) {
     final theme = Theme.of(context);
-
     if (tips.isEmpty) {
       return Center(
         child: Text(
-          'No resources found',
+          // This empty state text is localized when no search/popular resources are found.
+          context.tr('no_resources_found'),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurface.withOpacity(0.38),
             fontSize: 14,
@@ -477,7 +521,6 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
   Widget _buildErrorView(BuildContext context, String message) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
     return Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
@@ -502,7 +545,8 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
             TextButton(
               onPressed: () => context.read<RightstipsCubit>().loadAll(),
               child: Text(
-                'Retry',
+                // This button label is localized for retrying the request.
+                context.tr('retry'),
                 style: TextStyle(color: colorScheme.primary),
               ),
             ),
@@ -541,7 +585,6 @@ class _TipCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final onSurface = theme.colorScheme.onSurface;
-
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(

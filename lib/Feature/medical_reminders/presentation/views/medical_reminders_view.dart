@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// This import enables localized text access using context.tr().
+import '../../../../core/Services/Localization/translation_extension.dart';
 import '../../widgets/meds_header.dart';
 import '../../widgets/meds_progress_card.dart';
 import '../../widgets/meds_reminder_tile.dart';
@@ -8,19 +10,16 @@ import '../../widgets/open_add_bottomsheet.dart';
 import '../../models/reminder_model.dart';
 import '../../viewmodel/medical_reminders_view_model.dart';
 
-
 class MedicalRemindersView extends StatelessWidget {
   const MedicalRemindersView({super.key});
 
   String _formatTimeForUi(BuildContext context, String hhmm) {
     final parts = hhmm.split(':');
     if (parts.length != 2) return hhmm;
-
     final tod = TimeOfDay(
       hour: int.parse(parts[0]),
       minute: int.parse(parts[1]),
     );
-
     return MaterialLocalizations.of(context).formatTimeOfDay(tod);
   }
 
@@ -52,21 +51,27 @@ class MedicalRemindersView extends StatelessWidget {
     nextRaw == null ? null : _formatTimeForUi(context, nextRaw);
 
     if (missed > 0 && nextFormatted != null) {
-      return '$missed missed • Next at $nextFormatted';
+      // This progress footer combines the localized missed label with the localized next reminder label.
+      return '$missed ${context.tr('missed')} • ${context.tr('next_at')} $nextFormatted';
     }
     if (missed > 0) {
-      return '$missed missed';
+      // This progress footer shows the localized missed label only.
+      return '$missed ${context.tr('missed')}';
     }
     if (nextFormatted != null) {
-      return 'Next at $nextFormatted';
+      // This progress footer shows the localized next reminder label only.
+      return '${context.tr('next_at')} $nextFormatted';
     }
     if (vm.dueTodayCount == 0) {
-      return 'No doses scheduled';
+      // This footer label is localized when no doses are scheduled.
+      return context.tr('no_doses_scheduled');
     }
     if (vm.takenTodayCount >= vm.dueTodayCount) {
-      return 'All doses completed';
+      // This footer label is localized when all doses are completed.
+      return context.tr('all_doses_completed');
     }
-    return 'No upcoming doses';
+    // This footer label is localized when there are no upcoming doses.
+    return context.tr('no_upcoming_doses');
   }
 
   Future<void> _confirmDelete(
@@ -76,16 +81,20 @@ class MedicalRemindersView extends StatelessWidget {
       ) async {
     final colorScheme = Theme.of(context).colorScheme;
     final vm = context.read<MedicalRemindersViewModel>();
-
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Reminder?'),
-        content: Text('Delete "$title"?'),
+        // This dialog title is localized for deleting a reminder.
+        title: Text(context.tr('delete_reminder')),
+        // This dialog message is localized and injects the reminder title.
+        content: Text(
+          context.tr('delete_reminder_confirm').replaceAll('{title}', title),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Cancel'),
+            // This button label is localized for cancel action.
+            child: Text(context.tr('cancel')),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -93,12 +102,14 @@ class MedicalRemindersView extends StatelessWidget {
               foregroundColor: colorScheme.onError,
             ),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Delete'),
+            child: Text(
+              // This button label is localized for delete action.
+              context.tr('delete'),
+            ),
           ),
         ],
       ),
     );
-
     if (ok == true) {
       await vm.deleteReminder(id);
     }
@@ -139,23 +150,26 @@ class MedicalRemindersView extends StatelessWidget {
             MedsProgressCard(
               taken: vm.takenTodayCount,
               total: vm.dueTodayCount,
-              caption: 'Doses completed',
+              // This caption is localized for completed doses.
+              caption: context.tr('doses_completed'),
               footerText: _buildProgressFooter(context, vm),
               missedCount: vm.missedTodayCount,
             ),
             if (vm.errorMessage != null) ...[
               const SizedBox(height: 12),
               Text(
-                vm.errorMessage!,
+                // This error message is localized using the key stored in the view model.
+                context.tr(vm.errorMessage!),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: colorScheme.error,
                 ),
               ),
             ],
             const SizedBox(height: 18),
-            const MedsSectionTitle(
+            MedsSectionTitle(
               icon: Icons.wb_sunny_outlined,
-              label: 'Daily Reminders',
+              // This section title is localized for daily reminders.
+              label: context.tr('daily_reminders'),
             ),
             const SizedBox(height: 12),
             if (items.isEmpty)
@@ -163,7 +177,8 @@ class MedicalRemindersView extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 24),
                 child: Center(
                   child: Text(
-                    'No reminders yet. Tap + to add one.',
+                    // This empty state label is localized when there are no reminders.
+                    context.tr('no_reminders'),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurface.withOpacity(0.68),
                     ),
@@ -231,7 +246,8 @@ class _SwipeDirectionLabels extends StatelessWidget {
               ),
               const SizedBox(width: 4),
               Text(
-                'Taken',
+                // This swipe helper label is localized for taken action.
+                context.tr('taken'),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: labelColor,
                   fontSize: 11.5,
@@ -243,7 +259,8 @@ class _SwipeDirectionLabels extends StatelessWidget {
           ),
           const Spacer(),
           Text(
-            'Swipe',
+            // This swipe helper label is localized for swipe instruction.
+            context.tr('swipe'),
             style: theme.textTheme.bodySmall?.copyWith(
               color: labelColor,
               fontSize: 11.5,
@@ -255,7 +272,8 @@ class _SwipeDirectionLabels extends StatelessWidget {
           Row(
             children: [
               Text(
-                'Skip',
+                // This swipe helper label is localized for skip action.
+                context.tr('skip'),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: labelColor,
                   fontSize: 11.5,

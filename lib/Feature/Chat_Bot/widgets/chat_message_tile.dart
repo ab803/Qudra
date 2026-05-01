@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 
 class ChatMessageTile extends StatelessWidget {
   final bool isUser;
@@ -55,7 +57,8 @@ class ChatMessageTile extends StatelessWidget {
         theme.brightness == Brightness.dark ? 0.20 : 0.12,
       ),
       child: Text(
-        isUser ? 'U' : 'AI',
+        // This avatar label uses the localized first character for the user.
+        isUser ? _localizedUserInitial(context) : 'AI',
         style: TextStyle(
           color: isUser ? colorScheme.onPrimary : colorScheme.primary,
           fontWeight: FontWeight.bold,
@@ -124,6 +127,7 @@ class ChatMessageTile extends StatelessWidget {
                 },
               ),
             ),
+
             if (isUser) ...[
               const SizedBox(width: 10),
               avatar,
@@ -149,5 +153,12 @@ class ChatMessageTile extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  // This returns the first localized character for the user's avatar label.
+  String _localizedUserInitial(BuildContext context) {
+    final localizedYou = context.tr('you').trim();
+    if (localizedYou.isEmpty) return 'U';
+    return localizedYou.substring(0, 1).toUpperCase();
   }
 }

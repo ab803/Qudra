@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import 'package:qudra_0/core/Styles/AppColors.dart';
 
 // This widget renders the institutions disability filter chips row.
@@ -23,6 +24,7 @@ class InstitutionFilterBar extends StatelessWidget {
         children: List.generate(filterLabels.length, (index) {
           final label = filterLabels[index];
           final visualData = _getChipVisualData(label, context);
+          final displayLabel = _translateFilterLabel(context, label);
 
           return Padding(
             padding: EdgeInsets.only(
@@ -30,6 +32,7 @@ class InstitutionFilterBar extends StatelessWidget {
             ),
             child: _InstitutionFilterChip(
               label: label,
+              displayLabel: displayLabel,
               icon: visualData.icon,
               accentColor: visualData.accentColor,
               isSelected: selectedFilter == label,
@@ -39,6 +42,19 @@ class InstitutionFilterBar extends StatelessWidget {
         }),
       ),
     );
+  }
+
+  String _translateFilterLabel(BuildContext context, String chipLabel) {
+    switch (chipLabel) {
+      case 'Mobility':
+        return context.tr("filter_mobility");
+      case 'Vision':
+        return context.tr("filter_vision");
+      case 'Hearing':
+        return context.tr("filter_hearing");
+      default:
+        return context.tr("filter_all");
+    }
   }
 
   // This method returns the visual style config for each filter chip.
@@ -71,6 +87,7 @@ class InstitutionFilterBar extends StatelessWidget {
 // This widget renders a single filter chip with icon and label.
 class _InstitutionFilterChip extends StatelessWidget {
   final String label;
+  final String displayLabel;
   final IconData icon;
   final Color accentColor;
   final bool isSelected;
@@ -78,6 +95,7 @@ class _InstitutionFilterChip extends StatelessWidget {
 
   const _InstitutionFilterChip({
     required this.label,
+    required this.displayLabel,
     required this.icon,
     required this.accentColor,
     required this.isSelected,
@@ -162,7 +180,7 @@ class _InstitutionFilterChip extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    label,
+                    displayLabel,
                     style: TextStyle(
                       fontSize: 13.5,
                       fontWeight: FontWeight.w700,

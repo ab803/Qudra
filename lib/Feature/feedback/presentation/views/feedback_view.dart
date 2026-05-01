@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../../core/Styles/AppTextsyles.dart';
 import '../../services/feedback_service.dart';
 
@@ -17,44 +18,39 @@ class _FeedbackViewState extends State<FeedbackView> {
   final List<String> _selectedTags = [];
   bool _isSubmitting = false;
 
-  // This method submits the app feedback to Supabase.
+  // Tag keys → translation key map (stored as keys, shown as localized labels).
+  static const Map<String, String> _tagTranslationKeys = {
+    'fast_response': 'feedback_tag_fast_response',
+    'ease_of_use': 'feedback_tag_ease_of_use',
+    'design': 'feedback_tag_design',
+    'support': 'feedback_tag_support',
+  };
+
   Future<void> _submitFeedback() async {
     if (_selectedRating == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select a rating first.'),
-        ),
+        SnackBar(content: Text(context.tr('feedback_select_rating_error'))),
       );
       return;
     }
-
     if (_commentController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please write your feedback comment.'),
-        ),
+        SnackBar(content: Text(context.tr('feedback_write_comment_error'))),
       );
       return;
     }
 
-    setState(() {
-      _isSubmitting = true;
-    });
+    setState(() => _isSubmitting = true);
 
     try {
       await _feedbackService.submitAppFeedback(
         rating: _selectedRating,
         comment: _commentController.text.trim(),
       );
-
       if (!mounted) return;
-
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Feedback submitted successfully.'),
-        ),
+        SnackBar(content: Text(context.tr('feedback_submitted_success'))),
       );
-
       if (context.canPop()) {
         context.pop();
       } else {
@@ -63,15 +59,11 @@ class _FeedbackViewState extends State<FeedbackView> {
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString()),
-        ),
+        SnackBar(content: Text(e.toString())),
       );
     } finally {
       if (!mounted) return;
-      setState(() {
-        _isSubmitting = false;
-      });
+      setState(() => _isSubmitting = false);
     }
   }
 
@@ -107,7 +99,7 @@ class _FeedbackViewState extends State<FeedbackView> {
           },
         ),
         title: Text(
-          'Feedback',
+          context.tr('feedback_title'),
           style: AppTextStyles.title.copyWith(
             fontSize: 18,
             color: theme.textTheme.titleLarge?.color,
@@ -118,17 +110,12 @@ class _FeedbackViewState extends State<FeedbackView> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Divider(
-              color: theme.dividerColor,
-              thickness: 1,
-              height: 1,
-            ),
+            Divider(color: theme.dividerColor, thickness: 1, height: 1),
             Padding(
               padding: const EdgeInsets.all(24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Icon at the top
                   Container(
                     width: 60,
                     height: 60,
@@ -138,23 +125,21 @@ class _FeedbackViewState extends State<FeedbackView> {
                       border: Border.all(color: theme.dividerColor),
                       boxShadow: [
                         BoxShadow(
-                          color: theme.shadowColor.withOpacity(isDark ? 0.22 : 0.06),
+                          color: theme.shadowColor.withOpacity(
+                              isDark ? 0.22 : 0.06),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
                       ],
                     ),
                     child: Center(
-                      child: Icon(
-                        Icons.chat_bubble,
-                        color: colorScheme.primary,
-                        size: 28,
-                      ),
+                      child: Icon(Icons.chat_bubble,
+                          color: colorScheme.primary, size: 28),
                     ),
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'How was your experience?',
+                    context.tr('feedback_question'),
                     style: AppTextStyles.title.copyWith(
                       fontSize: 24,
                       fontWeight: FontWeight.w800,
@@ -164,7 +149,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Your feedback helps us improve Qudra for\neveryone in the community.',
+                    context.tr('feedback_description'),
                     style: AppTextStyles.body.copyWith(
                       fontSize: 15,
                       height: 1.5,
@@ -173,9 +158,7 @@ class _FeedbackViewState extends State<FeedbackView> {
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 40),
-
-                  // Rate Your Experience
-                  _buildSectionTitle(context, 'RATE YOUR EXPERIENCE'),
+                  _buildSectionTitle(context, context.tr('feedback_rate_section')),
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(vertical: 24),
@@ -186,31 +169,23 @@ class _FeedbackViewState extends State<FeedbackView> {
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: List.generate(5, (index) {
-                        return _buildStarRating(context, index + 1);
-                      }),
+                      children: List.generate(5, (i) => _buildStarRating(context, i + 1)),
                     ),
                   ),
                   const SizedBox(height: 32),
-
-                  // Additional Comments
-                  _buildSectionTitle(context, 'ADDITIONAL COMMENTS'),
+                  _buildSectionTitle(context, context.tr('feedback_comments_section')),
                   Container(
                     decoration: BoxDecoration(
                       color: theme.cardColor,
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: theme.dividerColor,
-                        width: 1.5,
-                      ),
+                      border: Border.all(color: theme.dividerColor, width: 1.5),
                     ),
                     child: TextField(
                       controller: _commentController,
                       enabled: !_isSubmitting,
                       maxLines: 5,
                       decoration: InputDecoration(
-                        hintText:
-                        'Tell us more about your experience...\nWhat did you like? What can we\nimprove?',
+                        hintText: context.tr('feedback_comment_hint'),
                         hintStyle: AppTextStyles.body.copyWith(
                           color: theme.textTheme.bodySmall?.color,
                           height: 1.5,
@@ -221,22 +196,15 @@ class _FeedbackViewState extends State<FeedbackView> {
                     ),
                   ),
                   const SizedBox(height: 32),
-
-                  // What Stood Out
-                  _buildSectionTitle(context, 'WHAT STOOD OUT?'),
+                  _buildSectionTitle(context, context.tr('feedback_stood_out_section')),
                   Wrap(
                     spacing: 12,
                     runSpacing: 12,
-                    children: [
-                      _buildTagChip(context, 'Fast Response'),
-                      _buildTagChip(context, 'Ease of Use'),
-                      _buildTagChip(context, 'Design'),
-                      _buildTagChip(context, 'Support'),
-                    ],
+                    children: _tagTranslationKeys.keys
+                        .map((key) => _buildTagChip(context, key))
+                        .toList(),
                   ),
                   const SizedBox(height: 40),
-
-                  // Submit Button
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -255,35 +223,29 @@ class _FeedbackViewState extends State<FeedbackView> {
                         child: CircularProgressIndicator(
                           strokeWidth: 2.3,
                           valueColor: AlwaysStoppedAnimation<Color>(
-                            colorScheme.onPrimary,
-                          ),
+                              colorScheme.onPrimary),
                         ),
                       )
                           : Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Submit Feedback',
+                            context.tr('feedback_submit'),
                             style: AppTextStyles.button.copyWith(
                               fontSize: 16,
                               color: colorScheme.onPrimary,
                             ),
                           ),
                           const SizedBox(width: 8),
-                          Icon(
-                            Icons.send,
-                            color: colorScheme.onPrimary,
-                            size: 18,
-                          ),
+                          Icon(Icons.send,
+                              color: colorScheme.onPrimary, size: 18),
                         ],
                       ),
                     ),
                   ),
                   const SizedBox(height: 16),
-
-                  // Terms Text
                   Text(
-                    'By submitting, you agree to our Terms of Service.',
+                    context.tr('feedback_terms'),
                     style: AppTextStyles.body.copyWith(
                       fontSize: 12,
                       color: theme.textTheme.bodySmall?.color,
@@ -302,7 +264,6 @@ class _FeedbackViewState extends State<FeedbackView> {
 
   Widget _buildSectionTitle(BuildContext context, String title) {
     final theme = Theme.of(context);
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Align(
@@ -324,20 +285,17 @@ class _FeedbackViewState extends State<FeedbackView> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isSelected = _selectedRating >= rating;
-
     return GestureDetector(
       onTap: _isSubmitting
           ? null
-          : () {
-        setState(() {
-          _selectedRating = rating;
-        });
-      },
+          : () => setState(() => _selectedRating = rating),
       child: Column(
         children: [
           Icon(
             isSelected ? Icons.star : Icons.star_border,
-            color: isSelected ? colorScheme.primary : theme.textTheme.bodySmall?.color,
+            color: isSelected
+                ? colorScheme.primary
+                : theme.textTheme.bodySmall?.color,
             size: 32,
           ),
           const SizedBox(height: 8),
@@ -345,7 +303,8 @@ class _FeedbackViewState extends State<FeedbackView> {
             rating.toString(),
             style: AppTextStyles.body.copyWith(
               fontSize: 12,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              fontWeight:
+              isSelected ? FontWeight.bold : FontWeight.normal,
               color: isSelected
                   ? theme.textTheme.titleLarge?.color
                   : theme.textTheme.bodySmall?.color,
@@ -356,23 +315,23 @@ class _FeedbackViewState extends State<FeedbackView> {
     );
   }
 
-  Widget _buildTagChip(BuildContext context, String label) {
+  // key is the stored tag key (e.g. 'fast_response'), label is localized.
+  Widget _buildTagChip(BuildContext context, String key) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final isSelected = _selectedTags.contains(label);
+    final isSelected = _selectedTags.contains(key);
+    final label = context.tr(_tagTranslationKeys[key]!);
 
     return GestureDetector(
       onTap: _isSubmitting
           ? null
-          : () {
-        setState(() {
-          if (isSelected) {
-            _selectedTags.remove(label);
-          } else {
-            _selectedTags.add(label);
-          }
-        });
-      },
+          : () => setState(() {
+        if (isSelected) {
+          _selectedTags.remove(key);
+        } else {
+          _selectedTags.add(key);
+        }
+      }),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         decoration: BoxDecoration(
@@ -384,7 +343,8 @@ class _FeedbackViewState extends State<FeedbackView> {
           label,
           style: TextStyle(
             fontSize: 14,
-            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+            fontWeight:
+            isSelected ? FontWeight.w600 : FontWeight.w500,
             color: isSelected
                 ? colorScheme.onPrimary
                 : theme.textTheme.bodyMedium?.color,

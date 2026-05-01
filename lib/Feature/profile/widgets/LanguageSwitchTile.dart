@@ -10,7 +10,6 @@ class LanguageSwitchTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20),
       padding: const EdgeInsets.all(12),
@@ -30,12 +29,11 @@ class LanguageSwitchTile extends StatelessWidget {
       child: BlocBuilder<LanguageCubit, LanguageState>(
         builder: (context, state) {
           final locale = state.locale.languageCode;
-
           return Column(
             children: [
               RadioListTile<String>(
                 title: Text(
-                  "English",
+                  context.tr("language_english"),
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: theme.textTheme.bodyLarge?.color,
@@ -50,12 +48,10 @@ class LanguageSwitchTile extends StatelessWidget {
                   }
                 },
               ),
-
               Divider(color: theme.dividerColor),
-
               RadioListTile<String>(
                 title: Text(
-                  "العربية",
+                  context.tr("language_arabic"),
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: theme.textTheme.bodyLarge?.color,
@@ -70,9 +66,7 @@ class LanguageSwitchTile extends StatelessWidget {
                   }
                 },
               ),
-
               Divider(color: theme.dividerColor),
-
               RadioListTile<String>(
                 title: Text(
                   context.tr("system_default"),

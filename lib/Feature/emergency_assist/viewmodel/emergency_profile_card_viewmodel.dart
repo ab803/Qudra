@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:geolocator/geolocator.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/Services/Localization/ar.dart';
+import '../../../core/Services/Localization/en.dart';
 import '../models/emergency_contact_model.dart';
 import '../models/emergency_profile_model.dart';
 import '../services/emergency_contacts_service.dart';
@@ -28,12 +30,12 @@ class EmergencyProfileCardViewModel extends ChangeNotifier {
   final EmergencyShareService _shareService;
   final EmergencyDialerService _dialerService;
 
+  static const String _languageKey = 'app_language';
+
   bool isLoading = false;
   String? errorMessage;
-
   EmergencyProfileModel? profile;
   List<EmergencyContactModel> contacts = [];
-
   Position? currentPosition;
   String? currentLocationUrl;
 
@@ -41,18 +43,18 @@ class EmergencyProfileCardViewModel extends ChangeNotifier {
   bool get hasContacts => contacts.isNotEmpty;
   bool get isLocationAvailable => currentLocationUrl != null;
 
-  String get communicationMethodLabel {
+  // This getter returns a localization key for the preferred communication method.
+  String get communicationMethodLabelKey {
     final method = profile?.preferredCommunicationMethod;
-
     switch (method) {
       case EmergencyCommunicationMethod.text:
-        return 'يرجى التواصل كتابة';
+        return 'emergency_communication_note_text';
       case EmergencyCommunicationMethod.signLanguage:
-        return 'أستخدم لغة الإشارة';
+        return 'emergency_communication_note_sign';
       case EmergencyCommunicationMethod.voice:
-        return 'أفضل التواصل الصوتي';
+        return 'emergency_communication_note_voice';
       default:
-        return 'يرجى التواصل بطريقة مناسبة';
+        return 'emergency_communication_note_default';
     }
   }
 
@@ -75,60 +77,74 @@ class EmergencyProfileCardViewModel extends ChangeNotifier {
 
       // 3) وبعدها هات الموقع في الخلفية
       currentPosition = await _locationService.getCurrentPositionSafely();
-
       if (currentPosition != null) {
         currentLocationUrl =
             _locationService.buildGoogleMapsUrl(currentPosition!);
       } else {
         currentLocationUrl = null;
       }
-
       notifyListeners();
     } catch (_) {
-      errorMessage = 'تعذر تحميل بطاقة الطوارئ.';
+      // This error key is resolved to localized text by the UI.
+      errorMessage = 'emergency_profile_card_load_error';
       isLoading = false;
       notifyListeners();
     }
   }
 
-  String buildCardShareText() {
-    final buffer = StringBuffer();
+  Future<String> _translate(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedCode = prefs.getString(_languageKey);
 
-    buffer.writeln('بطاقة طوارئ');
+    final localeCode = (savedCode == null || savedCode == 'system')
+        ? WidgetsBinding.instance.platformDispatcher.locale.languageCode
+        : savedCode;
+
+    final values = localeCode == 'ar' ? ar : en;
+    return values[key] ?? key;
+  }
+
+  Future<String> buildCardShareText() async {
+    final buffer = StringBuffer();
+    buffer.writeln(await _translate('emergency_card_title'));
     buffer.writeln();
 
     if (profile != null) {
       if (profile!.fullName.trim().isNotEmpty) {
-        buffer.writeln('الاسم: ${profile!.fullName}');
+        buffer.writeln('${await _translate('full_name')}: ${profile!.fullName}');
       }
-
       if (profile!.disabilityType.trim().isNotEmpty) {
-        buffer.writeln('نوع الإعاقة: ${profile!.disabilityType}');
+        buffer.writeln(
+          '${await _translate('disability_type')}: ${await _translate(profile!.disabilityType)}',
+        );
       }
-
-      buffer.writeln('التواصل المناسب: $communicationMethodLabel');
-
+      buffer.writeln(
+        '${await _translate('emergency_preferred_communication')}: ${await _translate(communicationMethodLabelKey)}',
+      );
       if (profile!.bloodType.trim().isNotEmpty) {
-        buffer.writeln('فصيلة الدم: ${profile!.bloodType}');
+        buffer.writeln(
+          '${await _translate('emergency_blood_type')}: ${profile!.bloodType}',
+        );
       }
-
       if (profile!.importantMedicalNotes.trim().isNotEmpty) {
-        buffer.writeln('ملاحظات طبية: ${profile!.importantMedicalNotes}');
+        buffer.writeln(
+          '${await _translate('emergency_important_medical_notes')}: ${profile!.importantMedicalNotes}',
+        );
       }
-
       if (profile!.allergiesAndMedications.trim().isNotEmpty) {
         buffer.writeln(
-          'الحساسية والأدوية: ${profile!.allergiesAndMedications}',
+          '${await _translate('emergency_allergies_medications')}: ${profile!.allergiesAndMedications}',
         );
       }
     }
 
     if (contacts.isNotEmpty) {
       buffer.writeln();
-      buffer.writeln('جهات اتصال الطوارئ:');
-
+      buffer.writeln(await _translate('emergency_contacts_title'));
       for (final contact in contacts.take(3)) {
-        final primaryMark = contact.isPrimary ? ' (أساسي)' : '';
+        final primaryMark = contact.isPrimary
+            ? ' (${await _translate('emergency_contact_primary')})'
+            : '';
         buffer.writeln(
           '- ${contact.name} - ${contact.relation}$primaryMark - ${contact.phoneNumber}',
         );
@@ -137,7 +153,7 @@ class EmergencyProfileCardViewModel extends ChangeNotifier {
 
     if (currentLocationUrl != null) {
       buffer.writeln();
-      buffer.writeln('الموقع الحالي:');
+      buffer.writeln(await _translate('emergency_current_location'));
       buffer.writeln(currentLocationUrl);
     }
 
@@ -146,8 +162,8 @@ class EmergencyProfileCardViewModel extends ChangeNotifier {
 
   Future<void> shareCard() async {
     await _shareService.shareText(
-      text: buildCardShareText(),
-      subject: 'Qudra Emergency Profile Card',
+      text: await buildCardShareText(),
+      subject: await _translate('emergency_card_share_subject'),
     );
   }
 

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 
 class MedsProgressCard extends StatelessWidget {
   final int taken;
@@ -20,10 +22,8 @@ class MedsProgressCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
     final double progress =
     total <= 0 ? 0.0 : (taken / total).clamp(0.0, 1.0).toDouble();
-
     final bool isComplete = total > 0 && taken >= total;
     final bool hasMissed = missedCount > 0;
 
@@ -63,7 +63,8 @@ class MedsProgressCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
-                    "Today's Progress",
+                    // This progress title is localized for today's progress.
+                    context.tr('today_progress'),
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: colorScheme.onPrimary,
                       fontSize: 12,

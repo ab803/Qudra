@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../models/emergency_contact_model.dart';
 import '../services/emergency_contacts_service.dart';
 import '../services/emergency_dialer_service.dart';
@@ -16,7 +15,6 @@ class EmergencyContactsViewModel extends ChangeNotifier {
 
   bool isLoading = false;
   String? errorMessage;
-
   List<EmergencyContactModel> contacts = [];
 
   Future<void> loadContacts() async {
@@ -27,7 +25,8 @@ class EmergencyContactsViewModel extends ChangeNotifier {
     try {
       contacts = await _contactsService.getContacts();
     } catch (_) {
-      errorMessage = 'تعذر تحميل جهات الاتصال.';
+      // This error key is resolved to localized text by the UI.
+      errorMessage = 'emergency_contact_load_error';
     } finally {
       isLoading = false;
       notifyListeners();
@@ -40,7 +39,8 @@ class EmergencyContactsViewModel extends ChangeNotifier {
       await loadContacts();
       return true;
     } catch (_) {
-      errorMessage = 'تعذر إضافة جهة الاتصال.';
+      // This error key is resolved to localized text by the UI.
+      errorMessage = 'emergency_contact_add_error';
       notifyListeners();
       return false;
     }
@@ -52,7 +52,8 @@ class EmergencyContactsViewModel extends ChangeNotifier {
       await loadContacts();
       return true;
     } catch (_) {
-      errorMessage = 'تعذر تعديل جهة الاتصال.';
+      // This error key is resolved to localized text by the UI.
+      errorMessage = 'emergency_contact_update_error';
       notifyListeners();
       return false;
     }
@@ -63,7 +64,8 @@ class EmergencyContactsViewModel extends ChangeNotifier {
       await _contactsService.deleteContact(localId);
       await loadContacts();
     } catch (_) {
-      errorMessage = 'تعذر حذف جهة الاتصال.';
+      // This error key is resolved to localized text by the UI.
+      errorMessage = 'emergency_contact_delete_error';
       notifyListeners();
     }
   }
@@ -73,7 +75,8 @@ class EmergencyContactsViewModel extends ChangeNotifier {
       await _contactsService.setPrimaryContact(localId);
       await loadContacts();
     } catch (_) {
-      errorMessage = 'تعذر تحديث جهة الاتصال الأساسية.';
+      // This error key is resolved to localized text by the UI.
+      errorMessage = 'emergency_contact_primary_error';
       notifyListeners();
     }
   }

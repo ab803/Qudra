@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../models/emergency_profile_model.dart';
 import '../services/emergency_profile_service.dart';
 
@@ -22,7 +21,6 @@ class EmergencyProfileSetupViewModel extends ChangeNotifier {
   String? selectedBloodType;
   EmergencyCommunicationMethod selectedCommunicationMethod =
       EmergencyCommunicationMethod.text;
-
   bool vibrationOnAlert = true;
 
   bool isLoading = false;
@@ -33,13 +31,14 @@ class EmergencyProfileSetupViewModel extends ChangeNotifier {
   String? bloodTypeError;
   String? submitError;
 
+  // This list stores localization keys for the disability type options.
   List<String> get disabilityTypes => const [
-    'سمعية',
-    'بصرية',
-    'حركية',
-    'نطقية',
-    'ذهنية',
-    'أخرى',
+    'disability_hearing',
+    'disability_visual',
+    'disability_physical',
+    'emergency_disability_speech',
+    'emergency_disability_mental',
+    'disability_other',
   ];
 
   List<String> get bloodTypes => const [
@@ -53,6 +52,34 @@ class EmergencyProfileSetupViewModel extends ChangeNotifier {
     'O-',
   ];
 
+  // This helper normalizes old saved values to the new localization keys.
+  String? _normalizeDisabilityType(String? raw) {
+    if (raw == null || raw.trim().isEmpty) return null;
+
+    switch (raw.trim()) {
+      case 'سمعية':
+      case 'Hearing':
+        return 'disability_hearing';
+      case 'بصرية':
+      case 'Visual':
+        return 'disability_visual';
+      case 'حركية':
+      case 'Physical':
+        return 'disability_physical';
+      case 'نطقية':
+      case 'Speech':
+        return 'emergency_disability_speech';
+      case 'ذهنية':
+      case 'Mental':
+        return 'emergency_disability_mental';
+      case 'أخرى':
+      case 'Other':
+        return 'disability_other';
+      default:
+        return raw.trim();
+    }
+  }
+
   Future<void> loadInitialData() async {
     if (hasLoadedInitialData) return;
 
@@ -60,15 +87,13 @@ class EmergencyProfileSetupViewModel extends ChangeNotifier {
     notifyListeners();
 
     final existingProfile = await _profileService.getProfile();
-
     if (existingProfile != null) {
       fullNameController.text = existingProfile.fullName;
       medicalNotesController.text = existingProfile.importantMedicalNotes;
       allergiesAndMedicationsController.text =
           existingProfile.allergiesAndMedications;
-      selectedDisabilityType = existingProfile.disabilityType.isEmpty
-          ? null
-          : existingProfile.disabilityType;
+      selectedDisabilityType =
+          _normalizeDisabilityType(existingProfile.disabilityType);
       selectedBloodType =
       existingProfile.bloodType.isEmpty ? null : existingProfile.bloodType;
       selectedCommunicationMethod =
@@ -111,21 +136,19 @@ class EmergencyProfileSetupViewModel extends ChangeNotifier {
   bool validateForm() {
     final fullName = fullNameController.text.trim();
 
+    // These error keys are resolved to localized text by the UI.
     fullNameError =
-    fullName.isEmpty ? 'من فضلك أدخل الاسم الكامل' : null;
-
+    fullName.isEmpty ? 'emergency_validation_full_name' : null;
     disabilityTypeError = (selectedDisabilityType == null ||
         selectedDisabilityType!.trim().isEmpty)
-        ? 'من فضلك اختر نوع الإعاقة'
+        ? 'emergency_validation_disability_type'
         : null;
-
-    bloodTypeError =
-    (selectedBloodType == null || selectedBloodType!.trim().isEmpty)
-        ? 'من فضلك اختر فصيلة الدم'
+    bloodTypeError = (selectedBloodType == null ||
+        selectedBloodType!.trim().isEmpty)
+        ? 'emergency_validation_blood_type'
         : null;
 
     notifyListeners();
-
     return fullNameError == null &&
         disabilityTypeError == null &&
         bloodTypeError == null;
@@ -149,7 +172,6 @@ class EmergencyProfileSetupViewModel extends ChangeNotifier {
 
   Future<bool> saveProfile() async {
     clearSubmitError();
-
     final isValid = validateForm();
     if (!isValid) return false;
 
@@ -159,12 +181,12 @@ class EmergencyProfileSetupViewModel extends ChangeNotifier {
     try {
       final profile = buildProfile();
       await _profileService.saveProfile(profile);
-
       isLoading = false;
       notifyListeners();
       return true;
     } catch (_) {
-      submitError = 'حدث خطأ أثناء حفظ البيانات، حاول مرة أخرى.';
+      // This error key is resolved to localized text by the UI.
+      submitError = 'emergency_profile_save_error';
       isLoading = false;
       notifyListeners();
       return false;

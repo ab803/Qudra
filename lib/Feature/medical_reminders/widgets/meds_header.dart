@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 
 class MedsHeader extends StatelessWidget {
   const MedsHeader({super.key});
@@ -15,7 +17,8 @@ class MedsHeader extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
-              'Medical Reminders',
+              // This header title is localized for the medical reminders screen.
+              context.tr('medical_reminders'),
               style: theme.textTheme.titleLarge?.copyWith(
                 fontSize: 28,
                 color: theme.colorScheme.primary,

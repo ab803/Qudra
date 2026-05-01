@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 
 class PostSearchBar extends StatelessWidget {
   final ValueChanged<String>? onChanged;
@@ -31,7 +33,8 @@ class PostSearchBar extends StatelessWidget {
       child: TextField(
         onChanged: onChanged,
         decoration: InputDecoration(
-          hintText: 'Search posts',
+          // This search hint is localized for searching posts.
+          hintText: context.tr('search_posts'),
           hintStyle: TextStyle(
             color: onSurface.withOpacity(0.6),
           ),

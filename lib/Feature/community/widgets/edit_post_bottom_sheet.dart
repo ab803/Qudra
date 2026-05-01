@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 import '../models/community_post_model.dart';
 import '../viewmodel/community_viewmodel.dart';
 
@@ -41,13 +43,14 @@ class _EditPostBottomSheetState extends State<EditPostBottomSheet> {
     );
 
     if (!mounted) return;
+
     if (success) {
       Navigator.pop(context, true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            widget.viewModel.errorMessage ?? 'Failed to update post',
+            widget.viewModel.errorMessage ?? context.tr('failed_update_post'),
           ),
         ),
       );
@@ -76,7 +79,8 @@ class _EditPostBottomSheetState extends State<EditPostBottomSheet> {
               children: [
                 Center(
                   child: Text(
-                    'Edit Post',
+                    // This bottom sheet title is localized for editing a post.
+                    context.tr('edit_post_title'),
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -90,7 +94,8 @@ class _EditPostBottomSheetState extends State<EditPostBottomSheet> {
                   minLines: 4,
                   textInputAction: TextInputAction.newline,
                   decoration: InputDecoration(
-                    hintText: 'Update your post...',
+                    // This hint text is localized for updating post content.
+                    hintText: context.tr('update_post_hint'),
                     hintStyle: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurface.withOpacity(0.5),
                     ),
@@ -114,10 +119,12 @@ class _EditPostBottomSheetState extends State<EditPostBottomSheet> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Post content cannot be empty';
+                      // This validation error is localized for empty post content.
+                      return context.tr('post_empty_error');
                     }
                     if (value.trim().length < 3) {
-                      return 'Post content is too short';
+                      // This validation error is localized for short post content.
+                      return context.tr('post_too_short_error');
                     }
                     return null;
                   },
@@ -143,7 +150,8 @@ class _EditPostBottomSheetState extends State<EditPostBottomSheet> {
                       ),
                     )
                         : Text(
-                      'Save Changes',
+                      // This button label is localized for saving changes.
+                      context.tr('save_changes'),
                       style: theme.textTheme.labelLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),

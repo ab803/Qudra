@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 import 'filter_chip_item.dart';
 
 class FilterChips extends StatelessWidget {
@@ -20,13 +22,15 @@ class FilterChips extends StatelessWidget {
         child: Row(
           children: [
             FilterChipItem(
-              label: 'All Posts',
+              // This chip label is localized for all posts.
+              label: context.tr('all_posts'),
               isSelected: selectedTab == 'all',
               onTap: () => onTabSelected('all'),
             ),
             const SizedBox(width: 8),
             FilterChipItem(
-              label: 'My Posts',
+              // This chip label is localized for the current user's posts.
+              label: context.tr('my_posts'),
               isSelected: selectedTab == 'my',
               onTap: () => onTabSelected('my'),
             ),

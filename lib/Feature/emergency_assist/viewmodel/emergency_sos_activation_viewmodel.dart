@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 class EmergencySosActivationViewModel extends ChangeNotifier {
@@ -8,7 +7,6 @@ class EmergencySosActivationViewModel extends ChangeNotifier {
   });
 
   final int totalMilliseconds;
-
   Timer? _timer;
 
   int remainingMilliseconds = 3000;
@@ -27,8 +25,9 @@ class EmergencySosActivationViewModel extends ChangeNotifier {
     return seconds <= 0 ? 0 : seconds;
   }
 
+  // This getter returns a localization key only when the countdown is completed.
   String get countdownLabel {
-    if (isCompleted) return 'تم التفعيل';
+    if (isCompleted) return 'emergency_sos_activated_short';
     return countdownNumber.toString();
   }
 

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 
 class ChatInputBar extends StatelessWidget {
   final TextEditingController controller;
@@ -29,7 +31,8 @@ class ChatInputBar extends StatelessWidget {
               onSubmitted: (_) => onSend(),
               textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(
-                hintText: 'Type a message...',
+                // This hint text is localized for the chat input field.
+                hintText: context.tr('type_message'),
                 hintStyle: TextStyle(color: onSurface.withOpacity(0.5)),
                 contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 
 class ReminderViewData {
   final String id;
@@ -50,10 +52,8 @@ class _MedsReminderTileState extends State<MedsReminderTile>
   Future<void> _playSwipeHint() async {
     for (int i = 0; i < 3; i++) {
       if (!mounted) return;
-
       _controller.reset();
       await _controller.forward();
-
       if (!mounted) return;
 
       // pause صغيرة بين كل مرة والتانية
@@ -66,12 +66,10 @@ class _MedsReminderTileState extends State<MedsReminderTile>
   @override
   void initState() {
     super.initState();
-
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1100),
     );
-
     _slideX = TweenSequence<double>([
       TweenSequenceItem(
         tween: Tween(begin: 0.0, end: 12.0)
@@ -103,7 +101,6 @@ class _MedsReminderTileState extends State<MedsReminderTile>
   @override
   void didUpdateWidget(covariant MedsReminderTile oldWidget) {
     super.didUpdateWidget(oldWidget);
-
     if (!oldWidget.showSwipeHint && widget.showSwipeHint) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
         if (!mounted) return;
@@ -124,7 +121,6 @@ class _MedsReminderTileState extends State<MedsReminderTile>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
     final dismissDirection =
     (widget.onMarkTaken != null || widget.onSkip != null)
         ? DismissDirection.horizontal
@@ -144,14 +140,16 @@ class _MedsReminderTileState extends State<MedsReminderTile>
         background: _SwipeBackground(
           color: Colors.green,
           icon: Icons.check_rounded,
-          label: 'Mark as taken',
+          // This swipe action label is localized for marking a dose as taken.
+          label: context.tr('mark_as_taken'),
           alignment: Alignment.centerLeft,
           padding: const EdgeInsets.only(left: 18),
         ),
         secondaryBackground: _SwipeBackground(
           color: Colors.orange,
           icon: Icons.skip_next_rounded,
-          label: 'Skip',
+          // This swipe action label is localized for skipping a dose.
+          label: context.tr('skip'),
           alignment: Alignment.centerRight,
           padding: const EdgeInsets.only(right: 18),
         ),
@@ -238,7 +236,8 @@ class _MedsReminderTileState extends State<MedsReminderTile>
                             borderRadius: BorderRadius.circular(999),
                           ),
                           child: Text(
-                            widget.data.statusLabel!,
+                            // This status label is localized using the status key returned by the view model.
+                            context.tr(widget.data.statusLabel!),
                             style: TextStyle(
                               fontSize: 11.5,
                               fontWeight: FontWeight.w700,
@@ -270,11 +269,11 @@ class _MedsReminderTileState extends State<MedsReminderTile>
 
   static Color _statusBgColor(String label) {
     switch (label) {
-      case 'Taken today':
+      case 'status_taken_today':
         return Colors.green.withOpacity(0.12);
-      case 'Skipped today':
+      case 'status_skipped_today':
         return Colors.orange.withOpacity(0.14);
-      case 'Missed':
+      case 'status_missed':
         return Colors.red.withOpacity(0.12);
       default:
         return Colors.grey.withOpacity(0.12);
@@ -283,11 +282,11 @@ class _MedsReminderTileState extends State<MedsReminderTile>
 
   static Color _statusTextColor(String label) {
     switch (label) {
-      case 'Taken today':
+      case 'status_taken_today':
         return Colors.green.shade800;
-      case 'Skipped today':
+      case 'status_skipped_today':
         return Colors.orange.shade800;
-      case 'Missed':
+      case 'status_missed':
         return Colors.red.shade800;
       default:
         return Colors.grey.shade800;
@@ -313,7 +312,6 @@ class _SwipeBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isLeft = alignment == Alignment.centerLeft;
-
     return Container(
       alignment: alignment,
       padding: padding,

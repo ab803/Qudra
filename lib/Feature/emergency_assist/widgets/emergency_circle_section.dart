@@ -1,132 +1,140 @@
 import 'package:flutter/material.dart';
-
+// This import enables    super.key,// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 import '../models/emergency_contact_model.dart';
 
 class EmergencyCircleSection extends StatelessWidget {
   const EmergencyCircleSection({
-    super.key,
-    required this.contacts,
-    required this.onAddContactsPressed,
-    required this.onCallContactPressed,
-  });
 
-  final List<EmergencyContactModel> contacts;
-  final VoidCallback onAddContactsPressed;
-  final ValueChanged<String> onCallContactPressed;
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final previewContacts = contacts.take(3).toList();
+required this.contacts,
+required this.onAddContactsPressed,
+required this.onCallContactPressed,
+});
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                'دائرة الطوارئ',
+final List<EmergencyContactModel> contacts;
+final VoidCallback onAddContactsPressed;
+final ValueChanged<String> onCallContactPressed;
+
+@override
+Widget build(BuildContext context) {
+  final theme = Theme.of(context);
+  final colorScheme = theme.colorScheme;
+  final previewContacts = contacts.take(3).toList();
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Row(
+        children: [
+          Expanded(
+            child: Text(
+              // This section title is localized for the emergency circle.
+              context.tr('emergency_circle_title'),
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: colorScheme.onSurface,
+                fontSize: 18,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: onAddContactsPressed,
+            child: Text(
+              // This action label is localized for adding or managing contacts.
+              contacts.isEmpty
+                  ? context.tr('emergency_circle_add')
+                  : context.tr('emergency_circle_manage'),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.primary,
+                fontSize: 15,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+        ],
+      ),
+      const SizedBox(height: 12),
+      if (contacts.isEmpty)
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: theme.cardColor,
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(color: theme.dividerColor),
+          ),
+          child: Column(
+            children: [
+              Icon(
+                Icons.people_outline_rounded,
+                size: 36,
+                color: colorScheme.onSurface.withOpacity(0.45),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                // This empty state title is localized for the emergency contacts section.
+                context.tr('emergency_circle_empty_title'),
+                textAlign: TextAlign.center,
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: colorScheme.onSurface,
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.w800,
                 ),
               ),
-            ),
-            TextButton(
-              onPressed: onAddContactsPressed,
-              child: Text(
-                contacts.isEmpty ? 'إضافة' : 'إدارة',
+              const SizedBox(height: 8),
+              Text(
+                // This empty state subtitle is localized for the emergency contacts section.
+                context.tr('emergency_circle_empty_subtitle'),
+                textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: colorScheme.primary,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w800,
+                  color: colorScheme.onSurface.withOpacity(0.68),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  height: 1.5,
                 ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        if (contacts.isEmpty)
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: theme.cardColor,
-              borderRadius: BorderRadius.circular(22),
-              border: Border.all(color: theme.dividerColor),
-            ),
-            child: Column(
-              children: [
-                Icon(
-                  Icons.people_outline_rounded,
-                  size: 36,
-                  color: colorScheme.onSurface.withOpacity(0.45),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'لا توجد جهات اتصال للطوارئ حتى الآن',
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: colorScheme.onSurface,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'أضف أشخاصًا موثوقين مثل أحد الوالدين أو مقدم رعاية أو طبيب.',
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: colorScheme.onSurface.withOpacity(0.68),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    height: 1.5,
-                  ),
-                ),
-                const SizedBox(height: 14),
-                SizedBox(
-                  height: 46,
-                  child: ElevatedButton.icon(
-                    onPressed: onAddContactsPressed,
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
+              const SizedBox(height: 14),
+              SizedBox(
+                height: 46,
+                child: ElevatedButton.icon(
+                  onPressed: onAddContactsPressed,
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    icon: const Icon(Icons.add),
-                    label: const Text(
-                      'إضافة جهات الاتصال',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w800,
-                      ),
+                  ),
+                  icon: const Icon(Icons.add),
+                  label: Text(
+                    // This button label is localized for adding emergency contacts.
+                    context.tr('emergency_circle_add_contacts'),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                 ),
-              ],
-            ),
-          )
-        else
-          Column(
-            children: previewContacts.map((contact) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: _ContactTile(
-                  name: contact.name,
-                  relation: contact.relation,
-                  isPrimary: contact.isPrimary,
-                  onCallPressed: () =>
-                      onCallContactPressed(contact.phoneNumber),
-                ),
-              );
-            }).toList(),
+              ),
+            ],
           ),
-      ],
-    );
-  }
+        )
+      else
+        Column(
+          children: previewContacts.map((contact) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _ContactTile(
+                name: contact.name,
+                relation: contact.relation,
+                isPrimary: contact.isPrimary,
+                onCallPressed: () => onCallContactPressed(contact.phoneNumber),
+              ),
+            );
+          }).toList(),
+        ),
+    ],
+  );
+}
 }
 
 class _ContactTile extends StatelessWidget {
@@ -199,7 +207,8 @@ class _ContactTile extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          'أساسي',
+                          // This badge label is localized for a primary emergency contact.
+                          context.tr('emergency_contact_primary'),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: colorScheme.primary,
                             fontSize: 12,
@@ -234,4 +243,3 @@ class _ContactTile extends StatelessWidget {
     );
   }
 }
-

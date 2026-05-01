@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../ViewModel/auth_cubit.dart';
 import '../../ViewModel/auth_state.dart';
 import '../../widgets/CustomTextField.dart';
@@ -24,6 +25,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
 
   void _onResetPressed() {
     if (!_formKey.currentState!.validate()) return;
+
     context.read<AuthCubit>().forgotPassword(
       email: _emailController.text.trim(),
     );
@@ -62,7 +64,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
             onPressed: () => context.go('/login'),
           ),
           title: Text(
-            'Forgot Password',
+            context.tr("forgot_password_title"),
             style: TextStyle(
               color: theme.appBarTheme.foregroundColor,
               fontWeight: FontWeight.bold,
@@ -101,7 +103,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                   ),
                   const SizedBox(height: 32),
                   Text(
-                    'Reset your\npassword',
+                    context.tr("reset_password_heading"),
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontSize: 36,
                       fontWeight: FontWeight.w900,
@@ -110,22 +112,21 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Enter the email address associated with your account. We\'ll send you a secure link to reset your password.',
+                    context.tr("reset_password_desc"),
                     style: theme.textTheme.bodyLarge?.copyWith(
                       height: 1.5,
                     ),
                   ),
-
                   const SizedBox(height: 12),
                   CustomTextField(
                     controller: _emailController,
-                    label: 'Email Address',
-                    hint: 'name@example.com',
+                    label: context.tr("email_address"),
+                    hint: context.tr("email_hint"),
                     keyboardType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Make sure this is the email you signed up with.',
+                    context.tr("email_note"),
                     style: theme.textTheme.bodySmall?.copyWith(
                       fontSize: 14,
                       fontStyle: FontStyle.italic,
@@ -156,7 +157,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                             ),
                           )
                               : Text(
-                            'Reset Password',
+                            context.tr("reset_password_btn"),
                             style: TextStyle(
                               color: theme.colorScheme.onPrimary,
                               fontSize: 18,
@@ -173,14 +174,14 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                       onTap: () => context.go('/login'),
                       child: RichText(
                         text: TextSpan(
-                          text: 'Remember your password? ',
+                          text: '${context.tr("remember_password")} ',
                           style: TextStyle(
                             color: theme.textTheme.bodyMedium?.color,
                             fontSize: 16,
                           ),
                           children: [
                             TextSpan(
-                              text: 'Sign In',
+                              text: context.tr("sign_in"),
                               style: TextStyle(
                                 color: theme.colorScheme.primary,
                                 fontWeight: FontWeight.bold,

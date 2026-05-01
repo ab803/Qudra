@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 
 // This widget renders the date and time pickers used in the booking checkout screen.
 class BookingDateTimeSection extends StatelessWidget {
@@ -16,8 +17,8 @@ class BookingDateTimeSection extends StatelessWidget {
   });
 
   // This helper formats the selected booking date for the UI.
-  String _formatDate(DateTime? date) {
-    if (date == null) return 'Select a date';
+  String _formatDate(BuildContext context, DateTime? date) {
+    if (date == null) return context.tr("booking_select_date");
     final day = date.day.toString().padLeft(2, '0');
     final month = date.month.toString().padLeft(2, '0');
     final year = date.year.toString();
@@ -33,7 +34,7 @@ class BookingDateTimeSection extends StatelessWidget {
       children: [
         // This block renders the title above the date and time selectors.
         Text(
-          'Booking Details',
+          context.tr("booking_datetime_section_title"),
           style: theme.textTheme.titleMedium?.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w800,
@@ -44,8 +45,8 @@ class BookingDateTimeSection extends StatelessWidget {
         // This block renders the date selector tile.
         _PickerTile(
           icon: Icons.calendar_month_outlined,
-          title: 'Preferred Date',
-          value: _formatDate(selectedDate),
+          title: context.tr("booking_preferred_date"),
+          value: _formatDate(context, selectedDate),
           onTap: onSelectDate,
         ),
         const SizedBox(height: 12),
@@ -53,8 +54,8 @@ class BookingDateTimeSection extends StatelessWidget {
         // This block renders the time selector tile.
         _PickerTile(
           icon: Icons.access_time_outlined,
-          title: 'Preferred Time',
-          value: selectedTime ?? 'Select a time',
+          title: context.tr("booking_preferred_time"),
+          value: selectedTime ?? context.tr("booking_select_time"),
           onTap: onSelectTime,
         ),
       ],

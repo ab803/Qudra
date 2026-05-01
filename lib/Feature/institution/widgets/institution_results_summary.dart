@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 
 // This widget shows a short summary of the current search and chip filter results.
 class InstitutionResultsSummary extends StatelessWidget {
@@ -13,6 +14,31 @@ class InstitutionResultsSummary extends StatelessWidget {
     required this.selectedFilter,
   });
 
+  String _replaceParams(String text, Map<String, String> params) {
+    var result = text;
+    params.forEach((key, value) {
+      result = result.replaceAll('{$key}', value);
+    });
+    return result;
+  }
+
+  String _translateFilterLabel(BuildContext context, String filter) {
+    switch (filter) {
+      case 'Mobility':
+        return context.tr("filter_mobility");
+      case 'Vision':
+        return context.tr("filter_vision");
+      case 'Hearing':
+        return context.tr("filter_hearing");
+      case 'Cognitive':
+        return context.tr("filter_cognitive");
+      case 'Other':
+        return context.tr("filter_other");
+      default:
+        return context.tr("filter_all");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -23,17 +49,68 @@ class InstitutionResultsSummary extends StatelessWidget {
     final hasChipFilter = selectedFilter != 'All';
 
     String label;
+    final localizedFilter = _translateFilterLabel(context, selectedFilter);
 
     if (!hasQuery && !hasChipFilter) {
-      label = 'Showing $count institution${count == 1 ? '' : 's'}';
+      label = count == 1
+          ? _replaceParams(
+        context.tr("results_showing_all_one"),
+        {"count": count.toString()},
+      )
+          : _replaceParams(
+        context.tr("results_showing_all_many"),
+        {"count": count.toString()},
+      );
     } else if (hasQuery && !hasChipFilter) {
-      label = 'Showing $count result${count == 1 ? '' : 's'} for "$query"';
+      label = count == 1
+          ? _replaceParams(
+        context.tr("results_showing_query_one"),
+        {
+          "count": count.toString(),
+          "query": query,
+        },
+      )
+          : _replaceParams(
+        context.tr("results_showing_query_many"),
+        {
+          "count": count.toString(),
+          "query": query,
+        },
+      );
     } else if (!hasQuery && hasChipFilter) {
-      label =
-      'Showing $count institution${count == 1 ? '' : 's'} in $selectedFilter';
+      label = count == 1
+          ? _replaceParams(
+        context.tr("results_showing_filter_one"),
+        {
+          "count": count.toString(),
+          "filter": localizedFilter,
+        },
+      )
+          : _replaceParams(
+        context.tr("results_showing_filter_many"),
+        {
+          "count": count.toString(),
+          "filter": localizedFilter,
+        },
+      );
     } else {
-      label =
-      'Showing $count result${count == 1 ? '' : 's'} for "$query" in $selectedFilter';
+      label = count == 1
+          ? _replaceParams(
+        context.tr("results_showing_both_one"),
+        {
+          "count": count.toString(),
+          "query": query,
+          "filter": localizedFilter,
+        },
+      )
+          : _replaceParams(
+        context.tr("results_showing_both_many"),
+        {
+          "count": count.toString(),
+          "query": query,
+          "filter": localizedFilter,
+        },
+      );
     }
 
     return Padding(
@@ -78,7 +155,7 @@ class InstitutionResultsSummary extends StatelessWidget {
               ),
               if (hasChipFilter)
                 _SummaryBadge(
-                  label: selectedFilter,
+                  label: localizedFilter,
                   color: colorScheme.primary,
                 ),
               if (hasQuery)

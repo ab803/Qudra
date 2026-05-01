@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../services/emergency_location_service.dart';
 import '../services/emergency_profile_service.dart';
 
@@ -22,7 +21,6 @@ class EmergencyEntryViewModel extends ChangeNotifier {
   final EmergencyLocationService _locationService;
 
   EmergencyEntryStatus status = EmergencyEntryStatus.loading;
-
   bool isRequestingPermission = false;
   bool isLocationServiceDisabled = false;
   String? errorMessage;
@@ -37,7 +35,6 @@ class EmergencyEntryViewModel extends ChangeNotifier {
 
     try {
       final hasCompletedSetup = await _profileService.hasCompletedSetup();
-
       if (!hasCompletedSetup) {
         status = EmergencyEntryStatus.needProfileSetup;
         notifyListeners();
@@ -49,8 +46,8 @@ class EmergencyEntryViewModel extends ChangeNotifier {
 
       if (!isLocationServiceEnabled) {
         isLocationServiceDisabled = true;
-        permissionHelperMessage =
-        'خدمة الموقع مقفلة من الجهاز. فعّل الموقع أولًا للتمكن من مشاركة موقعك في الطوارئ.';
+        // This helper message key is resolved to localized text by the UI.
+        permissionHelperMessage = 'location_service_disabled_message';
         status = EmergencyEntryStatus.needLocationPermission;
         notifyListeners();
         return;
@@ -67,14 +64,13 @@ class EmergencyEntryViewModel extends ChangeNotifier {
       } else {
         status = EmergencyEntryStatus.needLocationPermission;
       }
-
       notifyListeners();
     } catch (e, stackTrace) {
       debugPrint('EmergencyEntry initialize error: $e');
       debugPrintStack(stackTrace: stackTrace);
-
       status = EmergencyEntryStatus.error;
-      errorMessage = 'حدث خطأ أثناء تحميل بيانات الطوارئ.';
+      // This error key is resolved to localized text by the UI.
+      errorMessage = 'emergency_load_error';
       notifyListeners();
     }
   }
@@ -93,8 +89,8 @@ class EmergencyEntryViewModel extends ChangeNotifier {
 
       if (!isLocationServiceEnabled) {
         isLocationServiceDisabled = true;
-        permissionHelperMessage =
-        'خدمة الموقع مقفلة من الجهاز. افتح إعدادات الموقع ثم حاول مرة أخرى.';
+        // This helper message key is resolved to localized text by the UI.
+        permissionHelperMessage = 'location_service_open_settings_message';
         status = EmergencyEntryStatus.needLocationPermission;
         isRequestingPermission = false;
         notifyListeners();
@@ -110,15 +106,15 @@ class EmergencyEntryViewModel extends ChangeNotifier {
         status = EmergencyEntryStatus.ready;
       } else {
         status = EmergencyEntryStatus.needLocationPermission;
-        permissionHelperMessage =
-        'لم يتم منح صلاحية الموقع بعد. يمكنك المحاولة مرة أخرى أو التخطي الآن.';
+        // This helper message key is resolved to localized text by the UI.
+        permissionHelperMessage = 'location_permission_denied_message';
       }
     } catch (e, stackTrace) {
       debugPrint('EmergencyEntry request permission error: $e');
       debugPrintStack(stackTrace: stackTrace);
-
       status = EmergencyEntryStatus.error;
-      errorMessage = 'تعذر الوصول إلى صلاحية الموقع.';
+      // This error key is resolved to localized text by the UI.
+      errorMessage = 'location_permission_error';
     }
 
     isRequestingPermission = false;

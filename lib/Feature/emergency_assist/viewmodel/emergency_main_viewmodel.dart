@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import '../models/emergency_contact_model.dart';
-import '../models/emergency_profile_model.dart';
 import '../services/emergency_contacts_service.dart';
 import '../services/emergency_dialer_service.dart';
 import '../services/emergency_location_service.dart';
 import '../services/emergency_profile_service.dart';
+import '../models/emergency_profile_model.dart';
+
 
 class EmergencyMainViewModel extends ChangeNotifier {
   EmergencyMainViewModel({
@@ -23,7 +24,6 @@ class EmergencyMainViewModel extends ChangeNotifier {
   final EmergencyDialerService _dialerService;
 
   bool isLoading = false;
-
   EmergencyProfileModel? profile;
   List<EmergencyContactModel> contacts = [];
 
@@ -32,13 +32,14 @@ class EmergencyMainViewModel extends ChangeNotifier {
 
   final Set<String> selectedQuickNeeds = {};
 
+  // This list stores localization keys for the quick needs chips.
   List<String> get quickNeeds => const [
-    'لا أستطيع التحدث',
-    'ضعف سمع',
-    'حالة طبية',
-    'أحتاج مقدم رعاية',
-    'أنا في خطر',
-    'أحتاج مساعدة الآن',
+    'quick_need_cant_speak',
+    'quick_need_hard_of_hearing',
+    'quick_need_medical_case',
+    'quick_need_need_caregiver',
+    'quick_need_in_danger',
+    'quick_need_need_help_now',
   ];
 
   bool get hasContacts => contacts.isNotEmpty;

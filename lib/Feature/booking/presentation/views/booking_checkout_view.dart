@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../institution/models/institution_model.dart';
 import '../../../institution/models/service_model.dart';
 import '../widgets/booking_date_time_section.dart';
@@ -66,8 +67,8 @@ class _BookingCheckoutViewState extends State<BookingCheckoutView> {
   void _continueToPaymentMethods() {
     if (_selectedDate == null || _selectedTime == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select both date and time first.'),
+        SnackBar(
+          content: Text(context.tr("booking_select_datetime_error")),
         ),
       );
       return;
@@ -91,7 +92,7 @@ class _BookingCheckoutViewState extends State<BookingCheckoutView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Book Service'),
+        title: Text(context.tr("booking_checkout_title")),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -136,7 +137,7 @@ class _BookingCheckoutViewState extends State<BookingCheckoutView> {
                     ),
                   ),
                   child: Text(
-                    'Continue to Payment',
+                    context.tr("booking_continue_to_payment"),
                     style: theme.textTheme.labelLarge?.copyWith(
                       fontWeight: FontWeight.w800,
                       fontSize: 17,

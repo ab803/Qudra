@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 import '../viewmodel/community_viewmodel.dart';
 
 class CreatePostBottomSheet extends StatefulWidget {
@@ -31,13 +33,14 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
     );
 
     if (!mounted) return;
+
     if (success) {
       Navigator.pop(context, true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            widget.viewModel.errorMessage ?? 'Failed to publish post',
+            widget.viewModel.errorMessage ?? context.tr('failed_publish_post'),
           ),
         ),
       );
@@ -66,7 +69,8 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
               children: [
                 Center(
                   child: Text(
-                    'Create Post',
+                    // This bottom sheet title is localized for creating a post.
+                    context.tr('create_post_title'),
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -80,7 +84,8 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
                   minLines: 4,
                   textInputAction: TextInputAction.newline,
                   decoration: InputDecoration(
-                    hintText: 'Share something with the community...',
+                    // This hint text is localized for post content input.
+                    hintText: context.tr('post_hint'),
                     hintStyle: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurface.withOpacity(0.5),
                     ),
@@ -104,10 +109,12 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Post content cannot be empty';
+                      // This validation error is localized for empty post content.
+                      return context.tr('post_empty_error');
                     }
                     if (value.trim().length < 3) {
-                      return 'Post content is too short';
+                      // This validation error is localized for short post content.
+                      return context.tr('post_too_short_error');
                     }
                     return null;
                   },
@@ -133,7 +140,8 @@ class _CreatePostBottomSheetState extends State<CreatePostBottomSheet> {
                       ),
                     )
                         : Text(
-                      'Publish Post',
+                      // This button label is localized for publishing a post.
+                      context.tr('publish_post'),
                       style: theme.textTheme.labelLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../viewmodel/user_bookings_cubit.dart';
 import '../../viewmodel/user_bookings_state.dart';
 import '../../../feedback/widgets/rate_institution_dialog.dart';
@@ -16,11 +17,43 @@ class UserBookingsView extends StatelessWidget {
     return '$day/$month/$year';
   }
 
+  String _paymentMethodLabel(BuildContext context, String value) {
+    switch (value.toLowerCase()) {
+      case 'card':
+        return context.tr("payment_method_card");
+      case 'wallet':
+        return context.tr("payment_method_wallet");
+      case 'cash_at_institution':
+        return context.tr("payment_method_cash");
+      default:
+        return value;
+    }
+  }
+
+  String _statusLabel(BuildContext context, String status) {
+    final value = status.toLowerCase();
+    switch (value) {
+      case 'confirmed':
+        return context.tr("status_confirmed");
+      case 'success':
+        return context.tr("status_success");
+      case 'failed':
+        return context.tr("status_failed");
+      case 'pending_payment':
+        return context.tr("status_pending_payment");
+      case 'pending':
+        return context.tr("status_pending");
+      case 'cancelled':
+        return context.tr("status_cancelled");
+      default:
+        return status;
+    }
+  }
+
   // This helper maps booking status to a compact label color.
   Color _statusColor(BuildContext context, String status) {
     final value = status.toLowerCase();
     final colorScheme = Theme.of(context).colorScheme;
-
     if (value == 'confirmed' || value == 'success') {
       return Colors.green;
     }
@@ -39,7 +72,7 @@ class UserBookingsView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Bookings'),
+        title: Text(context.tr("my_bookings")),
       ),
       body: SafeArea(
         child: BlocBuilder<UserBookingsCubit, UserBookingsState>(
@@ -69,7 +102,7 @@ class UserBookingsView extends StatelessWidget {
               if (state.bookings.isEmpty) {
                 return Center(
                   child: Text(
-                    'No bookings found yet.',
+                    context.tr("no_bookings_found"),
                     style: theme.textTheme.bodyMedium,
                   ),
                 );
@@ -84,6 +117,7 @@ class UserBookingsView extends StatelessWidget {
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final booking = state.bookings[index];
+
                     return Container(
                       padding: const EdgeInsets.all(18),
                       decoration: BoxDecoration(
@@ -123,20 +157,20 @@ class UserBookingsView extends StatelessWidget {
 
                           // This block shows booking details rows.
                           _InfoRow(
-                            label: 'Date',
+                            label: context.tr("booking_label_date"),
                             value: _formatDate(booking.requestedDate),
                           ),
                           _InfoRow(
-                            label: 'Time',
+                            label: context.tr("booking_label_time"),
                             value: booking.requestedTime,
                           ),
                           _InfoRow(
-                            label: 'Amount',
+                            label: context.tr("booking_label_amount"),
                             value: 'EGP ${booking.amount.toStringAsFixed(2)}',
                           ),
                           _InfoRow(
-                            label: 'Method',
-                            value: booking.paymentMethod,
+                            label: context.tr("booking_label_method"),
+                            value: _paymentMethodLabel(context, booking.paymentMethod),
                           ),
                           const SizedBox(height: 14),
 
@@ -146,14 +180,16 @@ class UserBookingsView extends StatelessWidget {
                             runSpacing: 8,
                             children: [
                               _StatusChip(
-                                label: 'Booking: ${booking.bookingStatus}',
+                                label:
+                                '${context.tr("booking_status_prefix")}: ${_statusLabel(context, booking.bookingStatus)}',
                                 color: _statusColor(
                                   context,
                                   booking.bookingStatus,
                                 ),
                               ),
                               _StatusChip(
-                                label: 'Payment: ${booking.paymentStatus}',
+                                label:
+                                '${context.tr("payment_status_prefix")}: ${_statusLabel(context, booking.paymentStatus)}',
                                 color: _statusColor(
                                   context,
                                   booking.paymentStatus,
@@ -176,9 +212,9 @@ class UserBookingsView extends StatelessWidget {
                                 );
                                 if (didSubmit == true && context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
+                                    SnackBar(
                                       content: Text(
-                                        'Institution rating submitted successfully.',
+                                        context.tr("rating_submitted_success"),
                                       ),
                                     ),
                                   );
@@ -190,7 +226,7 @@ class UserBookingsView extends StatelessWidget {
                                 ),
                               ),
                               child: Text(
-                                'Rate Institution',
+                                context.tr("rate_institution"),
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -226,7 +262,6 @@ class _InfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Padding(
       padding: const EdgeInsets.only(top: 6),
       child: Row(
@@ -265,7 +300,6 @@ class _StatusChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       decoration: BoxDecoration(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import 'profile_badge.dart';
 
 class ProfileHeader extends StatelessWidget {
@@ -53,7 +54,7 @@ class ProfileHeader extends StatelessWidget {
             ),
           ),
           Text(
-            "Visual Assistance Mode",
+            context.tr("visual_assistance_mode"),
             style: TextStyle(
               color: theme.textTheme.bodyMedium?.color,
               fontSize: 16,
@@ -65,14 +66,14 @@ class ProfileHeader extends StatelessWidget {
             children: [
               ProfileBadge(
                 icon: Icons.workspace_premium,
-                text: "Premium",
+                text: context.tr("premium"),
                 bgColor: Colors.blue.shade50,
                 textColor: Colors.blue,
               ),
               const SizedBox(width: 12),
               ProfileBadge(
                 icon: Icons.check_circle,
-                text: "Verified",
+                text: context.tr("verified"),
                 bgColor: Colors.green.shade50,
                 textColor: Colors.green,
               ),

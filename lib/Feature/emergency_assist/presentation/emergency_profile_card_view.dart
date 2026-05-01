@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 import '../models/emergency_contact_model.dart';
 import '../viewmodel/emergency_profile_card_viewmodel.dart';
 
@@ -16,8 +18,7 @@ class EmergencyProfileCardView extends StatefulWidget {
   }
 }
 
-class _EmergencyProfileCardViewState
-    extends State<EmergencyProfileCardView> {
+class _EmergencyProfileCardViewState extends State<EmergencyProfileCardView> {
   @override
   void initState() {
     super.initState();
@@ -37,7 +38,6 @@ class _EmergencyProfileCardViewState
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
@@ -72,7 +72,6 @@ class _EmergencyProfileCardViewState
   }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
@@ -108,7 +107,6 @@ class _EmergencyProfileCardViewState
       ) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
@@ -166,7 +164,7 @@ class _EmergencyProfileCardViewState
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
-                          'أساسي',
+                          context.tr('emergency_contact_primary'),
                           style: theme.textTheme.bodySmall?.copyWith(
                             color: colorScheme.primary,
                             fontSize: 12,
@@ -212,6 +210,11 @@ class _EmergencyProfileCardViewState
     );
   }
 
+  // This helper safely localizes stored values that may already be plain Arabic text.
+  String _localizedMaybe(BuildContext context, String value) {
+    return context.tr(value);
+  }
+
   Widget _buildProfileSummary(EmergencyProfileCardViewModel vm) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
@@ -219,9 +222,9 @@ class _EmergencyProfileCardViewState
 
     if (profile == null) {
       return _buildSectionCard(
-        title: 'الملف الشخصي',
+        title: context.tr('emergency_profile_section_title'),
         child: Text(
-          'لا توجد بيانات ملف شخصي متاحة.',
+          context.tr('emergency_profile_no_data'),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: colorScheme.onSurface.withOpacity(0.68),
             fontSize: 15,
@@ -232,24 +235,24 @@ class _EmergencyProfileCardViewState
     }
 
     return _buildSectionCard(
-      title: 'الملف الشخصي',
+      title: context.tr('emergency_profile_section_title'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           _buildInfoRow(
-            label: 'الاسم',
+            label: context.tr('full_name'),
             value: profile.fullName,
           ),
           _buildInfoRow(
-            label: 'نوع الإعاقة',
-            value: profile.disabilityType,
+            label: context.tr('disability_type'),
+            value: _localizedMaybe(context, profile.disabilityType),
           ),
           _buildInfoRow(
-            label: 'التواصل المناسب',
-            value: vm.communicationMethodLabel,
+            label: context.tr('emergency_preferred_communication'),
+            value: context.tr(vm.communicationMethodLabelKey),
           ),
           _buildInfoRow(
-            label: 'فصيلة الدم',
+            label: context.tr('emergency_blood_type'),
             value: profile.bloodType,
           ),
         ],
@@ -265,20 +268,20 @@ class _EmergencyProfileCardViewState
     final String medicalNotes =
     (profile?.importantMedicalNotes.trim().isNotEmpty ?? false)
         ? profile!.importantMedicalNotes
-        : 'لا توجد ملاحظات طبية مسجلة.';
+        : context.tr('emergency_no_medical_notes');
 
     final String allergies =
     (profile?.allergiesAndMedications.trim().isNotEmpty ?? false)
         ? profile!.allergiesAndMedications
-        : 'لا توجد حساسية أو أدوية مسجلة.';
+        : context.tr('emergency_no_allergies_medications');
 
     return _buildSectionCard(
-      title: 'المعلومات الطبية',
+      title: context.tr('emergency_medical_info_title'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
-            'ملاحظات طبية هامة',
+            context.tr('emergency_important_medical_notes'),
             style: theme.textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurface,
               fontSize: 15,
@@ -297,7 +300,7 @@ class _EmergencyProfileCardViewState
           ),
           const SizedBox(height: 16),
           Text(
-            'الحساسية والأدوية',
+            context.tr('emergency_allergies_medications'),
             style: theme.textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurface,
               fontSize: 15,
@@ -324,10 +327,10 @@ class _EmergencyProfileCardViewState
     final colorScheme = theme.colorScheme;
 
     return _buildSectionCard(
-      title: 'جهات اتصال الطوارئ',
+      title: context.tr('emergency_contacts_title'),
       child: vm.contacts.isEmpty
           ? Text(
-        'لا توجد جهات اتصال للطوارئ حتى الآن.',
+        context.tr('emergency_contacts_empty_inline'),
         style: theme.textTheme.bodyMedium?.copyWith(
           color: colorScheme.onSurface.withOpacity(0.68),
           fontSize: 15,
@@ -335,12 +338,9 @@ class _EmergencyProfileCardViewState
         ),
       )
           : Column(
-        children: vm.contacts
-            .take(3)
-            .map((EmergencyContactModel contact) {
+        children: vm.contacts.take(3).map((EmergencyContactModel contact) {
           return _buildContactTile(contact, vm);
-        })
-            .toList(),
+        }).toList(),
       ),
     );
   }
@@ -350,11 +350,12 @@ class _EmergencyProfileCardViewState
     final colorScheme = theme.colorScheme;
 
     return _buildSectionCard(
-      title: 'الموقع الحالي',
+      title: context.tr('emergency_current_location'),
       child: Text(
         vm.isLocationAvailable
-            ? (vm.currentLocationUrl ?? 'الموقع غير متاح حاليًا.')
-            : 'الموقع غير متاح حاليًا.',
+            ? (vm.currentLocationUrl ??
+            context.tr('emergency_location_unavailable'))
+            : context.tr('emergency_location_unavailable'),
         style: theme.textTheme.bodyMedium?.copyWith(
           color: colorScheme.onSurface.withOpacity(0.72),
           fontSize: 15,
@@ -386,7 +387,7 @@ class _EmergencyProfileCardViewState
           ),
           const SizedBox(height: 10),
           Text(
-            vm.profile?.fullName ?? 'بطاقة الطوارئ',
+            vm.profile?.fullName ?? context.tr('emergency_card_title'),
             textAlign: TextAlign.center,
             style: theme.textTheme.headlineSmall?.copyWith(
               color: colorScheme.onSurface,
@@ -396,7 +397,7 @@ class _EmergencyProfileCardViewState
           ),
           const SizedBox(height: 8),
           Text(
-            vm.communicationMethodLabel,
+            context.tr(vm.communicationMethodLabelKey),
             textAlign: TextAlign.center,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurface.withOpacity(0.68),
@@ -424,9 +425,9 @@ class _EmergencyProfileCardViewState
           ),
         ),
         icon: const Icon(Icons.ios_share_rounded),
-        label: const Text(
-          'مشاركة البطاقة',
-          style: TextStyle(
+        label: Text(
+          context.tr('emergency_share_card'),
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w800,
           ),
@@ -437,68 +438,65 @@ class _EmergencyProfileCardViewState
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: AnimatedBuilder(
-        animation: widget.viewModel,
-        builder: (BuildContext context, _) {
-          final theme = Theme.of(context);
-          final colorScheme = theme.colorScheme;
-          final vm = widget.viewModel;
+    return AnimatedBuilder(
+      animation: widget.viewModel,
+      builder: (BuildContext context, _) {
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
+        final vm = widget.viewModel;
 
-          return Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              title: Text(
-                'بطاقة الطوارئ',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 22,
-                ),
+        return Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: Text(
+              context.tr('emergency_card_title'),
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+                fontSize: 22,
               ),
             ),
-            body: SafeArea(
-              child: vm.isLoading
-                  ? Center(
-                child: CircularProgressIndicator(
-                  color: colorScheme.primary,
-                ),
-              )
-                  : vm.errorMessage != null
-                  ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Text(
-                    vm.errorMessage!,
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: colorScheme.error,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
+          ),
+          body: SafeArea(
+            child: vm.isLoading
+                ? Center(
+              child: CircularProgressIndicator(
+                color: colorScheme.primary,
+              ),
+            )
+                : vm.errorMessage != null
+                ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  context.tr(vm.errorMessage!),
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    color: colorScheme.error,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
-              )
-                  : ListView(
-                padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
-                children: <Widget>[
-                  _buildHeader(vm),
-                  const SizedBox(height: 20),
-                  _buildProfileSummary(vm),
-                  const SizedBox(height: 16),
-                  _buildMedicalInfo(vm),
-                  const SizedBox(height: 16),
-                  _buildContactsSection(vm),
-                  const SizedBox(height: 16),
-                  _buildLocationSection(vm),
-                  const SizedBox(height: 24),
-                  _buildShareButton(vm),
-                ],
               ),
+            )
+                : ListView(
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
+              children: <Widget>[
+                _buildHeader(vm),
+                const SizedBox(height: 20),
+                _buildProfileSummary(vm),
+                const SizedBox(height: 16),
+                _buildMedicalInfo(vm),
+                const SizedBox(height: 16),
+                _buildContactsSection(vm),
+                const SizedBox(height: 16),
+                _buildLocationSection(vm),
+                const SizedBox(height: 24),
+                _buildShareButton(vm),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

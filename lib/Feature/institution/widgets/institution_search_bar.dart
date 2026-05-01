@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 
 // This widget renders the reusable institutions search field.
 class InstitutionSearchBar extends StatelessWidget {
@@ -35,7 +36,7 @@ class InstitutionSearchBar extends StatelessWidget {
         textInputAction: TextInputAction.search,
         decoration: InputDecoration(
           icon: const Icon(Icons.search),
-          hintText: 'Search institutions...',
+          hintText: context.tr("institution_search_hint"),
           border: InputBorder.none,
           suffixIcon: controller.text.trim().isEmpty
               ? null

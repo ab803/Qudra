@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 import '../services/emergency_location_service.dart';
 import '../services/emergency_profile_service.dart';
 import '../viewmodel/emergency_entry_viewmodel.dart';
@@ -54,6 +56,7 @@ class _EmergencyEntryViewState extends State<EmergencyEntryView>
     if (_isOpeningProfileSetup || !mounted) return;
 
     _isOpeningProfileSetup = true;
+
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (routeContext) {
@@ -69,8 +72,8 @@ class _EmergencyEntryViewState extends State<EmergencyEntryView>
         },
       ),
     );
-    _isOpeningProfileSetup = false;
 
+    _isOpeningProfileSetup = false;
     if (!mounted) return;
     await _viewModel.refreshEntryFlow();
   }
@@ -85,121 +88,130 @@ class _EmergencyEntryViewState extends State<EmergencyEntryView>
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: AnimatedBuilder(
-        animation: _viewModel,
-        builder: (context, _) {
-          final theme = Theme.of(context);
-          final colorScheme = theme.colorScheme;
+    return AnimatedBuilder(
+      animation: _viewModel,
+      builder: (context, _) {
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
 
-          _handleNavigation(_viewModel.status);
+        _handleNavigation(_viewModel.status);
 
-          switch (_viewModel.status) {
-            case EmergencyEntryStatus.loading:
-              return Scaffold(
-                body: Center(
-                  child: CircularProgressIndicator(
-                    color: colorScheme.primary,
+        switch (_viewModel.status) {
+          case EmergencyEntryStatus.loading:
+            return Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(
+                  color: colorScheme.primary,
+                ),
+              ),
+            );
+
+          case EmergencyEntryStatus.needProfileSetup:
+            return Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(
+                  color: colorScheme.primary,
+                ),
+              ),
+            );
+
+          case EmergencyEntryStatus.needLocationPermission:
+            return PermissionEmptyStatesView(
+              isLoading: _viewModel.isRequestingPermission,
+              // This helper message key is localized before being passed to the permission view.
+              helperMessage: _viewModel.permissionHelperMessage == null
+                  ? null
+                  : context.tr(_viewModel.permissionHelperMessage!),
+              showOpenLocationSettingsButton:
+              _viewModel.isLocationServiceDisabled,
+              onEnableLocationPressed: () async {
+                await _viewModel.requestLocationPermission();
+              },
+              onOpenLocationSettingsPressed: () async {
+                _shouldRefreshOnResume = true;
+                await _viewModel.openLocationSettings();
+              },
+              onSkipPressed: () {
+                _viewModel.skipLocationForNow();
+              },
+            );
+
+          case EmergencyEntryStatus.ready:
+            if (widget.mainScreenBuilder != null) {
+              // ✅ بدل pushReplacement: اعرض الشاشة الرئيسية مباشرة
+              return widget.mainScreenBuilder!(context);
+            }
+
+            return Scaffold(
+              appBar: AppBar(
+                centerTitle: true,
+                title: Text(
+                  // This title is localized for the emergency entry fallback screen.
+                  context.tr('emergency_title'),
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
-              );
-
-            case EmergencyEntryStatus.needProfileSetup:
-              return Scaffold(
-                body: Center(
-                  child: CircularProgressIndicator(
-                    color: colorScheme.primary,
-                  ),
-                ),
-              );
-
-            case EmergencyEntryStatus.needLocationPermission:
-              return PermissionEmptyStatesView(
-                isLoading: _viewModel.isRequestingPermission,
-                helperMessage: _viewModel.permissionHelperMessage,
-                showOpenLocationSettingsButton:
-                _viewModel.isLocationServiceDisabled,
-                onEnableLocationPressed: () async {
-                  await _viewModel.requestLocationPermission();
-                },
-                onOpenLocationSettingsPressed: () async {
-                  _shouldRefreshOnResume = true;
-                  await _viewModel.openLocationSettings();
-                },
-                onSkipPressed: () {
-                  _viewModel.skipLocationForNow();
-                },
-              );
-
-            case EmergencyEntryStatus.ready:
-              if (widget.mainScreenBuilder != null) {
-                // ✅ بدل pushReplacement: اعرض الشاشة الرئيسية مباشرة
-                return widget.mainScreenBuilder!(context);
-              }
-              return Scaffold(
-                appBar: AppBar(
-                  centerTitle: true,
-                  title: Text(
-                    'الطوارئ',
-                    style: theme.textTheme.titleLarge?.copyWith(
+              ),
+              body: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Text(
+                    // This placeholder text is localized for the emergency entry fallback screen.
+                    context.tr('emergency_phase_placeholder'),
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontSize: 22,
                       fontWeight: FontWeight.w800,
+                      height: 1.5,
                     ),
                   ),
                 ),
-                body: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Text(
-                      'تم اجتياز Phase 2 بنجاح.\nاربط هنا الشاشة الرئيسية في Phase 3.',
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w800,
-                        height: 1.5,
-                      ),
-                    ),
-                  ),
-                ),
-              );
+              ),
+            );
 
-            case EmergencyEntryStatus.error:
-              return Scaffold(
-                body: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.error_outline_rounded,
-                          color: colorScheme.error,
-                          size: 48,
+          case EmergencyEntryStatus.error:
+            return Scaffold(
+              body: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.error_outline_rounded,
+                        color: colorScheme.error,
+                        size: 48,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        // This error key is localized before being displayed.
+                        context.tr(
+                          _viewModel.errorMessage ?? 'emergency_unexpected_error',
                         ),
-                        const SizedBox(height: 16),
-                        Text(
-                          _viewModel.errorMessage ?? 'حدث خطأ غير متوقع.',
-                          textAlign: TextAlign.center,
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                          ),
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
                         ),
-                        const SizedBox(height: 20),
-                        ElevatedButton(
-                          onPressed: () async {
-                            await _viewModel.refreshEntryFlow();
-                          },
-                          child: const Text('إعادة المحاولة'),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () async {
+                          await _viewModel.refreshEntryFlow();
+                        },
+                        child: Text(
+                          // This button label is localized for retrying.
+                          context.tr('retry'),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
-              );
-          }
-        },
-      ),
+              ),
+            );
+        }
+      },
     );
   }
 }

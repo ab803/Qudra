@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 
 class EmergencySosButton extends StatefulWidget {
   const EmergencySosButton({
@@ -84,21 +86,16 @@ class _EmergencySosButtonState extends State<EmergencySosButton>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
     const Color idleInnerColor = Color(0xFF111827);
-
     final Color innerColor =
     _isPressing ? colorScheme.error : idleInnerColor;
-
     final Color shadowColor = _isPressing
         ? colorScheme.error.withOpacity(0.28)
         : theme.shadowColor.withOpacity(
       theme.brightness == Brightness.dark ? 0.12 : 0.08,
     );
-
     final Color innerForegroundColor =
     _isPressing ? colorScheme.onError : Colors.white;
-
     final Color pulseColor = colorScheme.error.withOpacity(
       theme.brightness == Brightness.dark ? 0.55 : 0.45,
     );
@@ -186,7 +183,8 @@ class _EmergencySosButtonState extends State<EmergencySosButton>
         ),
         const SizedBox(height: 6),
         Text(
-          'اضغط مطولًا للتفعيل',
+          // This hint text is localized for the SOS button.
+          context.tr('emergency_sos_press_hold'),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: colorScheme.onSurface.withOpacity(0.68),
             fontSize: 14,

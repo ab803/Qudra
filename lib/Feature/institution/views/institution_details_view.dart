@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../feedback/widgets/institution_rating_summary.dart';
 import '../../feedback/widgets/rate_institution_dialog.dart';
 import '../viewmodel/institution_cubit.dart';
@@ -46,8 +47,8 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
 
     if (didSubmit == true && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Institution rating submitted successfully.'),
+        SnackBar(
+          content: Text(context.tr("rating_submitted_success")),
         ),
       );
       setState(() {
@@ -66,8 +67,8 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
 
     if (!didLaunch && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Unable to open the location link.'),
+        SnackBar(
+          content: Text(context.tr("institution_open_location_error")),
         ),
       );
     }
@@ -83,7 +84,7 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(
-          'Institution Details',
+          context.tr("institution_details_title"),
           style: theme.textTheme.titleLarge,
         ),
       ),
@@ -172,7 +173,7 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                     const SizedBox(height: 18),
                     if ((institution.description ?? '').trim().isNotEmpty) ...[
                       Text(
-                        'About',
+                        context.tr("institution_about"),
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -189,7 +190,7 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                       const SizedBox(height: 16),
                     ] else ...[
                       Text(
-                        'About',
+                        context.tr("institution_about"),
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -197,7 +198,7 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'No institution description available yet.',
+                        context.tr("institution_no_description"),
                         style: theme.textTheme.bodyMedium?.copyWith(
                           fontSize: 15,
                           height: 1.5,
@@ -235,35 +236,35 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                               vertical: 12,
                             ),
                           ),
-                          child: const Text(
-                            'Rate Institution',
-                            style: TextStyle(fontWeight: FontWeight.w700),
+                          child: Text(
+                            context.tr("rate_institution"),
+                            style: const TextStyle(fontWeight: FontWeight.w700),
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 18),
                     _InfoRow(
-                      label: 'Address',
-                      value: institution.address ?? 'Not provided',
+                      label: context.tr("institution_address"),
+                      value: institution.address ?? context.tr("institution_not_provided"),
                     ),
                     _InfoRow(
-                      label: 'Location',
-                      value: 'Open in Maps',
+                      label: context.tr("institution_location"),
+                      value: context.tr("institution_open_in_maps"),
                       isAction: true,
                       onTap: () => _openLocationLink(institution.location),
                     ),
                     _InfoRow(
-                      label: 'Phone',
-                      value: institution.phone ?? 'Not provided',
+                      label: context.tr("institution_phone"),
+                      value: institution.phone ?? context.tr("institution_not_provided"),
                     ),
                     _InfoRow(
-                      label: 'Email',
+                      label: context.tr("institution_email"),
                       value: institution.email,
                     ),
                     const SizedBox(height: 22),
                     Text(
-                      'Services',
+                      context.tr("institution_services_title"),
                       style: theme.textTheme.titleLarge?.copyWith(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -272,7 +273,7 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
                     const SizedBox(height: 14),
                     if (services.isEmpty)
                       Text(
-                        'No active services available right now',
+                        context.tr("institution_no_services"),
                         style: theme.textTheme.bodyMedium,
                       ),
                     ...services.map(

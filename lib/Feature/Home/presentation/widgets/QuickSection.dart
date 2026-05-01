@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../../core/Styles/AppColors.dart';
 import '../../../../core/Styles/AppTextsyles.dart';
 import 'package:go_router/go_router.dart';
-
 import 'Quick_access_card.dart';
 
 class QuickAccessSection extends StatelessWidget {
@@ -19,7 +19,7 @@ class QuickAccessSection extends StatelessWidget {
       children: [
         // Section title
         Text(
-          'Quick Access',
+          context.tr("quick_access"),
           style: AppTextStyles.title.copyWith(
             color: theme.textTheme.titleLarge?.color,
           ),
@@ -68,14 +68,14 @@ class QuickAccessSection extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Emergency Call',
+                      context.tr("emergency_call"),
                       style: AppTextStyles.subtitle.copyWith(
                         color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Get immediate assistance',
+                      context.tr("emergency_subtitle"),
                       style: AppTextStyles.body.copyWith(
                         color: Colors.white.withOpacity(0.92),
                       ),
@@ -92,6 +92,7 @@ class QuickAccessSection extends StatelessWidget {
             ),
           ),
         ),
+
         const SizedBox(height: 16),
 
         // Two quick cards row
@@ -104,8 +105,8 @@ class QuickAccessSection extends StatelessWidget {
                   context.push('/chat'); // أو context.go('/chat') حسب اللي تحبه
                 },
                 child: QuickAccessCard(
-                  title: 'Intelligent',
-                  subtitle: 'Assistant',
+                  title: context.tr("intelligent"),
+                  subtitle: context.tr("assistant"),
                   icon: Symbols.robot_2,
                   color: Appcolors.cardTeal,
                 ),
@@ -119,8 +120,8 @@ class QuickAccessSection extends StatelessWidget {
                   context.push('/reminders'); //
                 },
                 child: QuickAccessCard(
-                  title: 'Medical',
-                  subtitle: 'Reminders',
+                  title: context.tr("medical"),
+                  subtitle: context.tr("reminders"),
                   icon: Icons.medication,
                   color: Appcolors.cardGreen,
                 ),
@@ -128,6 +129,7 @@ class QuickAccessSection extends StatelessWidget {
             ),
           ],
         ),
+
         const SizedBox(height: 16),
 
         // Accessibility card
@@ -158,20 +160,20 @@ class QuickAccessSection extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Accessibility',
+                      context.tr("accessibility"),
                       style: AppTextStyles.subtitle.copyWith(
                         color: theme.textTheme.titleMedium?.color,
                       ),
                     ),
                     Text(
-                      'Guidelines',
+                      context.tr("guidelines"),
                       style: AppTextStyles.body.copyWith(
                         color: theme.textTheme.bodyLarge?.color,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Learn your rights & tips',
+                      context.tr("learn_rights"),
                       style: AppTextStyles.body.copyWith(
                         color: theme.textTheme.bodyMedium?.color,
                       ),

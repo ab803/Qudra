@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 
 class EmergencyLocationStatusCard extends StatelessWidget {
   const EmergencyLocationStatusCard({
@@ -14,13 +16,15 @@ class EmergencyLocationStatusCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
     final isReady = isLocationServiceEnabled && isLocationPermissionGranted;
-    final String title =
-    isReady ? 'الموقع جاهز للمشاركة' : 'الموقع غير جاهز حاليًا';
+
+    final String title = isReady
+        ? context.tr('emergency_location_ready')
+        : context.tr('emergency_location_not_ready');
+
     final String subtitle = isReady
-        ? 'سيتمكن التطبيق من مشاركة موقعك وقت الطوارئ.'
-        : 'تحقق من تشغيل خدمة الموقع أو تفعيل الصلاحية من إعدادات الهاتف.';
+        ? context.tr('emergency_location_ready_subtitle')
+        : context.tr('emergency_location_not_ready_subtitle');
 
     final Color statusColor =
     isReady ? const Color(0xFF16A34A) : const Color(0xFFF59E0B);

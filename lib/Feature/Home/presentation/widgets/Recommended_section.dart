@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../../core/Styles/AppTextsyles.dart';
 import '../../../../core/Utilies/getit.dart';
 import '../../../Auth/ViewModel/auth_cubit.dart';
@@ -58,7 +59,7 @@ class _RecommendedSectionState extends State<RecommendedSection> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Recommended For You',
+          context.tr("recommended"),
           style: AppTextStyles.subtitle.copyWith(
             color: theme.textTheme.titleMedium?.color,
           ),
@@ -84,7 +85,7 @@ class _RecommendedSectionState extends State<RecommendedSection> {
                 height: recommendedCardHeight,
                 child: Center(
                   child: Text(
-                    'No recommendations available right now',
+                    context.tr("no_recommendations_available"),
                     style: theme.textTheme.bodyMedium,
                   ),
                 ),
@@ -117,7 +118,7 @@ class _RecommendedSectionState extends State<RecommendedSection> {
                   if (institutions.isEmpty) {
                     return Center(
                       child: Text(
-                        'No recommendations available right now',
+                        context.tr("no_recommendations_available"),
                         style: theme.textTheme.bodyMedium,
                       ),
                     );
@@ -129,6 +130,7 @@ class _RecommendedSectionState extends State<RecommendedSection> {
                     itemCount: institutions.length,
                     itemBuilder: (context, index) {
                       final institution = institutions[index];
+
                       return Padding(
                         padding: EdgeInsets.only(
                           right: index == institutions.length - 1 ? 0 : 12,

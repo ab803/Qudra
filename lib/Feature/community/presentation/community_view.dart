@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 import '../services/community_post_service.dart';
 import '../viewmodel/community_viewmodel.dart';
 import '../widgets/comments_bottom_sheet.dart';
@@ -35,7 +37,6 @@ class _CommunityViewState extends State<CommunityView> {
 
   Future<void> _openCreatePostSheet() async {
     final theme = Theme.of(context);
-
     final created = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -52,12 +53,12 @@ class _CommunityViewState extends State<CommunityView> {
         );
       },
     );
-
     if (!mounted) return;
     if (created == true) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Post published successfully'),
+        // This snackbar shows the localized success message after creating a post.
+        SnackBar(
+          content: Text(context.tr('post_published_success')),
         ),
       );
     }
@@ -65,7 +66,6 @@ class _CommunityViewState extends State<CommunityView> {
 
   Future<void> _openCommentsSheet(CommunityPostModel post) async {
     final theme = Theme.of(context);
-
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -87,7 +87,6 @@ class _CommunityViewState extends State<CommunityView> {
 
   Future<void> _openEditPostSheet(CommunityPostModel post) async {
     final theme = Theme.of(context);
-
     final updated = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -105,12 +104,12 @@ class _CommunityViewState extends State<CommunityView> {
         );
       },
     );
-
     if (!mounted) return;
     if (updated == true) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Post updated successfully'),
+        // This snackbar shows the localized success message after updating a post.
+        SnackBar(
+          content: Text(context.tr('post_updated_success')),
         ),
       );
     }
@@ -119,24 +118,27 @@ class _CommunityViewState extends State<CommunityView> {
   Future<void> _confirmDeletePost(CommunityPostModel post) async {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
     final confirm = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Delete Post'),
-          content: const Text(
-            'Are you sure you want to delete this post?',
+          // This dialog title is localized for deleting a post.
+          title: Text(context.tr('delete_post_title')),
+          // This dialog content is localized for delete confirmation.
+          content: Text(
+            context.tr('delete_post_confirm'),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext, false),
-              child: const Text('Cancel'),
+              // This button label is localized for cancel action.
+              child: Text(context.tr('cancel')),
             ),
             TextButton(
               onPressed: () => Navigator.pop(dialogContext, true),
               child: Text(
-                'Delete',
+                // This button label is localized for delete action.
+                context.tr('delete'),
                 style: TextStyle(color: colorScheme.error),
               ),
             ),
@@ -144,22 +146,23 @@ class _CommunityViewState extends State<CommunityView> {
         );
       },
     );
-
     if (confirm != true) return;
+
     final success = await _viewModel.deletePost(post.id);
     if (!mounted) return;
 
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Post deleted successfully'),
+        // This snackbar shows the localized success message after deleting a post.
+        SnackBar(
+          content: Text(context.tr('post_deleted_success')),
         ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            _viewModel.errorMessage ?? 'Failed to delete post',
+            _viewModel.errorMessage ?? context.tr('failed_delete_post'),
           ),
         ),
       );
@@ -169,7 +172,6 @@ class _CommunityViewState extends State<CommunityView> {
   Future<void> _openPostOptions(CommunityPostModel post) async {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-
     final action = await showModalBottomSheet<String>(
       context: context,
       backgroundColor:
@@ -185,7 +187,8 @@ class _CommunityViewState extends State<CommunityView> {
             children: [
               ListTile(
                 leading: const Icon(Icons.edit_outlined),
-                title: const Text('Edit Post'),
+                // This sheet option label is localized for editing a post.
+                title: Text(context.tr('edit_post_title')),
                 onTap: () {
                   Navigator.pop(sheetContext, 'edit');
                 },
@@ -196,7 +199,8 @@ class _CommunityViewState extends State<CommunityView> {
                   color: colorScheme.error,
                 ),
                 title: Text(
-                  'Delete Post',
+                  // This sheet option label is localized for deleting a post.
+                  context.tr('delete_post_title'),
                   style: TextStyle(color: colorScheme.error),
                 ),
                 onTap: () {
@@ -210,6 +214,7 @@ class _CommunityViewState extends State<CommunityView> {
     );
 
     if (!mounted) return;
+
     if (action == 'edit') {
       await _openEditPostSheet(post);
     } else if (action == 'delete') {
@@ -232,7 +237,6 @@ class _CommunityViewState extends State<CommunityView> {
               children: [
                 const CommunityAppBar(),
                 const SizedBox(height: 8),
-
                 // ✅ Search bar is now wired to the view model.
                 PostSearchBar(
                   onChanged: (value) {
@@ -296,7 +300,8 @@ class _CommunityViewState extends State<CommunityView> {
                 onPressed: () {
                   _viewModel.refreshCurrentTab();
                 },
-                child: const Text('Retry'),
+                // This retry button label is localized.
+                child: Text(context.tr('retry')),
               ),
             ],
           ),
@@ -307,7 +312,8 @@ class _CommunityViewState extends State<CommunityView> {
     if (_viewModel.displayedPosts.isEmpty) {
       return Center(
         child: Text(
-          'No posts found',
+          // This empty state label is localized when there are no posts.
+          context.tr('no_posts_found'),
           style: theme.textTheme.bodyLarge?.copyWith(
             fontSize: 16,
             color: colorScheme.onSurface.withOpacity(0.68),

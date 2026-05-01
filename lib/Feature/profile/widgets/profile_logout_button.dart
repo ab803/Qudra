@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import 'package:qudra_0/core/Styles/AppColors.dart';
 import '../../Auth/ViewModel/auth_cubit.dart';
 import '../../Auth/ViewModel/auth_state.dart';
@@ -58,7 +59,7 @@ class ProfileLogoutButton extends StatelessWidget {
               )
                   : Icon(Icons.logout, color: dangerColor),
               label: Text(
-                "Log Out",
+                context.tr("log_out"),
                 style: TextStyle(
                   color: dangerColor,
                   fontSize: 18,

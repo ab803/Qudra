@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 
 class EmergencyQuickNeedsWrap extends StatelessWidget {
   const EmergencyQuickNeedsWrap({
@@ -21,7 +23,8 @@ class EmergencyQuickNeedsWrap extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'احتياجات سريعة',
+          // This section title is localized for quick needs.
+          context.tr('emergency_quick_needs'),
           style: theme.textTheme.titleMedium?.copyWith(
             color: colorScheme.onSurface,
             fontSize: 18,
@@ -35,7 +38,8 @@ class EmergencyQuickNeedsWrap extends StatelessWidget {
           children: quickNeeds.map((label) {
             final isSelected = selectedQuickNeeds.contains(label);
             return FilterChip(
-              label: Text(label),
+              // This chip label is localized using the quick need key.
+              label: Text(context.tr(label)),
               selected: isSelected,
               onSelected: (_) => onToggle(label),
               selectedColor: colorScheme.primary.withOpacity(

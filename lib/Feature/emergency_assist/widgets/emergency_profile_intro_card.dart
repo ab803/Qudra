@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/Services/Localization/translation_extension.dart';
+// This importServices/Localization/translation_extension.dart';// This import enables localized text access using context.tr().
+
 class EmergencyProfileIntroCard extends StatelessWidget {
   const EmergencyProfileIntroCard({super.key});
 
@@ -38,7 +41,8 @@ class EmergencyProfileIntroCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'معلوماتك\nالمنقذة للحياة',
+                  // This intro title is localized for the emergency profile setup card.
+                  context.tr('emergency_profile_intro_title'),
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.w800,
                     color: colorScheme.primary,
@@ -47,7 +51,8 @@ class EmergencyProfileIntroCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'هذه البيانات تساعد فرق الطوارئ أو مقدم الدعم المناسب للوصول إليك بسرعة وقت الحاجة.',
+                  // This intro subtitle is localized for the emergency profile setup card.
+                  context.tr('emergency_profile_intro_subtitle'),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: colorScheme.onSurface.withOpacity(0.72),
                     height: 1.4,
@@ -61,3 +66,4 @@ class EmergencyProfileIntroCard extends StatelessWidget {
     );
   }
 }
+

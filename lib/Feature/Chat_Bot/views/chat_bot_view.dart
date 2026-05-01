@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 import '../../../core/Models/ChatMessage.dart';
 import '../view model/chat_cubit.dart';
 import '../view model/chat_state.dart';
@@ -31,11 +33,12 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
   final _scrollController = ScrollController();
   final _textController = TextEditingController();
 
+  // This list stores localization keys for the suggestion pills.
   static const _suggestions = [
-    ('Emergency help', Icons.emergency_outlined, true),
-    ('Nearby institutions', Icons.place_outlined, false),
-    ('Accessible transport', Icons.directions_bus_outlined, false),
-    ('My rights', Icons.gavel_outlined, false),
+    ('emergency_help', Icons.emergency_outlined, true),
+    ('nearby_institutions', Icons.place_outlined, false),
+    ('accessible_transport', Icons.directions_bus_outlined, false),
+    ('my_rights', Icons.gavel_outlined, false),
   ];
 
   @override
@@ -60,6 +63,7 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
   void _onSend() {
     final text = _textController.text.trim();
     if (text.isEmpty) return;
+
     _textController.clear();
     context.read<ChatCubit>().sendMessage(text);
     _scrollToBottom();
@@ -85,6 +89,7 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
               child: BlocConsumer<ChatCubit, ChatState>(
                 listener: (context, state) {
                   if (state is ChatLoaded) _scrollToBottom();
+
                   if (state is ChatFailure) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
@@ -100,8 +105,9 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
                 },
                 builder: (context, state) {
                   if (state is ChatLoaded) {
-                    return _buildMessageList(state.messages, state.isTyping);
+                    return _buildMessageList(context, state.messages, state.isTyping);
                   }
+
                   return Center(
                     child: CircularProgressIndicator(
                       color: colorScheme.primary,
@@ -119,14 +125,24 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    for (final (label, icon, isCritical) in _suggestions) ...[
-                      ChatSuggestionPill(
-                        label: label,
-                        icon: icon,
-                        isCritical: isCritical,
-                        onTap: () => _onSuggestion(label), // ✅ wired
+                    for (final (key, icon, isCritical) in _suggestions) ...[
+                      // This resolves the localized suggestion label from its key.
+                      Builder(
+                        builder: (context) {
+                          final label = context.tr(key);
+                          return Row(
+                            children: [
+                              ChatSuggestionPill(
+                                label: label,
+                                icon: icon,
+                                isCritical: isCritical,
+                                onTap: () => _onSuggestion(label), // ✅ wired
+                              ),
+                              const SizedBox(width: 10),
+                            ],
+                          );
+                        },
                       ),
-                      const SizedBox(width: 10),
                     ],
                   ],
                 ),
@@ -144,8 +160,13 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
     );
   }
 
-  Widget _buildMessageList(List<ChatMessage> messages, bool isTyping) {
+  Widget _buildMessageList(
+      BuildContext context,
+      List<ChatMessage> messages,
+      bool isTyping,
+      ) {
     final itemCount = messages.length + (isTyping ? 1 : 0);
+
     return ListView.separated(
       controller: _scrollController,
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
@@ -155,25 +176,30 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
         // Last item = typing indicator
         if (isTyping && i == itemCount - 1) {
           return ChatTypingIndicator(
-            time: _formatTime(DateTime.now()),
+            // This formats time using the active locale.
+            time: _formatTime(context, DateTime.now()),
           );
         }
+
         final msg = messages[i];
         return ChatMessageTile(
           isUser: msg.isUser,
-          name: msg.isUser ? 'You' : 'Qudra AI',
-          time: _formatTime(msg.time),
+          // This sender name is localized for user and AI messages.
+          name: msg.isUser ? context.tr('you') : context.tr('ai_name'),
+          // This formats message time using the active locale.
+          time: _formatTime(context, msg.time),
           text: msg.text,
         );
       },
     );
   }
 
-  String _formatTime(DateTime dt) {
-    final h = dt.hour > 12 ? dt.hour - 12 : dt.hour == 0 ? 12 : dt.hour;
-    final m = dt.minute.toString().padLeft(2, '0');
-    final period = dt.hour >= 12 ? 'PM' : 'AM';
-    return '$h:$m $period';
+  // This formats the time using Flutter's localized MaterialLocalizations.
+  String _formatTime(BuildContext context, DateTime dt) {
+    return MaterialLocalizations.of(context).formatTimeOfDay(
+      TimeOfDay.fromDateTime(dt),
+      alwaysUse24HourFormat: false,
+    );
   }
 
   AppBar _buildAppBar(BuildContext context) {
@@ -193,7 +219,8 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Qudra AI',
+            // This app bar title is localized for the AI assistant name.
+            context.tr('ai_name'),
             style: theme.textTheme.titleMedium?.copyWith(
               color: colorScheme.primary,
               fontWeight: FontWeight.w800,
@@ -213,7 +240,8 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
               ),
               const SizedBox(width: 6),
               Text(
-                'ONLINE',
+                // This status label is localized.
+                context.tr('online'),
                 style: theme.textTheme.bodySmall?.copyWith(
                   fontSize: 11,
                   letterSpacing: 1.2,
@@ -230,7 +258,8 @@ class _ChatBotBodyState extends State<_ChatBotBody> {
         // ✅ Clear chat button
         IconButton(
           icon: Icon(Icons.refresh, color: colorScheme.primary),
-          tooltip: 'Clear chat',
+          // This tooltip is localized for clearing the chat.
+          tooltip: context.tr('clear_chat'),
           onPressed: () => context.read<ChatCubit>().clearChat(),
         ),
         IconButton(

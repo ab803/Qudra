@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/Services/Localization/translation_extension.dart';
 import '../models/service_model.dart';
 
 // This widget renders a service card inside institution details and exposes a booking action.
@@ -13,8 +14,8 @@ class ServiceTile extends StatelessWidget {
   });
 
   // This helper formats the service price label.
-  String _formatPrice() {
-    if (service.isFree) return 'Free';
+  String _formatPrice(BuildContext context) {
+    if (service.isFree) return context.tr("service_free");
     return 'EGP ${service.price.toStringAsFixed(2)}';
   }
 
@@ -114,7 +115,7 @@ class ServiceTile extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Availability Notes',
+                          context.tr("institution_availability_notes"),
                           style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w700,
                             color: colorScheme.primary,
@@ -142,8 +143,10 @@ class ServiceTile extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              _TagChip(text: _formatPrice(), dark: true),
-              _TagChip(text: '${service.durationMinutes} min'),
+              _TagChip(text: _formatPrice(context), dark: true),
+              _TagChip(
+                text: '${service.durationMinutes} ${context.tr("minutes_short")}',
+              ),
               _TagChip(text: service.locationMode.replaceAll('_', ' ')),
               _TagChip(text: service.bookingType.replaceAll('_', ' ')),
               ...service.supportedDisabilities.map(
@@ -151,6 +154,7 @@ class ServiceTile extends StatelessWidget {
               ),
             ],
           ),
+
           const SizedBox(height: 16),
 
           // This block renders the booking action at the bottom of the service card.
@@ -165,7 +169,7 @@ class ServiceTile extends StatelessWidget {
                 ),
               ),
               child: Text(
-                'Book Now',
+                context.tr("service_book_now"),
                 style: theme.textTheme.labelLarge?.copyWith(
                   fontWeight: FontWeight.w700,
                 ),

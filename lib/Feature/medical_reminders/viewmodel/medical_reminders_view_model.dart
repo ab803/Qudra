@@ -26,14 +26,11 @@ class MedicalRemindersViewModel extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   int get totalCount => _reminders.length;
-
   int get dueTodayCount => _reminders.where(_isDueToday).length;
-
   int get takenTodayCount => _reminders.where((r) {
     return _isDueToday(r) &&
         getTodayStatusForReminder(r.id) == ReminderDoseStatus.taken;
   }).length;
-
   int get missedTodayCount => _reminders.where((r) {
     return _isDueToday(r) &&
         getTodayStatusForReminder(r.id) == ReminderDoseStatus.missed;
@@ -46,18 +43,15 @@ class MedicalRemindersViewModel extends ChangeNotifier {
 
   String? get nextReminderTime {
     final now = DateTime.now();
-
     final upcoming = _reminders
         .where((r) {
       if (!_isDueToday(r)) return false;
-
       final status = getTodayStatusForReminder(r.id);
       if (status == ReminderDoseStatus.taken ||
           status == ReminderDoseStatus.skipped ||
           status == ReminderDoseStatus.missed) {
         return false;
       }
-
       final dt = DateTimeHelpers.scheduledDateTimeToday(r.time);
       return dt != null && dt.isAfter(now);
     })
@@ -82,7 +76,8 @@ class MedicalRemindersViewModel extends ChangeNotifier {
       await _loadTodayLogs();
       await _syncAutoMissedLogs();
     } catch (e) {
-      _errorMessage = 'Failed to load reminders';
+      // This error key is resolved to localized text by the UI.
+      _errorMessage = 'failed_load_reminders';
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -100,7 +95,8 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     // ✅ Updated:
     // Enforce required valid time even if someone bypasses the add sheet UI.
     if (!TimeFormatValidator.isValidHHmm(reminder.time)) {
-      _errorMessage = 'Please choose a valid reminder time';
+      // This error key is resolved to localized text by the UI.
+      _errorMessage = 'valid_reminder_time';
       notifyListeners();
       return;
     }
@@ -112,7 +108,8 @@ class MedicalRemindersViewModel extends ChangeNotifier {
       await _syncAutoMissedLogs();
       notifyListeners();
     } catch (e) {
-      _errorMessage = 'Failed to add reminder';
+      // This error key is resolved to localized text by the UI.
+      _errorMessage = 'failed_add_reminder';
       notifyListeners();
       return;
     }
@@ -122,7 +119,6 @@ class MedicalRemindersViewModel extends ChangeNotifier {
 
   Future<void> deleteReminder(String id) async {
     _errorMessage = null;
-
     final oldReminders = List<ReminderModel>.from(_reminders);
     final oldLogs = List<ReminderLogModel>.from(_todayLogs);
 
@@ -136,7 +132,8 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     } catch (e) {
       _reminders = oldReminders;
       _todayLogs = oldLogs;
-      _errorMessage = 'Failed to delete reminder';
+      // This error key is resolved to localized text by the UI.
+      _errorMessage = 'failed_delete_reminder';
       notifyListeners();
       return;
     }
@@ -146,7 +143,6 @@ class MedicalRemindersViewModel extends ChangeNotifier {
 
   Future<void> toggleEnabled(String id, bool enabled) async {
     _errorMessage = null;
-
     final index = _reminders.indexWhere((r) => r.id == id);
     if (index == -1) return;
 
@@ -159,7 +155,8 @@ class MedicalRemindersViewModel extends ChangeNotifier {
       await _syncAutoMissedLogs();
     } catch (e) {
       _reminders[index] = old;
-      _errorMessage = 'Failed to update status';
+      // This error key is resolved to localized text by the UI.
+      _errorMessage = 'failed_update_reminder_status';
       notifyListeners();
       return;
     }
@@ -192,7 +189,8 @@ class MedicalRemindersViewModel extends ChangeNotifier {
       await _loadTodayLogs();
       notifyListeners();
     } catch (e) {
-      _errorMessage = 'Failed to mark dose as taken';
+      // This error key is resolved to localized text by the UI.
+      _errorMessage = 'failed_mark_taken';
       notifyListeners();
     }
   }
@@ -215,7 +213,8 @@ class MedicalRemindersViewModel extends ChangeNotifier {
       await _loadTodayLogs();
       notifyListeners();
     } catch (e) {
-      _errorMessage = 'Failed to skip dose';
+      // This error key is resolved to localized text by the UI.
+      _errorMessage = 'failed_skip_dose';
       notifyListeners();
     }
   }
@@ -235,20 +234,21 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     if (scheduled.isBefore(DateTime.now())) {
       return ReminderDoseStatus.missed;
     }
-
     return null;
   }
 
   String? getStatusLabelForReminder(String reminderId) {
     final status = getTodayStatusForReminder(reminderId);
-
     switch (status) {
       case ReminderDoseStatus.taken:
-        return 'Taken today';
+      // This status key is resolved to localized text by the tile UI.
+        return 'status_taken_today';
       case ReminderDoseStatus.skipped:
-        return 'Skipped today';
+      // This status key is resolved to localized text by the tile UI.
+        return 'status_skipped_today';
       case ReminderDoseStatus.missed:
-        return 'Missed';
+      // This status key is resolved to localized text by the tile UI.
+        return 'status_missed';
       default:
         return null;
     }
@@ -280,7 +280,6 @@ class MedicalRemindersViewModel extends ChangeNotifier {
 
     for (final reminder in _reminders) {
       if (!_isDueToday(reminder)) continue;
-
       final existing = _findTodayLogForReminder(reminder.id);
       if (existing != null) continue;
 
@@ -296,7 +295,6 @@ class MedicalRemindersViewModel extends ChangeNotifier {
           status: ReminderDoseStatus.missed.value,
           takenAt: null,
         );
-
         await _logService.upsertLog(missedLog);
         insertedAny = true;
       }

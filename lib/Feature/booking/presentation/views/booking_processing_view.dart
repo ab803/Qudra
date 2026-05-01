@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../viewmodel/booking_cubit.dart';
 import '../../viewmodel/booking_state.dart';
 
@@ -84,7 +85,7 @@ class _BookingProcessingViewState extends State<BookingProcessingView>
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Processing'),
+          title: Text(context.tr("booking_processing_title")),
         ),
         body: SafeArea(
           child: Center(
@@ -103,7 +104,7 @@ class _BookingProcessingViewState extends State<BookingProcessingView>
                   ),
                   const SizedBox(height: 24),
                   Text(
-                    'Checking payment result...',
+                    context.tr("booking_processing_checking"),
                     textAlign: TextAlign.center,
                     style: theme.textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.w900,
@@ -111,7 +112,7 @@ class _BookingProcessingViewState extends State<BookingProcessingView>
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    'Please wait while we verify your booking with Paymob and refresh the final booking status.',
+                    context.tr("booking_processing_description"),
                     textAlign: TextAlign.center,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       height: 1.5,

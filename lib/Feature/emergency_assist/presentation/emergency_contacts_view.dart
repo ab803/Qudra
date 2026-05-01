@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 import '../models/emergency_contact_model.dart';
 import '../viewmodel/emergency_contacts_viewmodel.dart';
 import '../widgets/emergency_contact_form_bottom_sheet.dart';
@@ -24,7 +26,6 @@ class _EmergencyContactsViewState extends State<EmergencyContactsView> {
 
   Future<void> _openAddBottomSheet() async {
     final theme = Theme.of(context);
-
     final result = await showModalBottomSheet<EmergencyContactModel>(
       context: context,
       isScrollControlled: true,
@@ -35,18 +36,23 @@ class _EmergencyContactsViewState extends State<EmergencyContactsView> {
       ),
       builder: (_) => const EmergencyContactFormBottomSheet(),
     );
+
     if (result == null) return;
 
     final success = await widget.viewModel.addContact(result);
     if (!mounted) return;
+
     if (!success) {
-      _showSnackBar(widget.viewModel.errorMessage ?? 'حدث خطأ غير متوقع.');
+      _showSnackBar(
+        widget.viewModel.errorMessage == null
+            ? context.tr('emergency_unexpected_error')
+            : context.tr(widget.viewModel.errorMessage!),
+      );
     }
   }
 
   Future<void> _openEditBottomSheet(EmergencyContactModel contact) async {
     final theme = Theme.of(context);
-
     final result = await showModalBottomSheet<EmergencyContactModel>(
       context: context,
       isScrollControlled: true,
@@ -59,41 +65,47 @@ class _EmergencyContactsViewState extends State<EmergencyContactsView> {
         initialContact: contact,
       ),
     );
+
     if (result == null) return;
 
     final success = await widget.viewModel.updateContact(result);
     if (!mounted) return;
+
     if (!success) {
-      _showSnackBar(widget.viewModel.errorMessage ?? 'حدث خطأ غير متوقع.');
+      _showSnackBar(
+        widget.viewModel.errorMessage == null
+            ? context.tr('emergency_unexpected_error')
+            : context.tr(widget.viewModel.errorMessage!),
+      );
     }
   }
 
   Future<void> _confirmDelete(EmergencyContactModel contact) async {
     final colorScheme = Theme.of(context).colorScheme;
-
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (_) => Directionality(
-        textDirection: TextDirection.rtl,
-        child: AlertDialog(
-          title: const Text('حذف جهة الاتصال'),
-          content: Text(
-            'هل تريد حذف "${contact.name}" من جهات اتصال الطوارئ؟',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('إلغاء'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text(
-                'حذف',
-                style: TextStyle(color: colorScheme.error),
-              ),
-            ),
-          ],
+      builder: (_) => AlertDialog(
+        // This dialog title is localized for deleting an emergency contact.
+        title: Text(context.tr('emergency_contact_delete_title')),
+        // This dialog body is localized and injects the contact name.
+        content: Text(
+          context
+              .tr('emergency_contact_delete_confirm')
+              .replaceAll('{name}', contact.name),
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(context.tr('cancel')),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(
+              context.tr('delete'),
+              style: TextStyle(color: colorScheme.error),
+            ),
+          ),
+        ],
       ),
     ) ??
         false;
@@ -104,7 +116,7 @@ class _EmergencyContactsViewState extends State<EmergencyContactsView> {
     if (!mounted) return;
 
     if (widget.viewModel.errorMessage != null) {
-      _showSnackBar(widget.viewModel.errorMessage!);
+      _showSnackBar(context.tr(widget.viewModel.errorMessage!));
     }
   }
 
@@ -122,78 +134,75 @@ class _EmergencyContactsViewState extends State<EmergencyContactsView> {
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: AnimatedBuilder(
-        animation: widget.viewModel,
-        builder: (context, _) {
-          final theme = Theme.of(context);
-          final colorScheme = theme.colorScheme;
-          final vm = widget.viewModel;
+    return AnimatedBuilder(
+      animation: widget.viewModel,
+      builder: (context, _) {
+        final theme = Theme.of(context);
+        final colorScheme = theme.colorScheme;
+        final vm = widget.viewModel;
 
-          return Scaffold(
-            appBar: AppBar(
-              centerTitle: true,
-              title: Text(
-                'جهات اتصال الطوارئ',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.w800,
-                  fontSize: 22,
-                ),
+        return Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: Text(
+              // This screen title is localized for emergency contacts.
+              context.tr('emergency_contacts_title'),
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+                fontSize: 22,
               ),
             ),
-            floatingActionButton: FloatingActionButton.extended(
-              onPressed: _openAddBottomSheet,
-              backgroundColor: colorScheme.primary,
-              foregroundColor: colorScheme.onPrimary,
-              icon: const Icon(Icons.add),
-              label: const Text(
-                'إضافة جهة',
-                style: TextStyle(fontWeight: FontWeight.w800),
-              ),
+          ),
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: _openAddBottomSheet,
+            backgroundColor: colorScheme.primary,
+            foregroundColor: colorScheme.onPrimary,
+            icon: const Icon(Icons.add),
+            label: Text(
+              // This FAB label is localized for adding a contact.
+              context.tr('emergency_contact_add'),
+              style: const TextStyle(fontWeight: FontWeight.w800),
             ),
-            body: SafeArea(
-              child: vm.isLoading
-                  ? Center(
-                child: CircularProgressIndicator(
-                  color: colorScheme.primary,
-                ),
-              )
-                  : vm.contacts.isEmpty
-                  ? _EmptyContactsState(
-                onAddPressed: _openAddBottomSheet,
-              )
-                  : ListView.separated(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 100),
-                itemBuilder: (context, index) {
-                  final contact = vm.contacts[index];
-                  return _ContactManagementTile(
-                    contact: contact,
-                    onCallPressed: () async {
-                      await vm.callContact(contact.phoneNumber);
-                    },
-                    onEditPressed: () async {
-                      await _openEditBottomSheet(contact);
-                    },
-                    onDeletePressed: () async {
-                      await _confirmDelete(contact);
-                    },
-                    onSetPrimaryPressed: contact.isPrimary
-                        ? null
-                        : () async {
-                      await vm.setPrimaryContact(
-                        contact.localId!,
-                      );
-                    },
-                  );
-                },
-                separatorBuilder: (_, __) => const SizedBox(height: 12),
-                itemCount: vm.contacts.length,
+          ),
+          body: SafeArea(
+            child: vm.isLoading
+                ? Center(
+              child: CircularProgressIndicator(
+                color: colorScheme.primary,
               ),
+            )
+                : vm.contacts.isEmpty
+                ? _EmptyContactsState(
+              onAddPressed: _openAddBottomSheet,
+            )
+                : ListView.separated(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 100),
+              itemBuilder: (context, index) {
+                final contact = vm.contacts[index];
+                return _ContactManagementTile(
+                  contact: contact,
+                  onCallPressed: () async {
+                    await vm.callContact(contact.phoneNumber);
+                  },
+                  onEditPressed: () async {
+                    await _openEditBottomSheet(contact);
+                  },
+                  onDeletePressed: () async {
+                    await _confirmDelete(contact);
+                  },
+                  onSetPrimaryPressed: contact.isPrimary
+                      ? null
+                      : () async {
+                    await vm.setPrimaryContact(contact.localId!);
+                  },
+                );
+              },
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemCount: vm.contacts.length,
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }
@@ -240,7 +249,8 @@ class _EmptyContactsState extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'لا توجد جهات اتصال للطوارئ',
+                // This empty state title is localized for emergency contacts.
+                context.tr('emergency_contacts_empty_title'),
                 textAlign: TextAlign.center,
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontSize: 22,
@@ -249,7 +259,8 @@ class _EmptyContactsState extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               Text(
-                'أضف أشخاصًا موثوقين مثل أحد الوالدين أو مقدم رعاية أو طبيب ليظهروا في الشاشة الرئيسية وفي بطاقة الطوارئ.',
+                // This empty state subtitle is localized for emergency contacts.
+                context.tr('emergency_contacts_empty_subtitle'),
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: colorScheme.onSurface.withOpacity(0.68),
@@ -270,9 +281,10 @@ class _EmptyContactsState extends StatelessWidget {
                     ),
                   ),
                   icon: const Icon(Icons.add),
-                  label: const Text(
-                    'إضافة جهة اتصال',
-                    style: TextStyle(
+                  label: Text(
+                    // This button label is localized for adding an emergency contact.
+                    context.tr('emergency_contact_add_single'),
+                    style: const TextStyle(
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -356,12 +368,15 @@ class _ContactManagementTile extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: colorScheme.primary.withOpacity(
-                                theme.brightness == Brightness.dark ? 0.16 : 0.10,
+                                theme.brightness == Brightness.dark
+                                    ? 0.16
+                                    : 0.10,
                               ),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
-                              'أساسي',
+                              // This badge label is localized for a primary contact.
+                              context.tr('emergency_contact_primary'),
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: colorScheme.primary,
                                 fontSize: 12,
@@ -416,9 +431,10 @@ class _ContactManagementTile extends StatelessWidget {
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    child: const Text(
-                      'تعيين كأساسي',
-                      style: TextStyle(fontWeight: FontWeight.w800),
+                    child: Text(
+                      // This button label is localized for setting a primary contact.
+                      context.tr('emergency_contact_set_primary'),
+                      style: const TextStyle(fontWeight: FontWeight.w800),
                     ),
                   ),
                 ),
@@ -433,9 +449,9 @@ class _ContactManagementTile extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  child: const Text(
-                    'تعديل',
-                    style: TextStyle(fontWeight: FontWeight.w800),
+                  child: Text(
+                    context.tr('edit'),
+                    style: const TextStyle(fontWeight: FontWeight.w800),
                   ),
                 ),
               ),
@@ -450,9 +466,9 @@ class _ContactManagementTile extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  child: const Text(
-                    'حذف',
-                    style: TextStyle(fontWeight: FontWeight.w800),
+                  child: Text(
+                    context.tr('delete'),
+                    style: const TextStyle(fontWeight: FontWeight.w800),
                   ),
                 ),
               ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 
 class EmergencyDirectServicesRow extends StatelessWidget {
   const EmergencyDirectServicesRow({
@@ -21,7 +23,8 @@ class EmergencyDirectServicesRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'خدمات الطوارئ المباشرة',
+          // This title is localized for the direct emergency services section.
+          context.tr('emergency_direct_services'),
           style: theme.textTheme.titleMedium?.copyWith(
             color: colorScheme.onSurface,
             fontSize: 18,
@@ -33,27 +36,33 @@ class EmergencyDirectServicesRow extends StatelessWidget {
           children: [
             Expanded(
               child: _ServiceCard(
-                title: 'الشرطة',
+                // This title is localized for the police service.
+                title: context.tr('emergency_service_police'),
                 subtitle: '122',
-                icon: Icons.local_police_outlined,
+                icon: Icons.local_police_rounded,
+                accentColor: const Color(0xFF2563EB),
                 onTap: onPolicePressed,
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: _ServiceCard(
-                title: 'الإسعاف',
+                // This title is localized for the ambulance service.
+                title: context.tr('emergency_service_ambulance'),
                 subtitle: '123',
-                icon: Icons.medical_services_outlined,
+                icon: Icons.medical_services_rounded,
+                accentColor: const Color(0xFF16A34A),
                 onTap: onAmbulancePressed,
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: _ServiceCard(
-                title: 'المطافي',
+                // This title is localized for the fire service.
+                title: context.tr('emergency_service_fire'),
                 subtitle: '180',
-                icon: Icons.local_fire_department_outlined,
+                icon: Icons.local_fire_department_rounded,
+                accentColor: const Color(0xFFF97316),
                 onTap: onFirePressed,
               ),
             ),
@@ -69,19 +78,20 @@ class _ServiceCard extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.icon,
+    required this.accentColor,
     required this.onTap,
   });
 
   final String title;
   final String subtitle;
   final IconData icon;
+  final Color accentColor;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    const emergencyAccent = Color(0xFFDC0909);
 
     return InkWell(
       borderRadius: BorderRadius.circular(20),
@@ -92,6 +102,15 @@ class _ServiceCard extends StatelessWidget {
           color: theme.cardColor,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: theme.dividerColor),
+          boxShadow: [
+            BoxShadow(
+              color: theme.shadowColor.withOpacity(
+                theme.brightness == Brightness.dark ? 0.08 : 0.04,
+              ),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Column(
           children: [
@@ -99,14 +118,15 @@ class _ServiceCard extends StatelessWidget {
               width: 46,
               height: 46,
               decoration: BoxDecoration(
-                color: emergencyAccent.withOpacity(
-                  theme.brightness == Brightness.dark ? 0.16 : 0.08,
+                color: accentColor.withOpacity(
+                  theme.brightness == Brightness.dark ? 0.18 : 0.10,
                 ),
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: const Icon(
-                Icons.local_police_outlined,
-                color: emergencyAccent,
+              child: Icon(
+                // This icon now correctly uses the service-specific icon.
+                icon,
+                color: accentColor,
               ),
             ),
             const SizedBox(height: 12),

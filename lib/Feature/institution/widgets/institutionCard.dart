@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../feedback/widgets/institution_rating_summary.dart';
 import '../models/institution_model.dart';
 
@@ -27,8 +28,8 @@ class InstitutionCard extends StatelessWidget {
 
     if (!didLaunch && context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Unable to open the location link.'),
+        SnackBar(
+          content: Text(context.tr("institution_open_location_error")),
         ),
       );
     }
@@ -138,7 +139,7 @@ class InstitutionCard extends StatelessWidget {
                   const SizedBox(width: 6),
                   Flexible(
                     child: Text(
-                      'Open in Maps',
+                      context.tr("institution_open_in_maps"),
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         fontSize: isCompact ? 12.5 : 13,
@@ -180,10 +181,10 @@ class InstitutionCard extends StatelessWidget {
                   ),
                   elevation: 0,
                 ),
-                child: const Text(
-                  'View Details',
+                child: Text(
+                  context.tr("institution_view_details"),
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -215,9 +216,9 @@ class InstitutionCard extends StatelessWidget {
                     ),
                     elevation: 0,
                   ),
-                  child: const Text(
-                    'View Details',
-                    style: TextStyle(
+                  child: Text(
+                    context.tr("institution_view_details"),
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),

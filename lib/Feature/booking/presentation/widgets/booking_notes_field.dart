@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 
 // This widget renders the optional notes field for the booking checkout screen.
 class BookingNotesField extends StatelessWidget {
@@ -18,7 +19,7 @@ class BookingNotesField extends StatelessWidget {
       children: [
         // This block renders the notes label above the input field.
         Text(
-          'Additional Notes',
+          context.tr("booking_notes_title"),
           style: theme.textTheme.titleMedium?.copyWith(
             fontSize: 18,
             fontWeight: FontWeight.w800,
@@ -32,7 +33,7 @@ class BookingNotesField extends StatelessWidget {
           minLines: 3,
           maxLines: 5,
           decoration: InputDecoration(
-            hintText: 'Add any notes or details for the institution...',
+            hintText: context.tr("booking_notes_hint"),
             filled: true,
             fillColor: theme.inputDecorationTheme.fillColor ?? theme.cardColor,
             contentPadding: const EdgeInsets.all(16),

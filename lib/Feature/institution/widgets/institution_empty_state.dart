@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 
 // This widget renders a friendlier empty state when no institutions match the search or chip filter.
 class InstitutionEmptyState extends StatelessWidget {
@@ -13,6 +14,31 @@ class InstitutionEmptyState extends StatelessWidget {
     required this.onClearFilters,
   });
 
+  String _replaceParams(String text, Map<String, String> params) {
+    var result = text;
+    params.forEach((key, value) {
+      result = result.replaceAll('{$key}', value);
+    });
+    return result;
+  }
+
+  String _translateFilterLabel(BuildContext context, String filter) {
+    switch (filter) {
+      case 'Mobility':
+        return context.tr("filter_mobility");
+      case 'Vision':
+        return context.tr("filter_vision");
+      case 'Hearing':
+        return context.tr("filter_hearing");
+      case 'Cognitive':
+        return context.tr("filter_cognitive");
+      case 'Other':
+        return context.tr("filter_other");
+      default:
+        return context.tr("filter_all");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -24,20 +50,21 @@ class InstitutionEmptyState extends StatelessWidget {
     String subtitle;
 
     if (hasQuery && hasChipFilter) {
-      title = 'No institutions match your search and filter';
-      subtitle =
-      'Try a different keyword, choose another category, or clear the current filters.';
+      title = context.tr("empty_no_match_search_filter");
+      subtitle = context.tr("empty_no_match_search_filter_subtitle");
     } else if (hasQuery) {
-      title = 'No institutions match your search';
-      subtitle =
-      'Try a different keyword or clear the current search to see all institutions.';
+      title = context.tr("empty_no_match_search");
+      subtitle = context.tr("empty_no_match_search_subtitle");
     } else if (hasChipFilter) {
-      title = 'No institutions found in $selectedFilter';
-      subtitle =
-      'Try another category or clear the current filter to see all institutions.';
+      final localizedFilter = _translateFilterLabel(context, selectedFilter);
+      title = _replaceParams(
+        context.tr("empty_no_match_filter"),
+        {"filter": localizedFilter},
+      );
+      subtitle = context.tr("empty_no_match_filter_subtitle");
     } else {
-      title = 'No institutions found';
-      subtitle = 'Please check again later.';
+      title = context.tr("empty_no_institutions");
+      subtitle = context.tr("empty_no_institutions_subtitle");
     }
 
     return Center(
@@ -83,9 +110,9 @@ class InstitutionEmptyState extends StatelessWidget {
                   ),
                 ),
                 icon: const Icon(Icons.refresh_rounded),
-                label: const Text(
-                  'Clear Filters',
-                  style: TextStyle(fontWeight: FontWeight.w700),
+                label: Text(
+                  context.tr("clear_filters"),
+                  style: const TextStyle(fontWeight: FontWeight.w700),
                 ),
               ),
             ],

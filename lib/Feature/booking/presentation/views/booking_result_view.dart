@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../../core/Utilies/getit.dart';
 import '../../models/booking_model.dart';
 import '../../models/booking_payment_model.dart';
@@ -26,30 +27,47 @@ class _BookingResultViewState extends State<BookingResultView> {
     _future = getIt<BookingService>().getBookingSnapshot(widget.bookingId);
   }
 
-  String _paymentMethodLabel(String? method) {
+  String _paymentMethodLabel(BuildContext context, String? method) {
     switch (method) {
       case 'card':
-        return 'Card';
+        return context.tr("payment_method_card");
       case 'wallet':
-        return 'Wallet';
+        return context.tr("payment_method_wallet");
       case 'cash_at_institution':
-        return 'Cash at Institution';
+        return context.tr("payment_method_cash");
       default:
-        return 'Unknown';
+        return context.tr("booking_result_unknown");
     }
   }
 
-  String _prettyStatus(String value) {
-    if (value.trim().isEmpty) return 'Unknown';
-    return value
-        .replaceAll('_', ' ')
-        .split(' ')
-        .map(
-          (part) => part.isEmpty
-          ? part
-          : '${part[0].toUpperCase()}${part.substring(1)}',
-    )
-        .join(' ');
+  String _prettyStatus(BuildContext context, String value) {
+    final normalized = value.trim().toLowerCase();
+    if (normalized.isEmpty) return context.tr("booking_result_unknown");
+
+    switch (normalized) {
+      case 'confirmed':
+        return context.tr("status_confirmed");
+      case 'success':
+        return context.tr("status_success");
+      case 'failed':
+        return context.tr("status_failed");
+      case 'pending_payment':
+        return context.tr("status_pending_payment");
+      case 'pending':
+        return context.tr("status_pending");
+      case 'cancelled':
+        return context.tr("status_cancelled");
+      default:
+        return value
+            .replaceAll('_', ' ')
+            .split(' ')
+            .map(
+              (part) => part.isEmpty
+              ? part
+              : '${part[0].toUpperCase()}${part.substring(1)}',
+        )
+            .join(' ');
+    }
   }
 
   _ResultPresentation _buildPresentation(
@@ -61,8 +79,8 @@ class _BookingResultViewState extends State<BookingResultView> {
 
     if (booking == null) {
       return _ResultPresentation(
-        title: 'Booking Not Found',
-        message: 'We could not load this booking right now.',
+        title: context.tr("booking_result_not_found_title"),
+        message: context.tr("booking_result_not_found_message"),
         icon: Icons.help_outline,
         accent: onSurface,
       );
@@ -73,19 +91,18 @@ class _BookingResultViewState extends State<BookingResultView> {
     (payment?.paymentStatus ?? booking.paymentStatus).toLowerCase();
 
     if (bookingStatus == 'confirmed') {
-      return const _ResultPresentation(
-        title: 'Booking Confirmed',
-        message: 'Your booking was confirmed successfully.',
+      return _ResultPresentation(
+        title: context.tr("booking_result_confirmed_title"),
+        message: context.tr("booking_result_confirmed_message"),
         icon: Icons.check_circle_outline,
         accent: Colors.green,
       );
     }
 
     if (bookingStatus == 'pending_payment' || paymentStatus == 'pending') {
-      return const _ResultPresentation(
-        title: 'Still Processing',
-        message:
-        'Paymob has returned you to the app, but the final callback has not finished updating the booking yet. You can check again shortly from Home.',
+      return _ResultPresentation(
+        title: context.tr("booking_result_processing_title"),
+        message: context.tr("booking_result_processing_message"),
         icon: Icons.hourglass_top_rounded,
         accent: Colors.orange,
       );
@@ -93,16 +110,16 @@ class _BookingResultViewState extends State<BookingResultView> {
 
     if (bookingStatus == 'cancelled') {
       return _ResultPresentation(
-        title: 'Booking Cancelled',
-        message: 'The payment session was cancelled or voided.',
+        title: context.tr("booking_result_cancelled_title"),
+        message: context.tr("booking_result_cancelled_message"),
         icon: Icons.remove_circle_outline,
         accent: onSurface,
       );
     }
 
-    return const _ResultPresentation(
-      title: 'Booking Failed',
-      message: 'The payment was not completed successfully.',
+    return _ResultPresentation(
+      title: context.tr("booking_result_failed_title"),
+      message: context.tr("booking_result_failed_message"),
       icon: Icons.error_outline,
       accent: Colors.red,
     );
@@ -130,7 +147,7 @@ class _BookingResultViewState extends State<BookingResultView> {
         icon: const Icon(Icons.arrow_back),
         onPressed: _goHome,
       ),
-      title: const Text('Booking Result'),
+      title: Text(context.tr("booking_result_title")),
     );
   }
 
@@ -174,7 +191,7 @@ class _BookingResultViewState extends State<BookingResultView> {
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Could not load booking result right now.',
+                          context.tr("booking_result_load_error"),
                           textAlign: TextAlign.center,
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.w800,
@@ -200,7 +217,7 @@ class _BookingResultViewState extends State<BookingResultView> {
                               ),
                             ),
                             child: Text(
-                              'Back to Home',
+                              context.tr("booking_result_back_home"),
                               style: theme.textTheme.labelLarge?.copyWith(
                                 fontWeight: FontWeight.w800,
                                 fontSize: 17,
@@ -278,32 +295,33 @@ class _BookingResultViewState extends State<BookingResultView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               _ResultRow(
-                                label: 'Booking ID',
+                                label: context.tr("booking_result_label_id"),
                                 value: booking.id,
                               ),
                               _ResultRow(
-                                label: 'Booking Status',
-                                value: _prettyStatus(booking.bookingStatus),
+                                label: context.tr("booking_result_label_booking_status"),
+                                value: _prettyStatus(context, booking.bookingStatus),
                               ),
                               _ResultRow(
-                                label: 'Payment Method',
-                                value: _paymentMethodLabel(booking.paymentMethod),
+                                label: context.tr("booking_result_label_payment_method"),
+                                value: _paymentMethodLabel(context, booking.paymentMethod),
                               ),
                               _ResultRow(
-                                label: 'Payment Status',
+                                label: context.tr("booking_result_label_payment_status"),
                                 value: _prettyStatus(
+                                  context,
                                   payment?.paymentStatus ?? booking.paymentStatus,
                                 ),
                               ),
                               _ResultRow(
-                                label: 'Requested Date',
+                                label: context.tr("booking_result_label_date"),
                                 value: booking.requestedDate
                                     .toIso8601String()
                                     .split('T')
                                     .first,
                               ),
                               _ResultRow(
-                                label: 'Requested Time',
+                                label: context.tr("booking_result_label_time"),
                                 value: booking.requestedTime,
                               ),
                             ],
@@ -323,7 +341,7 @@ class _BookingResultViewState extends State<BookingResultView> {
                             ),
                           ),
                           child: Text(
-                            'Back to Home',
+                            context.tr("booking_result_back_home"),
                             style: theme.textTheme.labelLarge?.copyWith(
                               fontWeight: FontWeight.w800,
                               fontSize: 17,
@@ -369,7 +387,6 @@ class _ResultRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(

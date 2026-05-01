@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
+import '../../../core/Services/Localization/translation_extension.dart';
 import '../../../core/Styles/AppColors.dart';
-
 
 class A11ySegmentFilter extends StatelessWidget {
   const A11ySegmentFilter({super.key});
@@ -9,23 +8,26 @@ class A11ySegmentFilter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      children: const [
+      children: [
         _SegmentPill(
-          label: 'Visual',
+          // This label is localized for the visual segment.
+          label: context.tr('category_visual'),
           icon: Icons.visibility_outlined,
           selected: true,
           color: Appcolors.cardBlue,
         ),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         _SegmentPill(
-          label: 'Hearing',
+          // This label is localized for the hearing segment.
+          label: context.tr('category_hearing'),
           icon: Icons.hearing_outlined,
           selected: false,
           color: Appcolors.cardPurple,
         ),
-        SizedBox(width: 8),
+        const SizedBox(width: 8),
         _SegmentPill(
-          label: 'Physical',
+          // This label is localized for the physical segment.
+          label: context.tr('category_physical'),
           icon: Icons.accessibility_new_outlined,
           selected: false,
           color: Appcolors.cardOrange,
@@ -52,12 +54,10 @@ class _SegmentPill extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final onSurface = theme.colorScheme.onSurface;
-
     final bg = selected
         ? color.withOpacity(theme.brightness == Brightness.dark ? 0.18 : 0.10)
         : theme.cardColor;
-    final border =
-    selected ? color.withOpacity(0.40) : theme.dividerColor;
+    final border = selected ? color.withOpacity(0.40) : theme.dividerColor;
     final fg = selected ? color : onSurface.withOpacity(0.72);
 
     return Expanded(

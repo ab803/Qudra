@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qudra_0/Feature/profile/widgets/LanguageSwitchTile.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../core/theme/theme_cubit.dart';
 import '../../Auth/ViewModel/auth_cubit.dart';
 import '../../Auth/ViewModel/auth_state.dart';
@@ -119,7 +121,7 @@ class ProfileView extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const _SectionTitle(title: 'Account'),
+                        _SectionTitle(title: context.tr("account")),
                         const SizedBox(height: 14),
                         Container(
                           padding: const EdgeInsets.all(16),
@@ -140,7 +142,7 @@ class ProfileView extends StatelessWidget {
                             children: [
                               ProfileMenuItem(
                                 icon: Icons.person,
-                                title: "Personal Info",
+                                title: context.tr("personal_info"),
                                 iconColor: Colors.orange,
                                 iconBg: Colors.orange.shade100,
                                 ontap: () => context.push('/personal'),
@@ -148,7 +150,7 @@ class ProfileView extends StatelessWidget {
                               const SizedBox(height: 12),
                               ProfileMenuItem(
                                 icon: Icons.book_online,
-                                title: "My Bookings",
+                                title: context.tr("my_bookings"),
                                 iconColor: Colors.deepPurple,
                                 iconBg: Colors.deepPurple.shade100,
                                 ontap: () => context.push('/my-bookings'),
@@ -167,7 +169,7 @@ class ProfileView extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const _SectionTitle(title: 'Support'),
+                        _SectionTitle(title: context.tr("support")),
                         const SizedBox(height: 14),
                         Container(
                           padding: const EdgeInsets.all(16),
@@ -188,7 +190,7 @@ class ProfileView extends StatelessWidget {
                             children: [
                               ProfileMenuItem(
                                 icon: Icons.info_outline,
-                                title: "App Guidelines",
+                                title: context.tr("app_guidelines"),
                                 iconColor: Colors.teal.shade100,
                                 iconBg: Colors.teal,
                                 ontap: () => context.go('/AppGuidelines'),
@@ -196,7 +198,7 @@ class ProfileView extends StatelessWidget {
                               const SizedBox(height: 12),
                               ProfileMenuItem(
                                 icon: Icons.chat_bubble,
-                                title: "Feedback",
+                                title: context.tr("feedback"),
                                 iconColor: Colors.blue.shade100,
                                 iconBg: Colors.blue,
                                 ontap: () => context.push('/feedback'),
@@ -215,7 +217,7 @@ class ProfileView extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const _SectionTitle(title: 'Appearance'),
+                        _SectionTitle(title: context.tr("appearance")),
                         const SizedBox(height: 14),
                         Container(
                           padding: const EdgeInsets.all(12),
@@ -240,7 +242,7 @@ class ProfileView extends StatelessWidget {
                                     contentPadding:
                                     const EdgeInsets.symmetric(horizontal: 8),
                                     title: Text(
-                                      'Light Mode',
+                                      context.tr("light_mode"),
                                       style: TextStyle(
                                         color: theme.textTheme.bodyLarge?.color,
                                         fontWeight: FontWeight.w600,
@@ -260,7 +262,7 @@ class ProfileView extends StatelessWidget {
                                     contentPadding:
                                     const EdgeInsets.symmetric(horizontal: 8),
                                     title: Text(
-                                      'Dark Mode',
+                                      context.tr("dark_mode"),
                                       style: TextStyle(
                                         color: theme.textTheme.bodyLarge?.color,
                                         fontWeight: FontWeight.w600,
@@ -280,7 +282,7 @@ class ProfileView extends StatelessWidget {
                                     contentPadding:
                                     const EdgeInsets.symmetric(horizontal: 8),
                                     title: Text(
-                                      'System Default',
+                                      context.tr("system_default"),
                                       style: TextStyle(
                                         color: theme.textTheme.bodyLarge?.color,
                                         fontWeight: FontWeight.w600,
@@ -303,6 +305,23 @@ class ProfileView extends StatelessWidget {
                       ],
                     ),
                   ),
+
+
+                  const SizedBox(height: 28),
+
+
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 25),
+                        child: _SectionTitle(title: context.tr("Language")),
+                      ),
+                      const SizedBox(height: 28),
+                      const LanguageSwitchTile(),
+                    ],
+                  ),
+
                   const SizedBox(height: 28),
 
                   const ProfileLogoutButton(),
@@ -310,7 +329,7 @@ class ProfileView extends StatelessWidget {
 
                   Center(
                     child: Text(
-                      "«With you to discover your ability»",
+                      context.tr("app_slogan"),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontStyle: FontStyle.italic,

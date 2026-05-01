@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../../core/widgets/adaptive_logo.dart';
 import '../../ViewModel/auth_cubit.dart';
 import '../../ViewModel/auth_state.dart';
@@ -29,6 +30,7 @@ class _LogInViewState extends State<LogInView> {
 
   void _onLoginPressed() {
     if (!_formKey.currentState!.validate()) return;
+
     context.read<AuthCubit>().login(
       email: _emailController.text.trim(),
       password: _passwordController.text.trim(),
@@ -36,12 +38,12 @@ class _LogInViewState extends State<LogInView> {
   }
 
   // This helper converts raw auth failures into friendly user-facing login messages.
-  String _buildFriendlyLoginError(String rawMessage) {
+  String _buildFriendlyLoginError(BuildContext context, String rawMessage) {
     final message = rawMessage.toLowerCase();
 
     // This block preserves the institution portal message returned from the auth cubit.
     if (message.contains('institution portal')) {
-      return 'This account belongs to the institution portal. Please use the institution app instead.';
+      return context.tr("institution_portal_login_error");
     }
 
     if (message.contains('invalid login credentials') ||
@@ -49,34 +51,36 @@ class _LogInViewState extends State<LogInView> {
         message.contains('email not confirmed') ||
         message.contains('user not found') ||
         message.contains('invalid email or password')) {
-      return 'This email is not registered or the password is incorrect. Please check your details or create a new account first.';
+      return context.tr("login_invalid_credentials_error");
     }
 
     if (message.contains('network') ||
         message.contains('socket') ||
         message.contains('timeout') ||
         message.contains('connection')) {
-      return 'Unable to connect right now. Please check your internet connection and try again.';
+      return context.tr("network_error_try_again");
     }
 
     if (message.contains('too many requests') ||
         message.contains('rate limit')) {
-      return 'Too many login attempts. Please wait a moment and try again.';
+      return context.tr("too_many_login_attempts");
     }
 
-    return 'Login failed. Please try again.';
+    return context.tr("login_failed_generic");
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is LoginSuccess) {
           context.go('/home');
         } else if (state is AuthFailure) {
           // This block shows a friendly login error instead of the raw backend message.
-          final friendlyMessage = _buildFriendlyLoginError(state.errorMessage);
+          final friendlyMessage =
+          _buildFriendlyLoginError(context, state.errorMessage);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(friendlyMessage),
@@ -98,19 +102,23 @@ class _LogInViewState extends State<LogInView> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 20),
+
                   // This block renders the correct logo asset for the active theme.
                   const AdaptiveLogo(width: 140),
+
                   const SizedBox(height: 24),
                   const SizedBox(height: 8),
                   Text(
-                    '"With you to discover your ability"',
+                    context.tr("tagline"),
                     style: TextStyle(
                       fontSize: 16,
                       fontStyle: FontStyle.italic,
                       color: theme.textTheme.bodyMedium?.color,
                     ),
                   ),
+
                   const SizedBox(height: 40),
+
                   // ── Card ────────────────────────────────────
                   Container(
                     padding: const EdgeInsets.all(24),
@@ -131,18 +139,19 @@ class _LogInViewState extends State<LogInView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Welcome back',
+                          context.tr("welcome_back"),
                           style: theme.textTheme.headlineSmall?.copyWith(
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 24),
+
                         // ✅ correct widget name
                         CustomTextField(
                           controller: _emailController,
-                          label: 'Email Address',
-                          hint: 'name@example.com',
+                          label: context.tr("email_address"),
+                          hint: context.tr("email_hint"),
                           keyboardType: TextInputType.emailAddress,
                           prefixIcon: Icon(
                             Icons.mail_outline,
@@ -150,18 +159,20 @@ class _LogInViewState extends State<LogInView> {
                           ),
                           validator: (v) {
                             if (v == null || v.isEmpty) {
-                              return 'Email is required';
+                              return context.tr("email_required");
                             }
                             if (!v.contains('@')) {
-                              return 'Enter a valid email';
+                              return context.tr("email_invalid");
                             }
                             return null;
                           },
                         ),
+
                         // ✅ correct widget name
                         PasswordField(
                           controller: _passwordController,
                         ),
+
                         // Forgot Password
                         Align(
                           alignment: Alignment.centerRight,
@@ -173,7 +184,7 @@ class _LogInViewState extends State<LogInView> {
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             ),
                             child: Text(
-                              'Forgot Password?',
+                              context.tr("forgot_password_btn"),
                               style: TextStyle(
                                 color: theme.colorScheme.primary,
                                 fontWeight: FontWeight.bold,
@@ -182,10 +193,12 @@ class _LogInViewState extends State<LogInView> {
                             ),
                           ),
                         ),
+
                         const SizedBox(height: 24),
+
                         // ✅ isLoading handled inside AuthButton via BlocBuilder
                         AuthButton(
-                          label: 'Login',
+                          label: context.tr("login"),
                           onPressed: _onLoginPressed,
                           trailingIcon: Icon(
                             Icons.login,
@@ -196,12 +209,14 @@ class _LogInViewState extends State<LogInView> {
                       ],
                     ),
                   ),
+
                   const SizedBox(height: 32),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "Don't have an account? ",
+                        '${context.tr("no_account")} ',
                         style: TextStyle(
                           color: theme.textTheme.bodyMedium?.color,
                           fontSize: 16,
@@ -210,7 +225,7 @@ class _LogInViewState extends State<LogInView> {
                       GestureDetector(
                         onTap: () => context.go('/signUp'),
                         child: Text(
-                          'Sign Up',
+                          context.tr("sign_up"),
                           style: TextStyle(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,
@@ -220,6 +235,7 @@ class _LogInViewState extends State<LogInView> {
                       ),
                     ],
                   ),
+
                   const SizedBox(height: 40),
                 ],
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 
 // This widget renders the institutions page title.
 class InstitutionTitleSection extends StatelessWidget {
@@ -7,7 +8,7 @@ class InstitutionTitleSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(
-      'Support Centers',
+      context.tr("institution_title"),
       style: Theme.of(context).textTheme.headlineSmall?.copyWith(
         fontSize: 24,
         fontWeight: FontWeight.bold,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import 'CustomTextField.dart';
 
 class PasswordField extends StatefulWidget {
@@ -28,16 +29,22 @@ class _PasswordFieldState extends State<PasswordField> {
         Theme.of(context).inputDecorationTheme.hintStyle?.color ??
             Theme.of(context).iconTheme.color;
 
+    final resolvedLabel =
+    widget.label == 'Password' ? context.tr("password") : widget.label;
+
+    final resolvedHint =
+    widget.hint == '••••••••' ? context.tr("password_hint") : widget.hint;
+
     return CustomTextField(
       controller: widget.controller,
-      label: widget.label,
-      hint: widget.hint,
+      label: resolvedLabel,
+      hint: resolvedHint,
       obscureText: _obscure,
       keyboardType: TextInputType.visiblePassword,
       validator: widget.validator ??
               (v) {
-            if (v == null || v.isEmpty) return 'Password is required';
-            if (v.length < 6) return 'Minimum 6 characters';
+            if (v == null || v.isEmpty) return context.tr("password_required");
+            if (v.length < 6) return context.tr("min_6_chars");
             return null;
           },
       prefixIcon: Icon(Icons.lock_outline, color: iconColor),

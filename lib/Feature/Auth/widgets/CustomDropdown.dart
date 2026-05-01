@@ -6,6 +6,7 @@ class CustomDropdown extends StatelessWidget {
   final String? value;
   final List<String> items;
   final ValueChanged<String?> onChanged;
+  final String Function(String)? itemLabelBuilder;
 
   const CustomDropdown({
     super.key,
@@ -14,6 +15,7 @@ class CustomDropdown extends StatelessWidget {
     required this.value,
     required this.items,
     required this.onChanged,
+    this.itemLabelBuilder,
   });
 
   @override
@@ -23,7 +25,8 @@ class CustomDropdown extends StatelessWidget {
 
     Color borderColor = theme.dividerColor;
     final enabledBorder = inputTheme.enabledBorder;
-    if (enabledBorder is OutlineInputBorder && enabledBorder.borderSide.color != Colors.transparent) {
+    if (enabledBorder is OutlineInputBorder &&
+        enabledBorder.borderSide.color != Colors.transparent) {
       borderColor = enabledBorder.borderSide.color;
     }
 
@@ -74,7 +77,7 @@ class CustomDropdown extends StatelessWidget {
                       (e) => DropdownMenuItem(
                     value: e,
                     child: Text(
-                      e,
+                      itemLabelBuilder?.call(e) ?? e,
                       style: TextStyle(color: textColor),
                     ),
                   ),

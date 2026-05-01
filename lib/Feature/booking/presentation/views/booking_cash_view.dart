@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../institution/models/institution_model.dart';
 import '../../../institution/models/service_model.dart';
 import '../../viewmodel/booking_cubit.dart';
@@ -89,7 +90,7 @@ class BookingCashView extends StatelessWidget {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Cash at Institution'),
+            title: Text(context.tr("booking_cash_title")),
           ),
           body: SafeArea(
             child: SingleChildScrollView(
@@ -119,7 +120,7 @@ class BookingCashView extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Your booking will be confirmed immediately, and payment will be collected at the institution.',
+                      context.tr("booking_cash_info"),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         height: 1.5,
                         fontSize: 15,
@@ -150,7 +151,7 @@ class BookingCashView extends StatelessWidget {
                         ),
                       )
                           : Text(
-                        'Confirm Booking',
+                        context.tr("booking_confirm"),
                         style: theme.textTheme.labelLarge?.copyWith(
                           fontWeight: FontWeight.w800,
                           fontSize: 17,

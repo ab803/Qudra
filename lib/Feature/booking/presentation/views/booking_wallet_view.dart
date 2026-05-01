@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../institution/models/institution_model.dart';
 import '../../../institution/models/service_model.dart';
 import '../../viewmodel/booking_cubit.dart';
@@ -44,14 +45,15 @@ class _BookingWalletViewState extends State<BookingWalletView> {
     if (!launched) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Could not open the payment checkout page.'),
+        SnackBar(
+          content: Text(context.tr("booking_checkout_error")),
         ),
       );
       return;
     }
 
     if (!mounted) return;
+
     context.pushReplacement(
       '/booking/processing',
       extra: {
@@ -127,7 +129,7 @@ class _BookingWalletViewState extends State<BookingWalletView> {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Wallet Payment'),
+            title: Text(context.tr("booking_wallet_title")),
           ),
           body: SafeArea(
             child: SingleChildScrollView(
@@ -154,7 +156,7 @@ class _BookingWalletViewState extends State<BookingWalletView> {
                       ),
                     ),
                     child: Text(
-                      'When you press pay, Paymob test checkout will open so you can continue with the wallet payment flow.',
+                      context.tr("booking_wallet_info"),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         height: 1.5,
                         fontSize: 15,
@@ -182,7 +184,7 @@ class _BookingWalletViewState extends State<BookingWalletView> {
                         ),
                       )
                           : Text(
-                        'Pay with Wallet',
+                        context.tr("booking_pay_with_wallet"),
                         style: theme.textTheme.labelLarge?.copyWith(
                           fontWeight: FontWeight.w800,
                           fontSize: 17,

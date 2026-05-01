@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import 'package:qudra_0/core/Styles/AppTextsyles.dart';
 
 class SplashTagline extends StatelessWidget {
@@ -18,7 +19,7 @@ class SplashTagline extends StatelessWidget {
       child: FadeTransition(
         opacity: opacity,
         child: Text(
-          "معاك علشان تكتشف قدراتك",
+          context.tr("app_slogan"),
           style: AppTextStyles.slogan.copyWith(
             color: Theme.of(context).textTheme.bodyMedium?.color,
           ),

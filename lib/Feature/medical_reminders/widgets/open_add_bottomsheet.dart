@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/Services/Localization/translation_extension.dart';
 import '../models/reminder_model.dart';
 
 Future<ReminderModel?> openAddBottomSheet(BuildContext context) async {
@@ -56,7 +57,8 @@ Future<ReminderModel?> openAddBottomSheet(BuildContext context) async {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Add Reminder',
+                      // This bottom sheet title is localized for adding a reminder.
+                      ctx.tr('add_reminder'),
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
@@ -66,13 +68,15 @@ Future<ReminderModel?> openAddBottomSheet(BuildContext context) async {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: titleCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Medicine Name',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        // This input label is localized for medicine name.
+                        labelText: ctx.tr('medicine_name'),
+                        border: const OutlineInputBorder(),
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Please enter medicine name';
+                          // This validation message is localized for medicine name.
+                          return ctx.tr('enter_medicine_name');
                         }
                         return null;
                       },
@@ -80,13 +84,15 @@ Future<ReminderModel?> openAddBottomSheet(BuildContext context) async {
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: subCtrl,
-                      decoration: const InputDecoration(
-                        labelText: 'Dose / Notes',
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        // This input label is localized for dose or notes.
+                        labelText: ctx.tr('dose_notes'),
+                        border: const OutlineInputBorder(),
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Please enter dose / notes';
+                          // This validation message is localized for dose or notes.
+                          return ctx.tr('enter_dose_notes');
                         }
                         return null;
                       },
@@ -95,7 +101,10 @@ Future<ReminderModel?> openAddBottomSheet(BuildContext context) async {
                     OutlinedButton.icon(
                       onPressed: pickTime,
                       icon: const Icon(Icons.access_time),
-                      label: Text(timeText ?? 'Pick Time'),
+                      label: Text(
+                        // This button label is localized for picking time unless a time is already selected.
+                        timeText ?? ctx.tr('pick_time'),
+                      ),
                     ),
                     if (timeError != null) ...[
                       const SizedBox(height: 8),
@@ -126,14 +135,14 @@ Future<ReminderModel?> openAddBottomSheet(BuildContext context) async {
 
                           if (timeText == null || timeText!.trim().isEmpty) {
                             setState(() {
-                              timeError = 'Please choose a reminder time';
+                              // This validation message is localized for choosing a reminder time.
+                              timeError = ctx.tr('choose_time');
                             });
                             return;
                           }
 
                           final id =
                           DateTime.now().microsecondsSinceEpoch.toString();
-
                           final model = ReminderModel(
                             id: id,
                             title: titleCtrl.text.trim(),
@@ -144,9 +153,10 @@ Future<ReminderModel?> openAddBottomSheet(BuildContext context) async {
 
                           Navigator.of(ctx).pop(model);
                         },
-                        child: const Text(
-                          'Save',
-                          style: TextStyle(
+                        child: Text(
+                          // This button label is localized for saving the reminder.
+                          ctx.tr('save'),
+                          style: const TextStyle(
                             fontWeight: FontWeight.w700,
                           ),
                         ),

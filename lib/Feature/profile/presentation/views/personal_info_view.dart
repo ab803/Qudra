@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 import '../../../Auth/ViewModel/auth_cubit.dart';
 import '../../../Auth/ViewModel/auth_state.dart';
 import '../../widgets/personal_info_avatar.dart';
@@ -71,7 +72,7 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
     if (age == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Please enter a valid age'),
+          content: Text(context.tr("invalid_age")),
           backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
@@ -114,7 +115,7 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
         ),
         centerTitle: true,
         title: Text(
-          'Personal Info',
+          context.tr("personal_info_title"),
           style: AppTextStyles.subtitle.copyWith(
             color: theme.textTheme.titleLarge?.color,
             fontWeight: FontWeight.w800,
@@ -126,8 +127,8 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
           listener: (context, state) {
             if (state is UpdateProfileSuccess) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Profile updated successfully'),
+                SnackBar(
+                  content: Text(context.tr("profile_updated")),
                   backgroundColor: Appcolors.successColor,
                   behavior: SnackBarBehavior.floating,
                 ),
@@ -179,12 +180,12 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                   const SizedBox(height: 18),
                   CustomTextField(
                     controller: _fullNameController,
-                    label: 'Full Name',
-                    hint: 'Enter your full name',
+                    label: context.tr("full_name"),
+                    hint: context.tr("full_name_hint"),
                     keyboardType: TextInputType.name,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Full name is required';
+                        return '${context.tr("full_name")} ${context.tr("required")}';
                       }
                       return null;
                     },
@@ -192,7 +193,7 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                   ),
                   const SizedBox(height: 12),
                   LabeledReadonlyField(
-                    label: 'Email Address',
+                    label: context.tr("email_address"),
                     hint: user.email,
                     prefixIcon: Icons.mail_outline,
                     keyboardType: TextInputType.emailAddress,
@@ -200,12 +201,12 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                   const SizedBox(height: 12),
                   CustomTextField(
                     controller: _phoneController,
-                    label: 'Phone Number',
-                    hint: 'e.g. 01234567890',
+                    label: context.tr("phone_number"),
+                    hint: context.tr("phone_hint"),
                     keyboardType: TextInputType.phone,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Phone number is required';
+                        return '${context.tr("phone_number")} ${context.tr("required")}';
                       }
                       return null;
                     },
@@ -214,15 +215,15 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                   const SizedBox(height: 12),
                   CustomTextField(
                     controller: _ageController,
-                    label: 'Age',
-                    hint: 'e.g. 25',
+                    label: context.tr("age"),
+                    hint: context.tr("age_hint"),
                     keyboardType: TextInputType.number,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Age is required';
+                        return '${context.tr("age")} ${context.tr("required")}';
                       }
                       if (int.tryParse(value.trim()) == null) {
-                        return 'Enter a valid age';
+                        return context.tr("invalid_age");
                       }
                       return null;
                     },
@@ -230,8 +231,8 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                   ),
                   const SizedBox(height: 12),
                   CustomDropdown(
-                    label: 'Gender',
-                    hint: 'Select gender',
+                    label: context.tr("gender"),
+                    hint: context.tr("select_gender"),
                     value: _selectedGender,
                     items: _genderOptions,
                     onChanged: (value) {
@@ -243,12 +244,12 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                   const SizedBox(height: 12),
                   CustomTextField(
                     controller: _responsibleController,
-                    label: 'Responsible Person',
-                    hint: 'Name of guardian/responsible person',
+                    label: context.tr("responsible_person"),
+                    hint: context.tr("responsible_hint"),
                     keyboardType: TextInputType.name,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Responsible person is required';
+                        return '${context.tr("responsible_person")} ${context.tr("required")}';
                       }
                       return null;
                     },
@@ -256,8 +257,8 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                   ),
                   const SizedBox(height: 12),
                   CustomDropdown(
-                    label: 'Disability Type',
-                    hint: 'Select disability type',
+                    label: context.tr("disability_type"),
+                    hint: context.tr("select_disability_type"),
                     value: _selectedDisabilityType,
                     items: _disabilityOptions,
                     onChanged: (value) {
@@ -288,7 +289,7 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
                         ),
                       )
                           : Text(
-                        'Save Changes',
+                        context.tr("save_changes"),
                         style: AppTextStyles.button.copyWith(
                           color: theme.colorScheme.onPrimary,
                         ),

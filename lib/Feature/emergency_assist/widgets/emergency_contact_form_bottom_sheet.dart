@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+import '../../../core/Services/Localization/translation_extension.dart';
 import '../models/emergency_contact_model.dart';
 
 class EmergencyContactFormBottomSheet extends StatefulWidget {
@@ -17,6 +20,7 @@ class EmergencyContactFormBottomSheet extends StatefulWidget {
 class _EmergencyContactFormBottomSheetState
     extends State<EmergencyContactFormBottomSheet> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   late final TextEditingController _nameController;
   late final TextEditingController _relationController;
   late final TextEditingController _phoneController;
@@ -70,143 +74,166 @@ class _EmergencyContactFormBottomSheetState
     final colorScheme = theme.colorScheme;
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
-    return Directionality(
-      textDirection: TextDirection.rtl,
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(20, 20, 20, bottomInset + 20),
-        child: SingleChildScrollView(
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  isEditMode
-                      ? 'تعديل جهة اتصال الطوارئ'
-                      : 'إضافة جهة اتصال للطوارئ',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    color: colorScheme.onSurface,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                  ),
+    return Padding(
+      padding: EdgeInsets.fromLTRB(20, 20, 20, bottomInset + 20),
+      child: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                // This title is localized for add/edit emergency contact mode.
+                isEditMode
+                    ? context.tr('emergency_contact_form_edit_title')
+                    : context.tr('emergency_contact_form_add_title'),
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: colorScheme.onSurface,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
                 ),
-                const SizedBox(height: 18),
-                TextFormField(
-                  controller: _nameController,
-                  textInputAction: TextInputAction.next,
-                  decoration: _inputDecoration(context, 'الاسم'),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'من فضلك أدخل الاسم';
-                    }
-                    return null;
-                  },
+              ),
+              const SizedBox(height: 18),
+              TextFormField(
+                controller: _nameController,
+                textInputAction: TextInputAction.next,
+                decoration: _inputDecoration(
+                  context,
+                  // This hint is localized for the contact name field.
+                  context.tr('emergency_contact_name_label'),
                 ),
-                const SizedBox(height: 14),
-                TextFormField(
-                  controller: _relationController,
-                  textInputAction: TextInputAction.next,
-                  decoration: _inputDecoration(context, 'الصفة / العلاقة'),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'من فضلك أدخل العلاقة';
-                    }
-                    return null;
-                  },
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    // This validation message is localized for missing contact name.
+                    return context.tr('emergency_contact_name_validation');
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 14),
+              TextFormField(
+                controller: _relationController,
+                textInputAction: TextInputAction.next,
+                decoration: _inputDecoration(
+                  context,
+                  // This hint is localized for the contact relation field.
+                  context.tr('emergency_contact_relation_label'),
                 ),
-                const SizedBox(height: 14),
-                TextFormField(
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
-                  textInputAction: TextInputAction.done,
-                  decoration: _inputDecoration(context, 'رقم الهاتف'),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'من فضلك أدخل رقم الهاتف';
-                    }
-                    final sanitized = value.trim().replaceAll(' ', '');
-                    if (sanitized.length < 8) {
-                      return 'رقم الهاتف غير صالح';
-                    }
-                    return null;
-                  },
-                  onFieldSubmitted: (_) => _submit(),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    // This validation message is localized for missing contact relation.
+                    return context.tr('emergency_contact_relation_validation');
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 14),
+              TextFormField(
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
+                textInputAction: TextInputAction.done,
+                decoration: _inputDecoration(
+                  context,
+                  // This hint is localized for the contact phone field.
+                  context.tr('emergency_contact_phone_label'),
                 ),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: theme.cardColor,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: theme.dividerColor),
-                  ),
-                  child: Row(
-                    children: [
-                      Switch.adaptive(
-                        value: _isPrimary,
-                        onChanged: (value) {
-                          setState(() {
-                            _isPrimary = value;
-                          });
-                        },
-                        activeColor: colorScheme.primary,
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'اجعلها جهة أساسية',
-                              style: theme.textTheme.bodyLarge?.copyWith(
-                                color: colorScheme.onSurface,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w800,
-                              ),
+                validator: (value) {
+                  if (value == null || value.trim().isEmpty) {
+                    // This validation message is localized for missing contact phone.
+                    return context.tr('emergency_contact_phone_validation');
+                  }
+
+                  final sanitized = value.trim().replaceAll(' ', '');
+                  if (sanitized.length < 8) {
+                    // This validation message is localized for invalid contact phone.
+                    return context.tr('emergency_contact_phone_invalid');
+                  }
+
+                  return null;
+                },
+                onFieldSubmitted: (_) => _submit(),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  color: theme.cardColor,
+                  borderRadius: BorderRadius.circular(18),
+                  border: Border.all(color: theme.dividerColor),
+                ),
+                child: Row(
+                  children: [
+                    Switch.adaptive(
+                      value: _isPrimary,
+                      onChanged: (value) {
+                        setState(() {
+                          _isPrimary = value;
+                        });
+                      },
+                      activeColor: colorScheme.primary,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            // This switch title is localized for making the contact primary.
+                            context.tr('emergency_contact_make_primary'),
+                            style: theme.textTheme.bodyLarge?.copyWith(
+                              color: colorScheme.onSurface,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'سيتم تمييزها كأول جهة اتصال للطوارئ.',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onSurface.withOpacity(0.68),
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                height: 1.4,
-                              ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            // This switch subtitle is localized for making the contact primary.
+                            context.tr(
+                              'emergency_contact_make_primary_subtitle',
                             ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  height: 54,
-                  child: ElevatedButton(
-                    onPressed: _submit,
-                    style: ElevatedButton.styleFrom(
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.onSurface.withOpacity(0.68),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    child: Text(
-                      isEditMode ? 'حفظ التعديلات' : 'إضافة جهة الاتصال',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                height: 54,
+                child: ElevatedButton(
+                  onPressed: _submit,
+                  style: ElevatedButton.styleFrom(
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                    ),
+                  ),
+                  child: Text(
+                    // This button label is localized for add/edit contact mode.
+                    isEditMode
+                        ? context.tr('save_changes')
+                        : context.tr('emergency_contact_add_single'),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

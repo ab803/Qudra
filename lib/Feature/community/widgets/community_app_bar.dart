@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 import '../../../core/widgets/adaptive_logo.dart';
 
 class CommunityAppBar extends StatelessWidget {
@@ -29,7 +31,8 @@ class CommunityAppBar extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Community Feed',
+              // This title is localized for the community app bar.
+              context.tr('community_feed'),
               style: theme.textTheme.titleLarge?.copyWith(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,

@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 
 class ChatTypingIndicator extends StatefulWidget {
   final String time;
@@ -43,7 +45,8 @@ class _ChatTypingIndicatorState extends State<ChatTypingIndicator>
         Padding(
           padding: const EdgeInsetsDirectional.only(start: 52, bottom: 6),
           child: Text(
-            'Qudra AI',
+            // This sender name is localized for the AI typing indicator.
+            context.tr('ai_name'),
             style: theme.textTheme.bodySmall?.copyWith(
               color: colorScheme.onSurface.withOpacity(0.65),
               fontSize: 12,

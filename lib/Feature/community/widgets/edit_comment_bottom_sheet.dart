@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// This import enables localized text access using context.tr().
+import '../../../core/Services/Localization/translation_extension.dart';
 import '../models/community_comment_model.dart';
 import '../viewmodel/community_viewmodel.dart';
 
@@ -44,13 +46,14 @@ class _EditCommentBottomSheetState extends State<EditCommentBottomSheet> {
     );
 
     if (!mounted) return;
+
     if (success) {
       Navigator.pop(context, true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            widget.viewModel.errorMessage ?? 'Failed to update comment',
+            widget.viewModel.errorMessage ?? context.tr('failed_update_comment'),
           ),
         ),
       );
@@ -79,7 +82,8 @@ class _EditCommentBottomSheetState extends State<EditCommentBottomSheet> {
               children: [
                 Center(
                   child: Text(
-                    'Edit Comment',
+                    // This bottom sheet title is localized for editing a comment.
+                    context.tr('edit_comment_title'),
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -93,7 +97,8 @@ class _EditCommentBottomSheetState extends State<EditCommentBottomSheet> {
                   minLines: 2,
                   textInputAction: TextInputAction.newline,
                   decoration: InputDecoration(
-                    hintText: 'Update your comment...',
+                    // This hint text is localized for updating comment content.
+                    hintText: context.tr('update_comment_hint'),
                     hintStyle: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSurface.withOpacity(0.5),
                     ),
@@ -117,10 +122,12 @@ class _EditCommentBottomSheetState extends State<EditCommentBottomSheet> {
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Comment cannot be empty';
+                      // This validation error is localized for empty comment content.
+                      return context.tr('comment_empty_error');
                     }
                     if (value.trim().length < 2) {
-                      return 'Comment is too short';
+                      // This validation error is localized for short comment content.
+                      return context.tr('comment_too_short_error');
                     }
                     return null;
                   },
@@ -146,7 +153,8 @@ class _EditCommentBottomSheetState extends State<EditCommentBottomSheet> {
                       ),
                     )
                         : Text(
-                      'Save Changes',
+                      // This button label is localized for saving changes.
+                      context.tr('save_changes'),
                       style: theme.textTheme.labelLarge?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
