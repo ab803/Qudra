@@ -49,6 +49,15 @@ class VoiceCommandRouter {
     } else if (command.contains('sign up') || command.contains('تسجيل')) {
       context.go('/signUp');
     }
+    else if (command.contains('Accessability hub') || command.contains('النصائح')|| command.contains('الحقوق') || command.contains('rigths&tips')) {
+      context.go('/accessibility');
+    }else if (command.contains('App Guidelines') || command.contains('ارشادات التطببق')) {
+      context.go('/AppGuidelines');
+    }else if (command.contains('personal info') || command.contains('معلوماتي')) {
+      context.go('/personal');
+    }else if (command.contains('sign up') || command.contains('تسجيل')) {
+      context.go('/signUp');
+    }
     // Booking sub-routes (/booking/checkout, /booking/card, etc.) are intentionally
     // excluded — they require typed `extra` args that can't come from voice alone.
   }
