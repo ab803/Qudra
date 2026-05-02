@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/Services/voiceAssistant/VoiceFab.dart';
 import '../widgets/Category_section.dart';
 import '../widgets/QuickSection.dart';
 import '../widgets/Recommended_section.dart';
@@ -11,6 +12,7 @@ class HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: const VoiceFAB(),
       backgroundColor: Theme.of(context).scaffoldBackgroundColor, // Use background color
       body: SafeArea(
         child: SingleChildScrollView(

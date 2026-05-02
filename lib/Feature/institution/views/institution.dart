@@ -13,6 +13,8 @@ import 'package:qudra_0/Feature/institution/widgets/institution_results_summary.
 import 'package:qudra_0/Feature/institution/widgets/institution_search_bar.dart';
 import 'package:qudra_0/Feature/institution/widgets/institution_sticky_filter_delegate.dart';
 
+import '../../../core/Services/voiceAssistant/VoiceFab.dart';
+
 class InstitutionView extends StatefulWidget {
   final String initialQuery;
 
@@ -126,6 +128,7 @@ class _InstitutionViewState extends State<InstitutionView> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      floatingActionButton: const VoiceFAB(),
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: CustomScrollView(

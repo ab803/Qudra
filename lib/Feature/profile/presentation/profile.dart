@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:qudra_0/Feature/profile/widgets/LanguageSwitchTile.dart';
 import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
+import '../../../core/Services/voiceAssistant/VoiceFab.dart';
 import '../../../core/theme/theme_cubit.dart';
 import '../../Auth/ViewModel/auth_cubit.dart';
 import '../../Auth/ViewModel/auth_state.dart';
@@ -17,6 +18,7 @@ class ProfileView extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
+      floatingActionButton: const VoiceFAB(),
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: BlocBuilder<AuthCubit, AuthState>(

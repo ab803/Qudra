@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
+import '../../../core/Services/voiceAssistant/VoiceFab.dart';
 import '../../feedback/widgets/institution_rating_summary.dart';
 import '../../feedback/widgets/rate_institution_dialog.dart';
 import '../viewmodel/institution_cubit.dart';
@@ -81,6 +82,7 @@ class _InstitutionDetailsViewState extends State<InstitutionDetailsView> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
+      floatingActionButton: const VoiceFAB(),
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(

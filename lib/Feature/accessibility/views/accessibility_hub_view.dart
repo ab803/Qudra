@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:qudra_0/Feature/accessibility/viewModel/tips_rights_state.dart';
 import 'package:qudra_0/core/Models/tips&rightsModel.dart';
 import '../../../core/Services/Localization/translation_extension.dart';
+import '../../../core/Services/voiceAssistant/VoiceFab.dart';
 import '../../../core/Styles/AppColors.dart';
 import '../viewModel/tips_rights_cubit.dart';
 
@@ -94,6 +95,7 @@ class _AccessibilityHubViewState extends State<AccessibilityHubView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: const VoiceFAB(),
       appBar: _buildAppBar(),
       body: Column(
         children: [
