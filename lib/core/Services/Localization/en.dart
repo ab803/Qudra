@@ -685,5 +685,8 @@ final Map<String, String> en = <String, String>{
 "institution_rating_summary_many": "{average} • {count} reviews",
 "feedback_rating_range_error": "Rating must be between 1 and 5.",
 "feedback_user_not_logged_in": "User is not logged in.",
-
+  "service_working_hours": "Working Hours",
+  "booking_choose_suitable_time": "Choose a Suitable Time",
+  "booking_choose_day_first_for_times": "Please choose a day first to see the available times.",
+  "booking_no_available_times_for_day": "No appointment times are available on this day.",
 };

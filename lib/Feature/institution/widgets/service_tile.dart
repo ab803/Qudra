@@ -19,20 +19,58 @@ class ServiceTile extends StatelessWidget {
     return 'EGP ${service.price.toStringAsFixed(2)}';
   }
 
-  // This helper returns a cleaned availability notes value for display.
-  String? _normalizedAvailabilityNotes() {
-    final value = service.availabilityNotes?.trim();
-    if (value == null || value.isEmpty) {
-      return null;
-    }
-    return value;
+  // This helper formats the working days value for display.
+  String? _formattedWorkingDays() {
+    if (service.workingDays.isEmpty) return null;
+    return service.workingDays.join(', ');
+  }
+
+  // This helper normalizes service working time values into HH:mm text.
+  String? _normalizeTime(String? value) {
+    if (value == null || value.trim().isEmpty) return null;
+    final parts = value.split(':');
+    if (parts.length < 2) return value;
+    final hour = parts[0].padLeft(2, '0');
+    final minute = parts[1].padLeft(2, '0');
+    return '$hour:$minute';
+  }
+
+  // This helper converts HH:mm values into a 12-hour display format.
+  String? _formatTimeTo12Hour(String? value) {
+    final normalized = _normalizeTime(value);
+    if (normalized == null) return null;
+
+    final parts = normalized.split(':');
+    if (parts.length < 2) return normalized;
+
+    final hour = int.tryParse(parts[0]);
+    final minute = int.tryParse(parts[1]);
+
+    if (hour == null || minute == null) return normalized;
+
+    final period = hour >= 12 ? 'PM' : 'AM';
+    final hour12 = hour % 12 == 0 ? 12 : hour % 12;
+    final minuteText = minute.toString().padLeft(2, '0');
+
+    return '$hour12:$minuteText $period';
+  }
+
+  // This helper builds the final working hours summary for display.
+  String? _formattedWorkingHours() {
+    final start = _formatTimeTo12Hour(service.workingStartTime);
+    final end = _formatTimeTo12Hour(service.workingEndTime);
+
+    if (start == null || end == null) return null;
+
+    return '$start - $end';
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final availabilityNotes = _normalizedAvailabilityNotes();
+    final workingDays = _formattedWorkingDays();
+    final workingHours = _formattedWorkingHours();
 
     return Container(
       width: double.infinity,
@@ -87,8 +125,8 @@ class ServiceTile extends StatelessWidget {
             const SizedBox(height: 12),
           ],
 
-          // This block renders the availability notes when the institution provides them.
-          if (availabilityNotes != null) ...[
+          // This block renders the service working schedule summary.
+          if (workingDays != null || workingHours != null) ...[
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(12),
@@ -114,21 +152,35 @@ class ServiceTile extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // This text shows the localized working hours title.
                         Text(
-                          context.tr("institution_availability_notes"),
+                          context.tr("service_working_hours"),
                           style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w700,
                             color: colorScheme.primary,
                           ),
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          availabilityNotes,
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            height: 1.45,
-                            color: theme.textTheme.bodyMedium?.color,
+                        if (workingDays != null) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            workingDays,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              height: 1.45,
+                              color: theme.textTheme.bodyMedium?.color,
+                            ),
                           ),
-                        ),
+                        ],
+                        if (workingHours != null) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            workingHours,
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              height: 1.45,
+                              color: theme.textTheme.bodyMedium?.color,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -148,13 +200,11 @@ class ServiceTile extends StatelessWidget {
                 text: '${service.durationMinutes} ${context.tr("minutes_short")}',
               ),
               _TagChip(text: service.locationMode.replaceAll('_', ' ')),
-              _TagChip(text: service.bookingType.replaceAll('_', ' ')),
               ...service.supportedDisabilities.map(
                     (item) => _TagChip(text: item, light: true),
               ),
             ],
           ),
-
           const SizedBox(height: 16),
 
           // This block renders the booking action at the bottom of the service card.

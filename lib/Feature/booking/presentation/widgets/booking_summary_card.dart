@@ -29,6 +29,27 @@ class BookingSummaryCard extends StatelessWidget {
     return '$day/$month/$year';
   }
 
+  // This helper converts HH:mm values into a 12-hour display format.
+  String _formatTimeTo12Hour(BuildContext context, String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return context.tr("booking_summary_not_selected");
+    }
+
+    final parts = value.split(':');
+    if (parts.length < 2) return value;
+
+    final hour = int.tryParse(parts[0]);
+    final minute = int.tryParse(parts[1]);
+
+    if (hour == null || minute == null) return value;
+
+    final period = hour >= 12 ? 'PM' : 'AM';
+    final hour12 = hour % 12 == 0 ? 12 : hour % 12;
+    final minuteText = minute.toString().padLeft(2, '0');
+
+    return '$hour12:$minuteText $period';
+  }
+
   // This helper formats the service price or marks it as free.
   String _formatPrice(BuildContext context) {
     if (service.isFree) return context.tr("service_free");
@@ -99,8 +120,14 @@ class BookingSummaryCard extends StatelessWidget {
           const SizedBox(height: 16),
 
           // This block shows booking-related summary rows.
-          _InfoRow(label: context.tr("booking_summary_category"), value: service.category),
-          _InfoRow(label: context.tr("booking_summary_price"), value: _formatPrice(context)),
+          _InfoRow(
+            label: context.tr("booking_summary_category"),
+            value: service.category,
+          ),
+          _InfoRow(
+            label: context.tr("booking_summary_price"),
+            value: _formatPrice(context),
+          ),
           _InfoRow(
             label: context.tr("booking_summary_duration"),
             value: '${service.durationMinutes} ${context.tr("minutes_short")}',
@@ -111,7 +138,8 @@ class BookingSummaryCard extends StatelessWidget {
           ),
           _InfoRow(
             label: context.tr("booking_summary_time"),
-            value: requestedTime ?? context.tr("booking_summary_not_selected"),
+            // This block renders the selected booking time in a 12-hour user-friendly format.
+            value: _formatTimeTo12Hour(context, requestedTime),
           ),
           _InfoRow(
             label: context.tr("booking_summary_notes"),
@@ -138,6 +166,7 @@ class _InfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(

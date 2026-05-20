@@ -26,16 +26,16 @@ function extractPaymobReferences(paymobIntention: Record<string, unknown>) {
     paymobIntention['order_id'] !== null
       ? String(paymobIntention['order_id'])
       : order['id'] !== undefined && order['id'] !== null
-          ? String(order['id'])
-          : null;
+        ? String(order['id'])
+        : null;
 
   const paymobIntentionId =
     paymobIntention['id'] !== undefined && paymobIntention['id'] !== null
       ? String(paymobIntention['id'])
       : paymobIntention['intention_id'] !== undefined &&
           paymobIntention['intention_id'] !== null
-            ? String(paymobIntention['intention_id'])
-            : null;
+        ? String(paymobIntention['intention_id'])
+        : null;
 
   return {
     paymobOrderId,
@@ -98,7 +98,175 @@ function normalizeOptionalNotes(value: unknown): string | null {
   if (typeof value !== 'string') return null;
 
   const trimmed = value.trim();
-  return trimmed.isEmpty ? null : trimmed;
+  return trimmed.length === 0 ? null : trimmed;
+}
+
+// This helper validates and normalizes the requested booking date.
+function normalizeRequestedDate(value: unknown): string {
+  if (typeof value !== 'string') {
+    throw new Error('Invalid requested date');
+  }
+
+  const trimmed = value.trim();
+  const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+
+  if (!datePattern.test(trimmed)) {
+    throw new Error('Invalid requested date format');
+  }
+
+  const parsed = new Date(`${trimmed}T00:00:00Z`);
+  if (Number.isNaN(parsed.getTime())) {
+    throw new Error('Invalid requested date');
+  }
+
+  return trimmed;
+}
+
+// This helper validates and normalizes the requested booking time into HH:mm.
+function normalizeRequestedTime(value: unknown): string {
+  if (typeof value !== 'string') {
+    throw new Error('Invalid requested time');
+  }
+
+  const trimmed = value.trim();
+  const parts = trimmed.split(':');
+
+  if (parts.length < 2) {
+    throw new Error('Invalid requested time format');
+  }
+
+  const hour = Number(parts[0]);
+  const minute = Number(parts[1]);
+
+  if (
+    !Number.isInteger(hour) ||
+    !Number.isInteger(minute) ||
+    hour < 0 ||
+    hour > 23 ||
+    minute < 0 ||
+    minute > 59
+  ) {
+    throw new Error('Invalid requested time');
+  }
+
+  return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+}
+
+// This helper normalizes stored DB time values like HH:mm:ss into HH:mm.
+function normalizeStoredTime(value: unknown): string | null {
+  if (typeof value !== 'string') {
+    return null;
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return null;
+  }
+
+  const parts = trimmed.split(':');
+  if (parts.length < 2) {
+    return null;
+  }
+
+  const hour = Number(parts[0]);
+  const minute = Number(parts[1]);
+
+  if (
+    !Number.isInteger(hour) ||
+    !Number.isInteger(minute) ||
+    hour < 0 ||
+    hour > 23 ||
+    minute < 0 ||
+    minute > 59
+  ) {
+    return null;
+  }
+
+  return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+}
+
+// This helper converts an HH:mm value into absolute minutes.
+function convertTimeToMinutes(value: string): number {
+  const parts = value.split(':');
+  const hour = Number(parts[0]);
+  const minute = Number(parts[1]);
+  return (hour * 60) + minute;
+}
+
+// This helper reads the service working days safely from the DB payload.
+function resolveWorkingDays(value: unknown): string[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map((item) => String(item).trim())
+    .filter((item) => item.length > 0);
+}
+
+// This helper returns the weekday name for a normalized YYYY-MM-DD date.
+function resolveWeekdayName(dateValue: string): string {
+  const date = new Date(`${dateValue}T00:00:00Z`);
+  const weekdayNames = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
+
+  return weekdayNames[date.getUTCDay()] ?? '';
+}
+
+// This helper validates that the requested slot is inside the service working hours grid.
+function validateRequestedSlotAgainstServiceWorkingHours(params: {
+  requestedDate: string;
+  requestedTime: string;
+  service: Record<string, unknown>;
+}) {
+  const { requestedDate, requestedTime, service } = params;
+
+  const workingDays = resolveWorkingDays(service['working_days']);
+  const workingStartTime = normalizeStoredTime(service['working_start_time']);
+  const workingEndTime = normalizeStoredTime(service['working_end_time']);
+  const durationMinutes = Number(service['duration_minutes'] ?? 0);
+
+  if (
+    workingDays.length === 0 ||
+    !workingStartTime ||
+    !workingEndTime ||
+    !Number.isFinite(durationMinutes) ||
+    durationMinutes <= 0
+  ) {
+    throw new Error('Service working hours are not configured correctly');
+  }
+
+  const weekdayName = resolveWeekdayName(requestedDate);
+  if (!workingDays.includes(weekdayName)) {
+    throw new Error('Selected day is خارج مواعيد الخدمة');
+  }
+
+  const startMinutes = convertTimeToMinutes(workingStartTime);
+  const endMinutes = convertTimeToMinutes(workingEndTime);
+  const requestedMinutes = convertTimeToMinutes(requestedTime);
+
+  if (endMinutes <= startMinutes) {
+    throw new Error('Service working hours are invalid');
+  }
+
+  if (requestedMinutes < startMinutes) {
+    throw new Error('Selected time is outside service working hours');
+  }
+
+  if (requestedMinutes + durationMinutes > endMinutes) {
+    throw new Error('Selected time is outside service working hours');
+  }
+
+  if ((requestedMinutes - startMinutes) % durationMinutes !== 0) {
+    throw new Error('Selected time is not a valid service slot');
+  }
 }
 
 serve(async (req: Request) => {
@@ -139,6 +307,10 @@ serve(async (req: Request) => {
     const selectedMethod = validatePaymentMethod(String(payment_method));
     const normalizedNotes = normalizeOptionalNotes(notes);
 
+    // This block normalizes the requested slot payload before any validation/query happens.
+    const normalizedRequestedDate = normalizeRequestedDate(requested_date);
+    const normalizedRequestedTime = normalizeRequestedTime(requested_time);
+
     // Load user profile
     const { data: profile, error: profileError } = await adminClient
       .from('people_with_disability')
@@ -153,7 +325,9 @@ serve(async (req: Request) => {
     // Load service
     const { data: service, error: serviceError } = await adminClient
       .from('services')
-      .select('id, institution_id, is_active, is_free, price')
+      .select(
+        'id, institution_id, is_active, is_free, price, duration_minutes, working_days, working_start_time, working_end_time',
+      )
       .eq('id', service_id)
       .maybeSingle();
 
@@ -169,6 +343,41 @@ serve(async (req: Request) => {
       return errorResponse('This service is currently inactive', 400);
     }
 
+    // This block validates that the selected slot belongs to the service working hours grid.
+    try {
+      validateRequestedSlotAgainstServiceWorkingHours({
+        requestedDate: normalizedRequestedDate,
+        requestedTime: normalizedRequestedTime,
+        service,
+      });
+    } catch (slotValidationError) {
+      return errorResponse(
+        slotValidationError instanceof Error
+          ? slotValidationError.message
+          : 'Invalid selected slot',
+        400,
+      );
+    }
+
+    // This block checks if the selected slot is already reserved by another active booking.
+    const { data: conflictingBookings, error: conflictingBookingsError } =
+      await adminClient
+        .from('bookings')
+        .select('id')
+        .eq('service_id', service_id)
+        .eq('requested_date', normalizedRequestedDate)
+        .eq('requested_time', normalizedRequestedTime)
+        .in('booking_status', ['pending_payment', 'confirmed'])
+        .limit(1);
+
+    if (conflictingBookingsError) {
+      return errorResponse('Failed to validate slot availability', 500);
+    }
+
+    if ((conflictingBookings ?? []).length > 0) {
+      return errorResponse('This slot is no longer available', 409);
+    }
+
     const serviceAmount = resolveServiceAmount(service);
     const isCash = selectedMethod === 'cash_at_institution';
     const isZeroAmount = serviceAmount <= 0;
@@ -181,8 +390,8 @@ serve(async (req: Request) => {
     const initialPaymentStatus = isCash
       ? 'cash_due'
       : isZeroAmount
-          ? 'success'
-          : 'pending';
+        ? 'success'
+        : 'pending';
 
     const initialProvider = isCash || isZeroAmount ? 'manual' : 'paymob';
 
@@ -192,8 +401,8 @@ serve(async (req: Request) => {
         user_id: user.id,
         institution_id,
         service_id,
-        requested_date,
-        requested_time,
+        requested_date: normalizedRequestedDate,
+        requested_time: normalizedRequestedTime,
         notes: normalizedNotes,
         amount: serviceAmount,
         booking_status: initialBookingStatus,
@@ -209,6 +418,11 @@ serve(async (req: Request) => {
       .single();
 
     if (bookingError || !booking) {
+      // This block converts a DB unique-slot collision into a clean slot-unavailable response.
+      if (bookingError?.code === '23505') {
+        return errorResponse('This slot is no longer available', 409);
+      }
+
       return errorResponse('Failed to create booking', 500);
     }
 
@@ -226,6 +440,18 @@ serve(async (req: Request) => {
       .single();
 
     if (paymentError || !payment) {
+      // This block marks the created booking as failed if the payment row could not be created.
+      // This prevents the slot from staying locked by mistake.
+      await adminClient
+        .from('bookings')
+        .update({
+          booking_status: 'failed',
+          payment_status: 'failed',
+          cancelled_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', booking.id);
+
       return errorResponse('Failed to create booking payment row', 500);
     }
 

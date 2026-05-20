@@ -85,7 +85,7 @@ class PermissionEmptyStatesView extends StatelessWidget {
                         color: colorScheme.onSurface,
                         fontSize: 32,
                         fontWeight: FontWeight.w900,
-                        height: 1.2,
+                        height: 1,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -188,7 +188,7 @@ class PermissionEmptyStatesView extends StatelessWidget {
                   ),
                 ),
               ],
-              const SizedBox(height: 14),
+              const SizedBox(height: 13),
               TextButton(
                 onPressed: isLoading ? null : onSkipPressed,
                 child: Text(

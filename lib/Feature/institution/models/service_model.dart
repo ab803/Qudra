@@ -11,6 +11,9 @@ class InstitutionServiceModel {
   final String locationMode;
   final String bookingType;
   final String? availabilityNotes;
+  final List<String> workingDays;
+  final String? workingStartTime;
+  final String? workingEndTime;
   final bool isActive;
   final DateTime? createdAt;
 
@@ -27,6 +30,9 @@ class InstitutionServiceModel {
     required this.locationMode,
     required this.bookingType,
     this.availabilityNotes,
+    required this.workingDays,
+    this.workingStartTime,
+    this.workingEndTime,
     required this.isActive,
     this.createdAt,
   });
@@ -47,8 +53,16 @@ class InstitutionServiceModel {
       isFree: (json['is_free'] as bool?) ?? false,
       durationMinutes: (json['duration_minutes'] as num?)?.toInt() ?? 30,
       locationMode: (json['location_mode'] as String?) ?? 'on_site',
-      bookingType: (json['booking_type'] as String?) ?? 'request',
+      bookingType: (json['booking_type'] as String?) ?? 'instant_slot',
       availabilityNotes: json['availability_notes'] as String?,
+      // This block reads the structured working days list for the service.
+      workingDays: (json['working_days'] as List<dynamic>? ?? [])
+          .map((e) => e.toString())
+          .toList(),
+      // This block reads the daily working start time in HH:mm or HH:mm:ss format.
+      workingStartTime: json['working_start_time']?.toString(),
+      // This block reads the daily working end time in HH:mm or HH:mm:ss format.
+      workingEndTime: json['working_end_time']?.toString(),
       isActive: (json['is_active'] as bool?) ?? true,
       createdAt: json['created_at'] != null
           ? DateTime.tryParse(json['created_at'].toString())

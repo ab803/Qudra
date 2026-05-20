@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
 
-// This widget renders the date and time pickers used in the booking checkout screen.
+// This widget renders the date selector and available times used in the booking checkout screen.
 class BookingDateTimeSection extends StatelessWidget {
   final DateTime? selectedDate;
   final String? selectedTime;
   final VoidCallback onSelectDate;
-  final VoidCallback onSelectTime;
+  final List<String> availableSlots;
+  final ValueChanged<String> onSelectSlot;
 
   const BookingDateTimeSection({
     super.key,
     required this.selectedDate,
     required this.selectedTime,
     required this.onSelectDate,
-    required this.onSelectTime,
+    required this.availableSlots,
+    required this.onSelectSlot,
   });
 
   // This helper formats the selected booking date for the UI.
@@ -51,19 +53,130 @@ class BookingDateTimeSection extends StatelessWidget {
         ),
         const SizedBox(height: 12),
 
-        // This block renders the time selector tile.
-        _PickerTile(
-          icon: Icons.access_time_outlined,
-          title: context.tr("booking_preferred_time"),
-          value: selectedTime ?? context.tr("booking_select_time"),
-          onTap: onSelectTime,
+        // This block renders the available time choices for the selected day.
+        _SlotsSection(
+          selectedDate: selectedDate,
+          selectedTime: selectedTime,
+          availableSlots: availableSlots,
+          onSelectSlot: onSelectSlot,
         ),
       ],
     );
   }
 }
 
-// This widget renders a single tap-able picker tile for date or time input.
+// This widget renders the available time list for the selected booking day.
+class _SlotsSection extends StatelessWidget {
+  final DateTime? selectedDate;
+  final String? selectedTime;
+  final List<String> availableSlots;
+  final ValueChanged<String> onSelectSlot;
+
+  const _SlotsSection({
+    required this.selectedDate,
+    required this.selectedTime,
+    required this.availableSlots,
+    required this.onSelectSlot,
+  });
+
+  // This helper converts HH:mm values into a 12-hour display format.
+  String _formatTimeTo12Hour(String value) {
+    final parts = value.split(':');
+    if (parts.length < 2) return value;
+
+    final hour = int.tryParse(parts[0]);
+    final minute = int.tryParse(parts[1]);
+
+    if (hour == null || minute == null) return value;
+
+    final period = hour >= 12 ? 'PM' : 'AM';
+    final hour12 = hour % 12 == 0 ? 12 : hour % 12;
+    final minuteText = minute.toString().padLeft(2, '0');
+
+    return '$hour12:$minuteText $period';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    if (selectedDate == null) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: theme.cardColor,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: theme.dividerColor),
+        ),
+        child: Text(
+          context.tr("booking_choose_day_first_for_times"),
+        ),
+      );
+    }
+
+    if (availableSlots.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: theme.cardColor,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: theme.dividerColor),
+        ),
+        child: Text(
+          context.tr("booking_no_available_times_for_day"),
+        ),
+      );
+    }
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: theme.dividerColor),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            context.tr("booking_choose_suitable_time"),
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: availableSlots.map((slot) {
+              final isSelected = selectedTime == slot;
+
+              return ChoiceChip(
+                label: Text(_formatTimeTo12Hour(slot)),
+                selected: isSelected,
+                onSelected: (_) => onSelectSlot(slot),
+                selectedColor: Colors.black,
+                backgroundColor: Colors.white,
+                labelStyle: TextStyle(
+                  color: isSelected ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w600,
+                ),
+                side: BorderSide(
+                  color: isSelected ? Colors.black : Colors.black26,
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// This widget renders a single tap-able picker tile for day selection.
 class _PickerTile extends StatelessWidget {
   final IconData icon;
   final String title;

@@ -70,6 +70,23 @@ class _BookingResultViewState extends State<BookingResultView> {
     }
   }
 
+  // This helper converts HH:mm values into a 12-hour display format.
+  String _formatTimeTo12Hour(String value) {
+    final parts = value.split(':');
+    if (parts.length < 2) return value;
+
+    final hour = int.tryParse(parts[0]);
+    final minute = int.tryParse(parts[1]);
+
+    if (hour == null || minute == null) return value;
+
+    final period = hour >= 12 ? 'PM' : 'AM';
+    final hour12 = hour % 12 == 0 ? 12 : hour % 12;
+    final minuteText = minute.toString().padLeft(2, '0');
+
+    return '$hour12:$minuteText $period';
+  }
+
   _ResultPresentation _buildPresentation(
       BuildContext context,
       BookingModel? booking,
@@ -322,7 +339,8 @@ class _BookingResultViewState extends State<BookingResultView> {
                               ),
                               _ResultRow(
                                 label: context.tr("booking_result_label_time"),
-                                value: booking.requestedTime,
+                                // This block renders the booked time in a 12-hour user-friendly format.
+                                value: _formatTimeTo12Hour(booking.requestedTime),
                               ),
                             ],
                           ),
@@ -387,6 +405,7 @@ class _ResultRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Row(

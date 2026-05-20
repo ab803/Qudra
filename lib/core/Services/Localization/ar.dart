@@ -659,4 +659,9 @@ final Map<String, String> ar = {
   "institution_rating_summary_many": "{average} • {count} تقييمات",
   "feedback_rating_range_error": "يجب أن يكون التقييم بين 1 و 5.",
   "feedback_user_not_logged_in": "المستخدم غير مسجل الدخول.",
+  "service_working_hours": "مواعيد العمل",
+  "booking_choose_suitable_time": "اختر الوقت المناسب",
+  "booking_choose_day_first_for_times": "يرجى اختيار اليوم أولًا لعرض الأوقات المتاحة.",
+  "booking_no_available_times_for_day": "لا توجد مواعيد متاحة في هذا اليوم.",
+
 };

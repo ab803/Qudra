@@ -37,11 +37,40 @@ class BookingService {
     }
 
     final data = Map<String, dynamic>.from(response.data);
+
     if (data['success'] != true) {
       throw Exception(data['error'] ?? 'Failed to create booking session');
     }
 
     return data;
+  }
+
+  // This method loads all already reserved slot times for a specific service and day.
+  Future<List<String>> fetchReservedTimesForServiceDate({
+    required String serviceId,
+    required DateTime requestedDate,
+  }) async {
+    final result = await _supabase
+        .from('bookings')
+        .select('requested_time, booking_status')
+        .eq('service_id', serviceId)
+        .eq('requested_date', _formatDate(requestedDate))
+        .inFilter('booking_status', ['pending_payment', 'confirmed']);
+
+    return List<Map<String, dynamic>>.from(result).map((row) {
+      final rawTime = row['requested_time']?.toString() ?? '';
+      return _normalizeStoredTime(rawTime);
+    }).where((time) => time.isNotEmpty).toList();
+  }
+
+  // This helper normalizes database time values into HH:mm format.
+  String _normalizeStoredTime(String rawTime) {
+    if (rawTime.trim().isEmpty) return '';
+    final parts = rawTime.split(':');
+    if (parts.length < 2) return rawTime;
+    final hour = parts[0].padLeft(2, '0');
+    final minute = parts[1].padLeft(2, '0');
+    return '$hour:$minute';
   }
 
   Future<BookingModel?> getBookingById(String bookingId) async {
@@ -52,6 +81,7 @@ class BookingService {
         .maybeSingle();
 
     if (result == null) return null;
+
     return BookingModel.fromJson(Map<String, dynamic>.from(result));
   }
 
@@ -65,6 +95,7 @@ class BookingService {
         .maybeSingle();
 
     if (result == null) return null;
+
     return BookingPaymentModel.fromJson(
       Map<String, dynamic>.from(result),
     );
