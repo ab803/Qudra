@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+
 import '../models/reminder_model.dart';
 import '../models/reminder_log_model.dart';
 import '../services/reminder_service.dart';
@@ -7,11 +8,20 @@ import '../services/local_notification_service.dart';
 import '../utils/time_format_validator.dart';
 import '../utils/date_time_helpers.dart';
 
+// This view model manages reminders, today logs, and UI state.
 class MedicalRemindersViewModel extends ChangeNotifier {
   final ReminderService _service;
-  final ReminderLogService _logService = ReminderLogService();
+  final ReminderLogService _logService;
+  final LocalNotificationService _notificationService;
 
-  MedicalRemindersViewModel(this._service);
+  // This constructor allows injecting dependencies for testing.
+  MedicalRemindersViewModel(
+      this._service, {
+        ReminderLogService? logService,
+        LocalNotificationService? notificationService,
+      })  : _logService = logService ?? ReminderLogService(),
+        _notificationService =
+            notificationService ?? LocalNotificationService.instance;
 
   List<ReminderModel> _reminders = [];
   List<ReminderModel> get reminders => List.unmodifiable(_reminders);
@@ -26,32 +36,40 @@ class MedicalRemindersViewModel extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
 
   int get totalCount => _reminders.length;
+
   int get dueTodayCount => _reminders.where(_isDueToday).length;
+
   int get takenTodayCount => _reminders.where((r) {
     return _isDueToday(r) &&
         getTodayStatusForReminder(r.id) == ReminderDoseStatus.taken;
   }).length;
+
   int get missedTodayCount => _reminders.where((r) {
     return _isDueToday(r) &&
         getTodayStatusForReminder(r.id) == ReminderDoseStatus.missed;
   }).length;
 
+  // This getter returns adherence percentage for today's due reminders.
   double get adherencePercent {
     if (dueTodayCount == 0) return 0;
     return takenTodayCount / dueTodayCount;
   }
 
+  // This getter returns the next upcoming reminder time for today.
   String? get nextReminderTime {
     final now = DateTime.now();
+
     final upcoming = _reminders
         .where((r) {
       if (!_isDueToday(r)) return false;
+
       final status = getTodayStatusForReminder(r.id);
       if (status == ReminderDoseStatus.taken ||
           status == ReminderDoseStatus.skipped ||
           status == ReminderDoseStatus.missed) {
         return false;
       }
+
       final dt = DateTimeHelpers.scheduledDateTimeToday(r.time);
       return dt != null && dt.isAfter(now);
     })
@@ -66,6 +84,7 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     return upcoming.first.time;
   }
 
+  // This method loads reminders, today logs, and missed doses.
   Future<void> loadReminders() async {
     _isLoading = true;
     _errorMessage = null;
@@ -84,18 +103,18 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     }
   }
 
+  // This method loads all reminder logs for today.
   Future<void> _loadTodayLogs() async {
     _todayLogs = await _logService.getLogsByDate(DateTimeHelpers.todayKey());
   }
 
+  // This method adds a reminder and schedules its notification.
   Future<void> addReminder(ReminderModel reminder) async {
     _errorMessage = null;
     notifyListeners();
 
-    // ✅ Updated:
-    // Enforce required valid time even if someone bypasses the add sheet UI.
+    // This block validates time format before creating the reminder.
     if (!TimeFormatValidator.isValidHHmm(reminder.time)) {
-      // This error key is resolved to localized text by the UI.
       _errorMessage = 'valid_reminder_time';
       notifyListeners();
       return;
@@ -108,17 +127,18 @@ class MedicalRemindersViewModel extends ChangeNotifier {
       await _syncAutoMissedLogs();
       notifyListeners();
     } catch (e) {
-      // This error key is resolved to localized text by the UI.
       _errorMessage = 'failed_add_reminder';
       notifyListeners();
       return;
     }
 
-    await LocalNotificationService.instance.scheduleReminder(reminder);
+    await _notificationService.scheduleReminder(reminder);
   }
 
+  // This method deletes a reminder and removes related logs and notifications.
   Future<void> deleteReminder(String id) async {
     _errorMessage = null;
+
     final oldReminders = List<ReminderModel>.from(_reminders);
     final oldLogs = List<ReminderLogModel>.from(_todayLogs);
 
@@ -132,17 +152,18 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     } catch (e) {
       _reminders = oldReminders;
       _todayLogs = oldLogs;
-      // This error key is resolved to localized text by the UI.
       _errorMessage = 'failed_delete_reminder';
       notifyListeners();
       return;
     }
 
-    await LocalNotificationService.instance.cancelReminder(id);
+    await _notificationService.cancelReminder(id);
   }
 
+  // This method toggles reminder enabled state and updates notifications.
   Future<void> toggleEnabled(String id, bool enabled) async {
     _errorMessage = null;
+
     final index = _reminders.indexWhere((r) => r.id == id);
     if (index == -1) return;
 
@@ -155,22 +176,22 @@ class MedicalRemindersViewModel extends ChangeNotifier {
       await _syncAutoMissedLogs();
     } catch (e) {
       _reminders[index] = old;
-      // This error key is resolved to localized text by the UI.
       _errorMessage = 'failed_update_reminder_status';
       notifyListeners();
       return;
     }
 
     if (!enabled) {
-      await LocalNotificationService.instance.cancelReminder(id);
+      await _notificationService.cancelReminder(id);
     } else {
-      await LocalNotificationService.instance
+      await _notificationService
           .scheduleReminder(old.copyWith(isEnabled: true));
     }
 
     notifyListeners();
   }
 
+  // This method marks today's dose as taken.
   Future<void> markTaken(String reminderId) async {
     final reminder = _findReminder(reminderId);
     if (reminder == null || !_isDueToday(reminder)) return;
@@ -189,20 +210,20 @@ class MedicalRemindersViewModel extends ChangeNotifier {
       await _loadTodayLogs();
       notifyListeners();
     } catch (e) {
-      // This error key is resolved to localized text by the UI.
       _errorMessage = 'failed_mark_taken';
       notifyListeners();
     }
   }
 
+  // This method marks today's dose as skipped.
   Future<void> skipDose(String reminderId) async {
     final reminder = _findReminder(reminderId);
     if (reminder == null || !_isDueToday(reminder)) return;
 
     final log = ReminderLogModel(
-      date: DateTimeHelpers.todayKey(),
-      reminderId: reminderId,
       id: DateTimeHelpers.generateLogId(reminderId),
+      reminderId: reminderId,
+      date: DateTimeHelpers.todayKey(),
       scheduledTime: reminder.time,
       status: ReminderDoseStatus.skipped.value,
       takenAt: null,
@@ -213,12 +234,12 @@ class MedicalRemindersViewModel extends ChangeNotifier {
       await _loadTodayLogs();
       notifyListeners();
     } catch (e) {
-      // This error key is resolved to localized text by the UI.
       _errorMessage = 'failed_skip_dose';
       notifyListeners();
     }
   }
 
+  // This method returns today's status for a reminder.
   ReminderDoseStatus? getTodayStatusForReminder(String reminderId) {
     final reminder = _findReminder(reminderId);
     if (reminder == null || !_isDueToday(reminder)) return null;
@@ -234,26 +255,27 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     if (scheduled.isBefore(DateTime.now())) {
       return ReminderDoseStatus.missed;
     }
+
     return null;
   }
 
+  // This method returns the localized status key used by the UI.
   String? getStatusLabelForReminder(String reminderId) {
     final status = getTodayStatusForReminder(reminderId);
+
     switch (status) {
       case ReminderDoseStatus.taken:
-      // This status key is resolved to localized text by the tile UI.
         return 'status_taken_today';
       case ReminderDoseStatus.skipped:
-      // This status key is resolved to localized text by the tile UI.
         return 'status_skipped_today';
       case ReminderDoseStatus.missed:
-      // This status key is resolved to localized text by the tile UI.
         return 'status_missed';
       default:
         return null;
     }
   }
 
+  // This helper finds today's log for a reminder.
   ReminderLogModel? _findTodayLogForReminder(String reminderId) {
     try {
       return _todayLogs.firstWhere((l) => l.reminderId == reminderId);
@@ -262,6 +284,7 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     }
   }
 
+  // This helper finds a reminder by id.
   ReminderModel? _findReminder(String id) {
     try {
       return _reminders.firstWhere((r) => r.id == id);
@@ -270,16 +293,19 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     }
   }
 
+  // This helper checks whether a reminder is valid and enabled for today.
   bool _isDueToday(ReminderModel reminder) {
     return reminder.isEnabled && TimeFormatValidator.isValidHHmm(reminder.time);
   }
 
+  // This method auto-creates missed logs for overdue reminders with no status yet.
   Future<void> _syncAutoMissedLogs() async {
     final now = DateTime.now();
     bool insertedAny = false;
 
     for (final reminder in _reminders) {
       if (!_isDueToday(reminder)) continue;
+
       final existing = _findTodayLogForReminder(reminder.id);
       if (existing != null) continue;
 
@@ -295,6 +321,7 @@ class MedicalRemindersViewModel extends ChangeNotifier {
           status: ReminderDoseStatus.missed.value,
           takenAt: null,
         );
+
         await _logService.upsertLog(missedLog);
         insertedAny = true;
       }
