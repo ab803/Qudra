@@ -663,5 +663,17 @@ final Map<String, String> ar = {
   "booking_choose_suitable_time": "اختر الوقت المناسب",
   "booking_choose_day_first_for_times": "يرجى اختيار اليوم أولًا لعرض الأوقات المتاحة.",
   "booking_no_available_times_for_day": "لا توجد مواعيد متاحة في هذا اليوم.",
+  "full_name_required": "الاسم الكامل مطلوب",
+  "full_name_too_short": "يجب أن يكون الاسم الكامل 3 أحرف على الأقل",
 
+  "phone_required": "رقم الهاتف مطلوب",
+  "phone_invalid": "من فضلك أدخل رقم هاتف صحيح",
+
+  "responsible_person_required": "اسم الشخص المسؤول مطلوب",
+  "responsible_person_invalid": "من فضلك أدخل اسم شخص مسؤول صحيح",
+
+  "age_required": "العمر مطلوب",
+
+  "gender_required": "من فضلك اختر النوع",
+  "disability_type_required": "من فضلك اختر نوع الإعاقة",
 };

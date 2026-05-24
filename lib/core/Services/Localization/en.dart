@@ -689,4 +689,17 @@ final Map<String, String> en = <String, String>{
   "booking_choose_suitable_time": "Choose a Suitable Time",
   "booking_choose_day_first_for_times": "Please choose a day first to see the available times.",
   "booking_no_available_times_for_day": "No appointment times are available on this day.",
+  "full_name_required": "Full name is required",
+  "full_name_too_short": "Full name must be at least 3 characters",
+
+  "phone_required": "Phone number is required",
+  "phone_invalid": "Please enter a valid phone number",
+
+  "responsible_person_required": "Responsible person is required",
+  "responsible_person_invalid": "Please enter a valid responsible person name",
+
+  "age_required": "Age is required",
+
+  "gender_required": "Please select a gender",
+  "disability_type_required": "Please select a disability type",
 };
