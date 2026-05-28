@@ -8,7 +8,49 @@ import '../services/local_notification_service.dart';
 import '../utils/time_format_validator.dart';
 import '../utils/date_time_helpers.dart';
 
-// This view model manages reminders, today logs, and UI state.
+// This enum defines the visible filter tabs used by the Care Plans screen.
+enum CarePlanFilter {
+  all,
+  medication,
+  feeding,
+  rehab,
+  learning,
+}
+
+// This extension converts each filter into a localization key and matching care plan type.
+extension CarePlanFilterX on CarePlanFilter {
+  String get labelKey {
+    switch (this) {
+      case CarePlanFilter.all:
+        return 'plan_type_all';
+      case CarePlanFilter.medication:
+        return 'plan_type_medication';
+      case CarePlanFilter.feeding:
+        return 'plan_type_feeding';
+      case CarePlanFilter.rehab:
+        return 'plan_type_rehab';
+      case CarePlanFilter.learning:
+        return 'plan_type_learning';
+    }
+  }
+
+  CarePlanType? get matchingType {
+    switch (this) {
+      case CarePlanFilter.all:
+        return null;
+      case CarePlanFilter.medication:
+        return CarePlanType.medication;
+      case CarePlanFilter.feeding:
+        return CarePlanType.feeding;
+      case CarePlanFilter.rehab:
+        return CarePlanType.rehab;
+      case CarePlanFilter.learning:
+        return CarePlanType.learning;
+    }
+  }
+}
+
+// This view model manages reminders, care plans, today logs, and UI state.
 class MedicalRemindersViewModel extends ChangeNotifier {
   final ReminderService _service;
   final ReminderLogService _logService;
@@ -24,38 +66,82 @@ class MedicalRemindersViewModel extends ChangeNotifier {
             notificationService ?? LocalNotificationService.instance;
 
   List<ReminderModel> _reminders = [];
+
+  // This getter returns all care plan items regardless of the selected filter.
   List<ReminderModel> get reminders => List.unmodifiable(_reminders);
 
   List<ReminderLogModel> _todayLogs = [];
+
+  // This getter returns today's logs for all care plan items.
   List<ReminderLogModel> get todayLogs => List.unmodifiable(_todayLogs);
 
   bool _isLoading = false;
+
   bool get isLoading => _isLoading;
 
   String? _errorMessage;
+
   String? get errorMessage => _errorMessage;
 
+  // This field stores the currently selected Care Plans filter.
+  CarePlanFilter _selectedFilter = CarePlanFilter.all;
+
+  CarePlanFilter get selectedFilter => _selectedFilter;
+
+  // This getter exposes all filters for the UI chips row.
+  List<CarePlanFilter> get availableFilters => const [
+    CarePlanFilter.all,
+    CarePlanFilter.medication,
+    CarePlanFilter.feeding,
+    CarePlanFilter.rehab,
+    CarePlanFilter.learning,
+  ];
+
+  // This method updates the selected filter and refreshes the visible list.
+  void setSelectedFilter(CarePlanFilter filter) {
+    if (_selectedFilter == filter) return;
+    _selectedFilter = filter;
+    notifyListeners();
+  }
+
+  // This getter returns reminders filtered by the selected care plan type.
+  List<ReminderModel> get visibleReminders {
+    final matchingType = _selectedFilter.matchingType;
+
+    if (matchingType == null) {
+      return List.unmodifiable(_reminders);
+    }
+
+    return List.unmodifiable(
+      _reminders.where((reminder) => reminder.type == matchingType).toList(),
+    );
+  }
+
+  // This getter returns the total number of all care plan items.
   int get totalCount => _reminders.length;
 
+  // This getter returns the number of active items due today across all care plan types.
   int get dueTodayCount => _reminders.where(_isDueToday).length;
 
+  // This getter returns the number of completed items today across all care plan types.
   int get takenTodayCount => _reminders.where((r) {
     return _isDueToday(r) &&
         getTodayStatusForReminder(r.id) == ReminderDoseStatus.taken;
   }).length;
 
+  // This getter returns the number of missed items today across all care plan types.
   int get missedTodayCount => _reminders.where((r) {
     return _isDueToday(r) &&
         getTodayStatusForReminder(r.id) == ReminderDoseStatus.missed;
   }).length;
 
-  // This getter returns adherence percentage for today's due reminders.
+  // This getter returns adherence percentage for today's due care plan items.
   double get adherencePercent {
     if (dueTodayCount == 0) return 0;
     return takenTodayCount / dueTodayCount;
   }
 
-  // This getter returns the next upcoming reminder time for today.
+  // This getter returns the next upcoming reminder time for today across all care plan items.
   String? get nextReminderTime {
     final now = DateTime.now();
 
@@ -84,7 +170,7 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     return upcoming.first.time;
   }
 
-  // This method loads reminders, today logs, and missed doses.
+  // This method loads reminders, today logs, and missed care plan items.
   Future<void> loadReminders() async {
     _isLoading = true;
     _errorMessage = null;
@@ -108,12 +194,12 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     _todayLogs = await _logService.getLogsByDate(DateTimeHelpers.todayKey());
   }
 
-  // This method adds a reminder and schedules its notification.
+  // This method adds a care plan item and schedules its notification.
   Future<void> addReminder(ReminderModel reminder) async {
     _errorMessage = null;
     notifyListeners();
 
-    // This block validates time format before creating the reminder.
+    // This block validates time format before creating the care plan item.
     if (!TimeFormatValidator.isValidHHmm(reminder.time)) {
       _errorMessage = 'valid_reminder_time';
       notifyListeners();
@@ -135,7 +221,7 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     await _notificationService.scheduleReminder(reminder);
   }
 
-  // This method deletes a reminder and removes related logs and notifications.
+  // This method deletes a care plan item and removes related logs and notifications.
   Future<void> deleteReminder(String id) async {
     _errorMessage = null;
 
@@ -160,7 +246,7 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     await _notificationService.cancelReminder(id);
   }
 
-  // This method toggles reminder enabled state and updates notifications.
+  // This method toggles care plan item enabled state and updates notifications.
   Future<void> toggleEnabled(String id, bool enabled) async {
     _errorMessage = null;
 
@@ -184,14 +270,15 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     if (!enabled) {
       await _notificationService.cancelReminder(id);
     } else {
-      await _notificationService
-          .scheduleReminder(old.copyWith(isEnabled: true));
+      await _notificationService.scheduleReminder(
+        old.copyWith(isEnabled: true),
+      );
     }
 
     notifyListeners();
   }
 
-  // This method marks today's dose as taken.
+  // This method marks today's care plan item as completed.
   Future<void> markTaken(String reminderId) async {
     final reminder = _findReminder(reminderId);
     if (reminder == null || !_isDueToday(reminder)) return;
@@ -215,7 +302,7 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     }
   }
 
-  // This method marks today's dose as skipped.
+  // This method marks today's care plan item as skipped.
   Future<void> skipDose(String reminderId) async {
     final reminder = _findReminder(reminderId);
     if (reminder == null || !_isDueToday(reminder)) return;
@@ -239,7 +326,7 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     }
   }
 
-  // This method returns today's status for a reminder.
+  // This method returns today's status for a care plan item.
   ReminderDoseStatus? getTodayStatusForReminder(String reminderId) {
     final reminder = _findReminder(reminderId);
     if (reminder == null || !_isDueToday(reminder)) return null;
@@ -275,7 +362,35 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     }
   }
 
-  // This helper finds today's log for a reminder.
+  // This helper returns the localization key for a care plan type.
+  String getTypeLabelKey(CarePlanType type) {
+    switch (type) {
+      case CarePlanType.medication:
+        return 'plan_type_medication';
+      case CarePlanType.feeding:
+        return 'plan_type_feeding';
+      case CarePlanType.rehab:
+        return 'plan_type_rehab';
+      case CarePlanType.learning:
+        return 'plan_type_learning';
+    }
+  }
+
+  // This helper returns a semantic icon key for a care plan type.
+  String getTypeIconKey(CarePlanType type) {
+    switch (type) {
+      case CarePlanType.medication:
+        return 'medication';
+      case CarePlanType.feeding:
+        return 'feeding';
+      case CarePlanType.rehab:
+        return 'rehab';
+      case CarePlanType.learning:
+        return 'learning';
+    }
+  }
+
+  // This helper finds today's log for a care plan item.
   ReminderLogModel? _findTodayLogForReminder(String reminderId) {
     try {
       return _todayLogs.firstWhere((l) => l.reminderId == reminderId);
@@ -284,7 +399,7 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     }
   }
 
-  // This helper finds a reminder by id.
+  // This helper finds a care plan item by id.
   ReminderModel? _findReminder(String id) {
     try {
       return _reminders.firstWhere((r) => r.id == id);
@@ -293,12 +408,12 @@ class MedicalRemindersViewModel extends ChangeNotifier {
     }
   }
 
-  // This helper checks whether a reminder is valid and enabled for today.
+  // This helper checks whether a care plan item is valid and enabled for today.
   bool _isDueToday(ReminderModel reminder) {
     return reminder.isEnabled && TimeFormatValidator.isValidHHmm(reminder.time);
   }
 
-  // This method auto-creates missed logs for overdue reminders with no status yet.
+  // This method auto-creates missed logs for overdue care plan items with no status yet.
   Future<void> _syncAutoMissedLogs() async {
     final now = DateTime.now();
     bool insertedAny = false;
