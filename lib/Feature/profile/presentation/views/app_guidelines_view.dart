@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
+
 import '../../../../core/Styles/AppTextsyles.dart';
 
 // This screen provides searchable and filterable guidance that matches the real app flows.
@@ -21,9 +22,10 @@ class _AppGuidelinesViewState extends State<AppGuidelinesView> {
   // This list defines the topics that appear in the horizontal filter chips.
   static const List<String> _topics = <String>[
     'all_topics',
-    'accessibility_topic',
     'chatbot_topic',
-    'health_topic',
+    'care_plans_topic',
+    'smart_map_topic',
+    'awareness_topic',
     'safety_topic',
     'institutions_topic',
   ];
@@ -38,22 +40,37 @@ class _AppGuidelinesViewState extends State<AppGuidelinesView> {
       actionLabelKey: 'open_chatbot',
       route: '/chat',
     ),
+
+    // This guideline explains the upgraded Care Plans feature.
     _GuidelineItem(
-      categoryKey: 'health_topic',
-      icon: Icons.notifications_active_outlined,
-      titleKey: 'guideline_reminders_title',
-      descriptionKey: 'guideline_reminders_description',
-      actionLabelKey: 'open_reminders',
+      categoryKey: 'care_plans_topic',
+      icon: Icons.event_available_rounded,
+      titleKey: 'guideline_care_plans_title',
+      descriptionKey: 'guideline_care_plans_description',
+      actionLabelKey: 'open_care_plans',
       route: '/reminders',
     ),
+
+    // This guideline explains the new Smart Accessible Map feature.
     _GuidelineItem(
-      categoryKey: 'accessibility_topic',
-      icon: Icons.menu_book_outlined,
-      titleKey: 'guideline_accessibility_title',
-      descriptionKey: 'guideline_accessibility_description',
+      categoryKey: 'smart_map_topic',
+      icon: Icons.map_outlined,
+      titleKey: 'guideline_smart_map_title',
+      descriptionKey: 'guideline_smart_map_description',
+      actionLabelKey: 'open_smart_map',
+      route: '/smart-map',
+    ),
+
+    // This guideline explains the upgraded Accessibility Awareness Hub.
+    _GuidelineItem(
+      categoryKey: 'awareness_topic',
+      icon: Icons.auto_stories_outlined,
+      titleKey: 'guideline_awareness_hub_title',
+      descriptionKey: 'guideline_awareness_hub_description',
       actionLabelKey: 'open_accessibility_hub',
       route: '/accessibility',
     ),
+
     _GuidelineItem(
       categoryKey: 'safety_topic',
       icon: Icons.emergency_outlined,
@@ -62,6 +79,7 @@ class _AppGuidelinesViewState extends State<AppGuidelinesView> {
       actionLabelKey: 'open_emergency',
       route: '/emergency-entry',
     ),
+
     _GuidelineItem(
       categoryKey: 'institutions_topic',
       icon: Icons.business_outlined,
@@ -93,6 +111,7 @@ class _AppGuidelinesViewState extends State<AppGuidelinesView> {
       ].join(' ').toLowerCase();
 
       final matchesQuery = query.isEmpty || searchableText.contains(query);
+
       return matchesTopic && matchesQuery;
     }).toList();
   }
@@ -110,9 +129,11 @@ class _AppGuidelinesViewState extends State<AppGuidelinesView> {
 
   String _replaceParams(String text, Map<String, String> params) {
     var result = text;
+
     params.forEach((key, value) {
       result = result.replaceAll('{$key}', value);
     });
+
     return result;
   }
 
@@ -129,110 +150,153 @@ class _AppGuidelinesViewState extends State<AppGuidelinesView> {
         scrolledUnderElevation: 0,
         leading: IconButton(
           icon: Icon(
-            Icons.arrow_back,
+            Icons.arrow_back_ios_new_rounded,
             color: theme.appBarTheme.foregroundColor,
           ),
-          onPressed: () => context.go('/profile'),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('/profile');
+            }
+          },
         ),
         title: Text(
           context.tr("app_guidelines_title"),
-          style: AppTextStyles.title.copyWith(
+          style: AppTextStyles.subtitle.copyWith(
             fontSize: 18,
             color: theme.textTheme.titleLarge?.color,
+            fontWeight: FontWeight.w800,
           ),
         ),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Divider(
-              color: theme.dividerColor,
-              thickness: 1,
-              height: 1,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // This top section introduces the help experience and current app guidance scope.
-                  _buildIntroSection(context),
-                  const SizedBox(height: 24),
-                  // Search Bar
-                  // This search field filters guideline cards by title, description, and category.
-                  _buildSearchField(context),
-                  const SizedBox(height: 20),
-                  // Filter Chips
-                  // This chips row lets the user switch between guideline topics.
-                  _buildTopicChips(context),
-                  const SizedBox(height: 20),
-                  // This summary row shows the current filtering result count.
-                  _buildResultsSummary(context, filteredGuidelines.length),
-                  const SizedBox(height: 18),
-                  // Guideline Cards
-                  // This section renders the currently filtered guideline cards.
-                  if (filteredGuidelines.isEmpty)
-                    _buildEmptyState(context)
-                  else
-                    ...filteredGuidelines.map((item) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: _buildGuidelineCard(
-                          context,
-                          item: item,
-                        ),
-                      );
-                    }),
-                  const SizedBox(height: 16),
-                  // Still need help section
-                  // This support card sends the user to the feedback screen.
-                  _buildSupportSection(context),
-                  const SizedBox(height: 32),
-                ],
-              ),
-            ),
+            // This top hero card introduces the help experience and current app guidance scope.
+            _buildHeroIntroCard(context),
+
+            const SizedBox(height: 20),
+
+            // This search field filters guideline cards by title, description, and category.
+            _buildSearchField(context),
+
+            const SizedBox(height: 18),
+
+            // This chips row lets the user switch between guideline topics.
+            _buildTopicChips(context),
+
+            const SizedBox(height: 18),
+
+            // This summary row shows the current filtering result count.
+            _buildResultsSummary(context, filteredGuidelines.length),
+
+            const SizedBox(height: 18),
+
+            // This section renders the currently filtered guideline cards.
+            if (filteredGuidelines.isEmpty)
+              _buildEmptyState(context)
+            else
+              ...filteredGuidelines.map((item) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: _buildGuidelineCard(
+                    context,
+                    item: item,
+                  ),
+                );
+              }),
+
+            const SizedBox(height: 6),
+
+            // This support card sends the user to the feedback screen.
+            _buildSupportSection(context),
           ],
         ),
       ),
     );
   }
 
-  // This widget builds the screen heading and descriptive intro copy.
-  Widget _buildIntroSection(BuildContext context) {
+  // This widget builds a polished hero-style intro card for the guidelines screen.
+  Widget _buildHeroIntroCard(BuildContext context) {
     final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          context.tr("how_can_we_help"),
-          style: AppTextStyles.title.copyWith(
-            fontSize: 24,
-            fontWeight: FontWeight.w800,
-            color: theme.textTheme.titleLarge?.color,
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(26),
+        border: Border.all(color: theme.dividerColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(
+              theme.brightness == Brightness.dark ? 0.14 : 0.05,
+            ),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
           ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          context.tr("app_guidelines_intro"),
-          style: AppTextStyles.body.copyWith(
-            fontSize: 15,
-            height: 1.55,
-            color: theme.textTheme.bodyMedium?.color,
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary.withOpacity(
+                theme.brightness == Brightness.dark ? 0.18 : 0.08,
+              ),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(
+              Icons.support_agent_rounded,
+              color: theme.colorScheme.primary,
+              size: 26,
+            ),
           ),
-        ),
-      ],
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  context.tr("how_can_we_help"),
+                  style: AppTextStyles.title.copyWith(
+                    fontSize: 23,
+                    fontWeight: FontWeight.w800,
+                    color: theme.textTheme.titleLarge?.color,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  context.tr("app_guidelines_intro"),
+                  style: AppTextStyles.body.copyWith(
+                    fontSize: 14.5,
+                    height: 1.55,
+                    color: theme.textTheme.bodyMedium?.color,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   // This widget builds the interactive search input used by the guidelines list.
   Widget _buildSearchField(BuildContext context) {
     final theme = Theme.of(context);
+
     return Container(
       decoration: BoxDecoration(
         color: theme.cardColor,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: theme.dividerColor),
         boxShadow: [
           BoxShadow(
@@ -247,13 +311,14 @@ class _AppGuidelinesViewState extends State<AppGuidelinesView> {
       child: TextField(
         controller: _searchController,
         onChanged: (_) => setState(() {}),
+        style: theme.textTheme.bodyLarge,
         decoration: InputDecoration(
           hintText: context.tr("search_help"),
           hintStyle: AppTextStyles.body.copyWith(
             color: theme.inputDecorationTheme.hintStyle?.color,
           ),
           prefixIcon: Icon(
-            Icons.search,
+            Icons.search_rounded,
             color: theme.inputDecorationTheme.hintStyle?.color,
           ),
           suffixIcon: _searchController.text.trim().isEmpty
@@ -261,14 +326,14 @@ class _AppGuidelinesViewState extends State<AppGuidelinesView> {
               : IconButton(
             onPressed: _clearSearch,
             icon: Icon(
-              Icons.close,
+              Icons.close_rounded,
               color: theme.textTheme.bodyMedium?.color,
             ),
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
-            vertical: 14,
+            vertical: 15,
           ),
         ),
       ),
@@ -282,7 +347,7 @@ class _AppGuidelinesViewState extends State<AppGuidelinesView> {
       child: Row(
         children: _topics.map((topic) {
           return Padding(
-            padding: const EdgeInsets.only(right: 12),
+            padding: const EdgeInsets.only(right: 10),
             child: _buildFilterChip(
               context,
               topic,
@@ -301,41 +366,50 @@ class _AppGuidelinesViewState extends State<AppGuidelinesView> {
       bool isSelected,
       ) {
     final theme = Theme.of(context);
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedTopic = label;
-        });
-      },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected ? theme.colorScheme.primary : theme.cardColor,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? theme.colorScheme.primary : theme.dividerColor,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: theme.shadowColor.withOpacity(
-                isSelected
-                    ? (theme.brightness == Brightness.dark ? 0.14 : 0.06)
-                    : 0,
-              ),
-              blurRadius: 10,
-              offset: const Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Text(
-          context.tr(label),
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(999),
+        onTap: () {
+          setState(() {
+            _selectedTopic = label;
+          });
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
+          decoration: BoxDecoration(
             color: isSelected
-                ? theme.colorScheme.onPrimary
-                : theme.textTheme.bodyMedium?.color,
+                ? theme.colorScheme.primary.withOpacity(
+              theme.brightness == Brightness.dark ? 0.18 : 0.10,
+            )
+                : theme.cardColor,
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(
+              color: isSelected ? theme.colorScheme.primary : theme.dividerColor,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: theme.shadowColor.withOpacity(
+                  isSelected
+                      ? (theme.brightness == Brightness.dark ? 0.14 : 0.06)
+                      : (theme.brightness == Brightness.dark ? 0.08 : 0.02),
+                ),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Text(
+            context.tr(label),
+            style: TextStyle(
+              fontSize: 13.5,
+              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : theme.textTheme.bodyMedium?.color,
+            ),
           ),
         ),
       ),
@@ -349,6 +423,7 @@ class _AppGuidelinesViewState extends State<AppGuidelinesView> {
     final hasTopicFilter = _selectedTopic != 'all_topics';
 
     String label;
+
     if (hasSearch && hasTopicFilter) {
       label = count == 1
           ? _replaceParams(
@@ -403,23 +478,19 @@ class _AppGuidelinesViewState extends State<AppGuidelinesView> {
       label = count == 1
           ? _replaceParams(
         context.tr("guidelines_showing_all_one"),
-        {
-          "count": count.toString(),
-        },
+        {"count": count.toString()},
       )
           : _replaceParams(
         context.tr("guidelines_showing_all_many"),
-        {
-          "count": count.toString(),
-        },
+        {"count": count.toString()},
       );
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: theme.cardColor,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: theme.dividerColor),
       ),
       child: Row(
@@ -451,12 +522,13 @@ class _AppGuidelinesViewState extends State<AppGuidelinesView> {
         required _GuidelineItem item,
       }) {
     final theme = Theme.of(context);
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: theme.cardColor,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: theme.dividerColor, width: 1.2),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: theme.dividerColor, width: 1.1),
         boxShadow: [
           BoxShadow(
             color: theme.shadowColor.withOpacity(
@@ -477,7 +549,7 @@ class _AppGuidelinesViewState extends State<AppGuidelinesView> {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: theme.scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(14),
+                  borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: theme.dividerColor),
                 ),
                 child: Icon(
@@ -567,12 +639,13 @@ class _AppGuidelinesViewState extends State<AppGuidelinesView> {
   // This widget appears when no guideline matches the current search and filter state.
   Widget _buildEmptyState(BuildContext context) {
     final theme = Theme.of(context);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: theme.cardColor,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(22),
         border: Border.all(color: theme.dividerColor),
       ),
       child: Column(
@@ -626,12 +699,13 @@ class _AppGuidelinesViewState extends State<AppGuidelinesView> {
   // This widget renders the bottom support CTA that opens the feedback screen.
   Widget _buildSupportSection(BuildContext context) {
     final theme = Theme.of(context);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: theme.cardColor,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(22),
         border: Border.all(color: theme.dividerColor),
         boxShadow: [
           BoxShadow(
