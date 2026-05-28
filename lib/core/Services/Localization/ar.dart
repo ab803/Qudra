@@ -676,4 +676,155 @@ final Map<String, String> ar = {
 
   "gender_required": "من فضلك اختر النوع",
   "disability_type_required": "من فضلك اختر نوع الإعاقة",
+
+  // =========================
+  // Care Plans
+  // =========================
+  "care_plans": "خطط الرعاية",
+  "care_plans_subtitle": "تابع الأدوية، إرشادات التغذية، تمارين التأهيل، وأهداف التعلم في مكان واحد.",
+  "add_care_plan_item": "إضافة عنصر لخطة الرعاية",
+  "add_care_plan_item_subtitle": "اختر ما إذا كان العنصر خاصًا بالدواء أو التغذية أو التأهيل أو أهداف التعلم.",
+
+  // =========================
+  // Care Plan Types
+  // =========================
+  "plan_type_all": "الكل",
+  "plan_type_medication": "الدواء",
+  "plan_type_feeding": "التغذية",
+  "plan_type_rehab": "التأهيل",
+  "plan_type_learning": "التعلم",
+
+  // =========================
+  // Care Plans Progress
+  // =========================
+  "tasks_completed": "المهام المكتملة",
+  "no_tasks_scheduled": "لا توجد مهام مجدولة",
+  "all_tasks_completed": "تم إكمال جميع المهام",
+  "no_upcoming_tasks": "لا توجد مهام قادمة",
+  "daily_care_plan_items": "عناصر خطة الرعاية اليومية",
+  "no_care_plan_items": "لا توجد عناصر في خطة الرعاية حتى الآن. اضغط + لإضافة دواء أو تغذية أو تأهيل أو هدف تعلم.",
+  "no_items_in_selected_plan": "لا توجد عناصر في فئة خطة الرعاية المحددة حتى الآن.",
+
+  // =========================
+  // Feeding Guidance
+  // =========================
+  "feeding_title_label": "وجبة / تذكير تغذية",
+  "feeding_guidance": "إرشادات التغذية",
+  "enter_feeding_title": "من فضلك أدخل عنوان الوجبة أو تذكير التغذية",
+  "enter_feeding_guidance": "من فضلك أدخل إرشادات أو ملاحظات التغذية",
+  "general_feeding_disclaimer": "إرشادات التغذية هي دعم عام ولا تغني عن النصيحة الطبية أو الغذائية المتخصصة.",
+
+  // =========================
+  // Rehabilitation Plans
+  // =========================
+  "rehab_title_label": "تمرين تأهيلي",
+  "rehab_notes": "ملاحظات التمرين",
+  "enter_rehab_title": "من فضلك أدخل عنوان التمرين التأهيلي",
+  "enter_rehab_notes": "من فضلك أدخل ملاحظات التأهيل",
+  "general_rehab_disclaimer": "إرشادات التأهيل هي دعم عام. اتبع تعليمات المعالج أو الطبيب عند توفرها.",
+
+  // =========================
+  // Learning Goals
+  // =========================
+  "learning_title_label": "هدف تعلم",
+  "learning_goal_details": "تفاصيل الهدف",
+  "enter_learning_title": "من فضلك أدخل عنوان هدف التعلم",
+  "enter_learning_goal_details": "من فضلك أدخل تفاصيل هدف التعلم",
+
+  // =========================
+  // Care Plans General Notice
+  // =========================
+  "care_plans_general_disclaimer": "توفر خطط الرعاية دعمًا يوميًا عامًا للأدوية والتغذية والتأهيل وأهداف التعلم، ولا تغني عن النصيحة الطبية المتخصصة.",
+  "delete_care_plan_item": "حذف عنصر خطة الرعاية؟",
+
+  // =========================
+  // Accessibility Awareness Hub
+  // =========================
+  "accessibility_awareness_hub": "مركز التوعية وإمكانية الوصول",
+  "awareness_hub_title": "مركز التوعية وإمكانية الوصول",
+  "awareness_hub_subtitle": "استكشف الحقوق والنصائح العملية والمقالات والفيديوهات المصممة لتحسين جودة الحياة اليومية.",
+  "awareness_results_count": "تم العثور على {count} مورد",
+
+  // =========================
+  // Awareness Content Types
+  // =========================
+  "content_type_all": "الكل",
+  "content_type_tip": "نصيحة",
+  "content_type_tips": "نصائح",
+  "content_type_right": "حق",
+  "content_type_rights": "حقوق",
+  "content_type_article": "مقال",
+  "content_type_articles": "مقالات",
+  "content_type_video": "فيديو",
+  "content_type_videos": "فيديوهات",
+
+  // =========================
+  // Daily Tips & Featured Resources
+  // =========================
+  "daily_tip": "نصيحة اليوم",
+  "featured": "مميز",
+  "read_time": "مدة القراءة",
+
+  // =========================
+  // External Resource Actions
+  // =========================
+  "watch_video": "مشاهدة الفيديو",
+  "open_article": "فتح المقال",
+  "resource_url_missing": "لا يوجد رابط متاح لهذا المورد.",
+  "resource_url_invalid": "رابط هذا المورد غير صالح.",
+  "resource_url_open_error": "تعذر فتح هذا المورد حاليًا.",
+
+  // =========================
+  // Empty States
+  // =========================
+  "no_awareness_resources_found": "لا توجد موارد",
+  "no_awareness_resources_found_desc": "جرّب تغيير نص البحث أو نوع المحتوى أو فلتر الإعاقة.",
+  // =========================
+  // Smart Accessible Map
+  // =========================
+  "smart_accessible_map": "الخريطة الذكية للأماكن المتاحة",
+  "smart_accessible_map_placeholder": "ستظهر هنا المطاعم والخدمات الصحية والصيدليات والمواصلات القريبة مع أولوية للأماكن المناسبة لسهولة الوصول.",
+  "smart_map_filter_all": "الكل",
+  "smart_map_filter_food": "مطاعم",
+  "smart_map_filter_healthcare": "رعاية صحية",
+  "smart_map_filter_pharmacy": "صيدليات",
+  "smart_map_filter_transport": "مواصلات",
+  "smart_map_accessible": "مناسب للوصول",
+  "smart_map_limited_access": "مناسب جزئيًا",
+  "smart_map_not_accessible": "غير مناسب للوصول",
+  "smart_map_unknown_accessibility": "إتاحة غير معروفة",
+  "smart_map_accessible_only": "الأماكن المناسبة فقط",
+  "smart_map_loading_places": "جاري تحميل الأماكن القريبة...",
+  "smart_map_failed_load_places": "تعذر تحميل الأماكن القريبة حاليًا.",
+  "smart_map_location_unavailable": "الموقع غير متاح حاليًا.",
+  "smart_map_location_permission_denied": "صلاحية الموقع مطلوبة لعرض الأماكن القريبة.",
+  "smart_map_location_permission_denied_forever": "تم رفض صلاحية الموقع بشكل دائم. يرجى تفعيلها من الإعدادات.",
+  "smart_map_location_service_disabled": "خدمة الموقع غير مفعلة. يرجى تشغيلها لعرض الأماكن القريبة.",
+  "smart_map_directions_error": "تعذر فتح الاتجاهات حاليًا.",
+  "smart_map_open_directions": "فتح الاتجاهات",
+  "smart_map_nearby_results": "{count} مكان قريب",
+  "smart_map_no_places_found": "لا توجد أماكن",
+  "smart_map_no_places_found_desc": "جرّب تغيير الفلتر أو تحديث موقعك.",
+  "smart_map_address": "العنوان",
+  "smart_map_phone": "الهاتف",
+  "smart_map_accessibility_notes": "ملاحظات إمكانية الوصول",
+  "smart_map_data_notice": "تعتمد معلومات إمكانية الوصول على مساهمات OpenStreetMap العامة وقد تكون غير مكتملة. يرجى التأكد من المكان قبل الزيارة.",
+  "km_short": "كم",
+  // =========================
+  // Updated App Guidelines
+  // =========================
+  "care_plans_topic": "خطط الرعاية",
+  "smart_map_topic": "الخريطة الذكية",
+  "awareness_topic": "التوعية",
+
+  "guideline_care_plans_title": "إدارة خطط الرعاية اليومية",
+  "guideline_care_plans_description": "استخدم خطط الرعاية لتنظيم تذكيرات الدواء، وإرشادات التغذية، وتمارين التأهيل، وأهداف التعلم في مكان واحد.",
+  "open_care_plans": "فتح خطط الرعاية",
+
+  "guideline_smart_map_title": "اكتشف الأماكن القريبة المناسبة",
+  "guideline_smart_map_description": "استخدم الخريطة الذكية لعرض المطاعم، والخدمات الصحية، والصيدليات، والمواصلات القريبة مع أولوية للأماكن التي تحتوي على معلومات إمكانية الوصول.",
+  "open_smart_map": "فتح الخريطة الذكية",
+
+  "guideline_awareness_hub_title": "استكشف محتوى التوعية وإمكانية الوصول",
+  "guideline_awareness_hub_description": "اقرأ نصائح عملية وحقوق ومقالات ونصيحة اليوم، وشاهد فيديوهات مصممة لدعم إمكانية الوصول والاستقلال اليومي.",
 };

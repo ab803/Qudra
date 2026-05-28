@@ -702,4 +702,156 @@ final Map<String, String> en = <String, String>{
 
   "gender_required": "Please select a gender",
   "disability_type_required": "Please select a disability type",
+
+  // =========================
+  // Care Plans
+  // =========================
+  "care_plans": "Care Plans",
+  "care_plans_subtitle": "Track medication, feeding guidance, rehabilitation exercises, and learning goals in one place.",
+  "add_care_plan_item": "Add Care Plan Item",
+  "add_care_plan_item_subtitle": "Choose whether this item is for medication, feeding, rehabilitation, or learning goals.",
+
+  // =========================
+  // Care Plan Types
+  // =========================
+  "plan_type_all": "All",
+  "plan_type_medication": "Medication",
+  "plan_type_feeding": "Feeding",
+  "plan_type_rehab": "Rehabilitation",
+  "plan_type_learning": "Learning",
+
+  // =========================
+  // Care Plans Progress
+  // =========================
+  "tasks_completed": "Tasks completed",
+  "no_tasks_scheduled": "No tasks scheduled",
+  "all_tasks_completed": "All tasks completed",
+  "no_upcoming_tasks": "No upcoming tasks",
+  "daily_care_plan_items": "Daily Care Plan Items",
+  "no_care_plan_items": "No care plan items yet. Tap + to add medication, feeding, rehab, or learning goals.",
+  "no_items_in_selected_plan": "No items in this selected care plan category yet.",
+
+  // =========================
+  // Feeding Guidance
+  // =========================
+  "feeding_title_label": "Meal / Feeding Reminder",
+  "feeding_guidance": "Feeding Guidance",
+  "enter_feeding_title": "Please enter the meal or feeding reminder title",
+  "enter_feeding_guidance": "Please enter feeding guidance or notes",
+  "general_feeding_disclaimer": "Feeding guidance is general support and does not replace medical or nutrition advice.",
+
+  // =========================
+  // Rehabilitation Plans
+  // =========================
+  "rehab_title_label": "Rehabilitation Exercise",
+  "rehab_notes": "Exercise Notes",
+  "enter_rehab_title": "Please enter the rehabilitation exercise title",
+  "enter_rehab_notes": "Please enter rehabilitation notes",
+  "general_rehab_disclaimer": "Rehabilitation guidance is general support. Follow your therapist or doctor's instructions when available.",
+
+  // =========================
+  // Learning Goals
+  // =========================
+  "learning_title_label": "Learning Goal",
+  "learning_goal_details": "Goal Details",
+  "enter_learning_title": "Please enter the learning goal title",
+  "enter_learning_goal_details": "Please enter learning goal details",
+
+  // =========================
+  // Care Plans General Notice
+  // =========================
+  "care_plans_general_disclaimer": "Care Plans provide general daily support for medication, feeding, rehabilitation, and learning goals. They do not replace professional medical advice.",
+  "delete_care_plan_item": "Delete Care Plan Item?",
+
+  // =========================
+  // Accessibility Awareness Hub
+  // =========================
+  "accessibility_awareness_hub": "Accessibility Awareness Hub",
+  "awareness_hub_title": "Accessibility Awareness Hub",
+  "awareness_hub_subtitle": "Explore rights, practical tips, articles, and videos designed to improve daily quality of life.",
+  "awareness_results_count": "{count} resources found",
+
+  // =========================
+  // Awareness Content Types
+  // =========================
+  "content_type_all": "All",
+  "content_type_tip": "Tip",
+  "content_type_tips": "Tips",
+  "content_type_right": "Right",
+  "content_type_rights": "Rights",
+  "content_type_article": "Article",
+  "content_type_articles": "Articles",
+  "content_type_video": "Video",
+  "content_type_videos": "Videos",
+
+  // =========================
+  // Daily Tips & Featured Resources
+  // =========================
+  "daily_tip": "Daily Tip",
+  "featured": "Featured",
+  "read_time": "Read time",
+
+  // =========================
+  // External Resource Actions
+  // =========================
+  "watch_video": "Watch Video",
+  "open_article": "Open Article",
+  "resource_url_missing": "No link is available for this resource.",
+  "resource_url_invalid": "This resource link is not valid.",
+  "resource_url_open_error": "Unable to open this resource right now.",
+
+  // =========================
+  // Empty States
+  // =========================
+  "no_awareness_resources_found": "No resources found",
+  "no_awareness_resources_found_desc": "Try changing the search text, content type, or disability filter.",
+
+  // =========================
+  // Smart Accessible Map
+  // =========================
+  "smart_accessible_map": "Smart Accessible Map",
+  "smart_accessible_map_placeholder": "Nearby restaurants, healthcare, pharmacies, and transport places will appear here with accessibility priority.",
+  "smart_map_filter_all": "All",
+  "smart_map_filter_food": "Food",
+  "smart_map_filter_healthcare": "Healthcare",
+  "smart_map_filter_pharmacy": "Pharmacy",
+  "smart_map_filter_transport": "Transport",
+  "smart_map_accessible": "Accessible",
+  "smart_map_limited_access": "Limited access",
+  "smart_map_not_accessible": "Not accessible",
+  "smart_map_unknown_accessibility": "Unknown accessibility",
+  "smart_map_accessible_only": "Accessible only",
+  "smart_map_loading_places": "Loading nearby accessible places...",
+  "smart_map_failed_load_places": "Could not load nearby places right now.",
+  "smart_map_location_unavailable": "Location is unavailable right now.",
+  "smart_map_location_permission_denied": "Location permission is required to show nearby places.",
+  "smart_map_location_permission_denied_forever": "Location permission is permanently denied. Please enable it from settings.",
+  "smart_map_location_service_disabled": "Location service is disabled. Please turn it on to see nearby places.",
+  "smart_map_directions_error": "Could not open directions right now.",
+  "smart_map_open_directions": "Open directions",
+  "smart_map_nearby_results": "{count} nearby places",
+  "smart_map_no_places_found": "No places found",
+  "smart_map_no_places_found_desc": "Try changing the filter or refreshing your location.",
+  "smart_map_address": "Address",
+  "smart_map_phone": "Phone",
+  "smart_map_accessibility_notes": "Accessibility notes",
+  "smart_map_data_notice": "Accessibility information depends on public OpenStreetMap contributions and may be incomplete. Please confirm with the place before visiting.",
+  "km_short": "km",
+  // =========================
+  // Updated App Guidelines
+  // =========================
+  "care_plans_topic": "Care Plans",
+  "smart_map_topic": "Smart Map",
+  "awareness_topic": "Awareness",
+
+  "guideline_care_plans_title": "Manage your daily Care Plans",
+  "guideline_care_plans_description": "Use Care Plans to organize medication reminders, feeding guidance, rehabilitation exercises, and learning goals in one place.",
+  "open_care_plans": "Open Care Plans",
+
+  "guideline_smart_map_title": "Find nearby accessible places",
+  "guideline_smart_map_description": "Use the Smart Accessible Map to discover nearby restaurants, healthcare places, pharmacies, and transport stops with accessibility priority.",
+  "open_smart_map": "Open Smart Map",
+
+  "guideline_awareness_hub_title": "Explore accessibility awareness content",
+  "guideline_awareness_hub_description": "Read practical tips, rights, articles, daily tips, and watch videos designed to support accessibility and daily independence.",
 };
