@@ -24,6 +24,7 @@ import '../../Feature/profile/presentation/profile.dart';
 import '../../Feature/feedback/presentation/views/feedback_view.dart';
 import '../../Feature/profile/presentation/views/personal_info_view.dart';
 
+import '../../Feature/smart_accessible_map/views/smart_accessible_map_view.dart';
 import 'getit.dart';
 
 
@@ -305,8 +306,15 @@ class AppRouter {
         },
       ),
 
+      GoRoute(
+        path: '/reminders',
+        builder: (context, state) => const MedicalRemindersView(),
+      ),
 
-
+      GoRoute(
+        path: '/smart-map',
+        builder: (context, state) => const SmartAccessibleMapView(),
+      ),
 
       ShellRoute(
         builder: (context, state, child) {
@@ -320,26 +328,29 @@ class AppRouter {
               return const HomeView();
             },
           ),
+     GoRoute(
+        path: '/institution',
+        builder: (context, state) {
+           // This query parameter carries the search text
+           final initialQuery = state.uri.queryParameters['q'] ?? '';
 
-  GoRoute(
-  path: '/institution',
-  builder: (context, state) {
-  // This query parameter carries the initial search text from the home search bar.
-  final initialQuery = state.uri.queryParameters['q'] ?? '';
+          // ✅ NEW: This query parameter carries the filter from Home category chips
+          final initialFilter = state.uri.queryParameters['filter'] ?? 'All';
 
-  return BlocProvider(
-  create: (_) => getIt<InstitutionCubit>(),
-  child: InstitutionView(initialQuery: initialQuery),
-  );
-  },
+             return BlocProvider(
+               create: (_) => getIt<InstitutionCubit>(),
+               child: InstitutionView(
+                 initialQuery: initialQuery,
+                  initialFilter: initialFilter,
+           ),
+        );
+     },
   ),
 
 
 
-          GoRoute(
-            path: '/reminders',
-            builder: (context, state) => const MedicalRemindersView(),
-          ),
+
+
           GoRoute(
             path: '/community',
             builder: (context, state) => const CommunityView(),
