@@ -4,112 +4,125 @@ import 'package:qudra_0/core/Styles/AppColors.dart';
 import 'package:qudra_0/core/Styles/AppTextsyles.dart';
 
 class DisabilityProfileCard extends StatelessWidget {
-  const DisabilityProfileCard({super.key});
+  final String disabilityType;
+
+  const DisabilityProfileCard({
+    super.key,
+    required this.disabilityType,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final details = _DisabilityVisualDetails.fromType(context, disabilityType);
 
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: theme.cardColor,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(26),
         border: Border.all(color: theme.dividerColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(
+              theme.brightness == Brightness.dark ? 0.14 : 0.04,
+            ),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Container(
-                width: 30,
-                height: 30,
+                width: 42,
+                height: 42,
                 decoration: BoxDecoration(
-                  color: theme.scaffoldBackgroundColor,
-                  borderRadius: BorderRadius.circular(8),
+                  color: details.accentColor.withOpacity(
+                    theme.brightness == Brightness.dark ? 0.22 : 0.10,
+                  ),
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 child: Icon(
-                  Icons.accessibility_new_rounded,
-                  size: 18,
-                  color: theme.colorScheme.primary,
+                  details.leadingIcon,
+                  size: 22,
+                  color: details.accentColor,
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
               Expanded(
-                child: Text(
-                  context.tr("disability_profile"),
-                  style: AppTextStyles.subtitle.copyWith(
-                    fontWeight: FontWeight.w800,
-                    color: theme.textTheme.titleMedium?.color,
-                  ),
-                ),
-              ),
-              Text(
-                context.tr("edit"),
-                style: AppTextStyles.body.copyWith(
-                  color: Appcolors.cardBlue,
-                  fontWeight: FontWeight.w700,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      context.tr("disability_profile"),
+                      style: AppTextStyles.subtitle.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: theme.textTheme.titleMedium?.color,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      context.tr("disability_description"),
+                      style: AppTextStyles.body.copyWith(
+                        color: theme.textTheme.bodyMedium?.color,
+                        fontSize: 12.5,
+                        height: 1.35,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              context.tr("disability_description"),
-              style: AppTextStyles.body.copyWith(
-                color: theme.textTheme.bodyMedium?.color,
-                fontSize: 12.5,
-                height: 1.25,
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               color: theme.scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(18),
               border: Border.all(color: theme.dividerColor),
             ),
             child: Row(
               children: [
                 Container(
-                  width: 34,
-                  height: 34,
+                  width: 42,
+                  height: 42,
                   decoration: BoxDecoration(
-                    color: theme.cardColor,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: theme.dividerColor),
+                    color: details.accentColor.withOpacity(
+                      theme.brightness == Brightness.dark ? 0.18 : 0.10,
+                    ),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                   child: Icon(
-                    Icons.visibility_outlined,
-                    color: theme.colorScheme.primary,
-                    size: 18,
+                    details.trailingIcon,
+                    color: details.accentColor,
+                    size: 20,
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        context.tr("visual_impairment"),
+                        details.typeLabel,
                         style: AppTextStyles.body.copyWith(
                           color: theme.textTheme.bodyLarge?.color,
                           fontWeight: FontWeight.w800,
-                          height: 1.0,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        context.tr("low_vision_mode"),
+                        details.description,
                         style: AppTextStyles.body.copyWith(
                           color: theme.textTheme.bodyMedium?.color,
-                          fontSize: 12,
-                          height: 1.0,
+                          fontSize: 12.5,
+                          height: 1.35,
                         ),
                       ),
                     ],
@@ -121,5 +134,66 @@ class DisabilityProfileCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class _DisabilityVisualDetails {
+  final IconData leadingIcon;
+  final IconData trailingIcon;
+  final Color accentColor;
+  final String typeLabel;
+  final String description;
+
+  const _DisabilityVisualDetails({
+    required this.leadingIcon,
+    required this.trailingIcon,
+    required this.accentColor,
+    required this.typeLabel,
+    required this.description,
+  });
+
+  factory _DisabilityVisualDetails.fromType(BuildContext context, String type) {
+    switch (type.trim().toLowerCase()) {
+      case 'visual':
+        return _DisabilityVisualDetails(
+          leadingIcon: Icons.visibility_outlined,
+          trailingIcon: Icons.visibility_rounded,
+          accentColor: Appcolors.rateColor,
+          typeLabel: context.tr("disability_visual"),
+          description: context.tr("subtitle_visual"),
+        );
+      case 'hearing':
+        return _DisabilityVisualDetails(
+          leadingIcon: Icons.hearing_rounded,
+          trailingIcon: Icons.hearing_rounded,
+          accentColor: Appcolors.cardTeal,
+          typeLabel: context.tr("disability_hearing"),
+          description: context.tr("subtitle_hearing"),
+        );
+      case 'physical':
+        return _DisabilityVisualDetails(
+          leadingIcon: Icons.accessible_rounded,
+          trailingIcon: Icons.accessibility_new_rounded,
+          accentColor: Appcolors.cardOrange,
+          typeLabel: context.tr("disability_physical"),
+          description: context.tr("subtitle_physical"),
+        );
+      case 'cognitive':
+        return _DisabilityVisualDetails(
+          leadingIcon: Icons.psychology_alt_rounded,
+          trailingIcon: Icons.psychology_alt_rounded,
+          accentColor: Appcolors.cardPurple,
+          typeLabel: context.tr("disability_cognitive"),
+          description: context.tr("subtitle_cognitive"),
+        );
+      default:
+        return _DisabilityVisualDetails(
+          leadingIcon: Icons.adjust_rounded,
+          trailingIcon: Icons.stars_rounded,
+          accentColor: Appcolors.cardBlue,
+          typeLabel: context.tr("disability_other"),
+          description: context.tr("subtitle_other"),
+        );
+    }
   }
 }

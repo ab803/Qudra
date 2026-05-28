@@ -10,83 +10,135 @@ class LanguageSwitchTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: theme.cardColor,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(
-              theme.brightness == Brightness.dark ? 0.14 : 0.03,
+
+    return BlocBuilder<LanguageCubit, LanguageState>(
+      builder: (context, state) {
+        final locale = state.locale.languageCode;
+
+        return Column(
+          children: [
+            _LanguageOptionTile(
+              title: context.tr("language_english"),
+              icon: Icons.language_rounded,
+              isSelected: locale == 'en',
+              onTap: () => context.read<LanguageCubit>().changeLanguage('en'),
             ),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            const SizedBox(height: 10),
+            _LanguageOptionTile(
+              title: context.tr("language_arabic"),
+              icon: Icons.translate_rounded,
+              isSelected: locale == 'ar',
+              onTap: () => context.read<LanguageCubit>().changeLanguage('ar'),
+            ),
+            const SizedBox(height: 10),
+            _LanguageOptionTile(
+              title: context.tr("system_default"),
+              icon: Icons.settings_suggest_rounded,
+              isSelected: false,
+              onTap: () => context.read<LanguageCubit>().changeLanguage('system'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _LanguageOptionTile extends StatelessWidget {
+  final String title;
+  final IconData icon;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _LanguageOptionTile({
+    required this.title,
+    required this.icon,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(18),
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOut,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? theme.colorScheme.primary.withOpacity(
+              theme.brightness == Brightness.dark ? 0.18 : 0.08,
+            )
+                : theme.scaffoldBackgroundColor,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: isSelected
+                  ? theme.colorScheme.primary
+                  : theme.dividerColor,
+            ),
           ),
-        ],
-      ),
-      child: BlocBuilder<LanguageCubit, LanguageState>(
-        builder: (context, state) {
-          final locale = state.locale.languageCode;
-          return Column(
+          child: Row(
             children: [
-              RadioListTile<String>(
-                title: Text(
-                  context.tr("language_english"),
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: theme.textTheme.bodyLarge?.color,
-                  ),
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? theme.colorScheme.primary
+                      : theme.cardColor,
+                  shape: BoxShape.circle,
                 ),
-                value: 'en',
-                groupValue: locale,
-                activeColor: theme.colorScheme.primary,
-                onChanged: (value) {
-                  if (value != null) {
-                    context.read<LanguageCubit>().changeLanguage(value);
-                  }
-                },
+                alignment: Alignment.center,
+                child: Icon(
+                  icon,
+                  size: 18,
+                  color: isSelected
+                      ? theme.colorScheme.onPrimary
+                      : theme.textTheme.bodyMedium?.color,
+                ),
               ),
-              Divider(color: theme.dividerColor),
-              RadioListTile<String>(
-                title: Text(
-                  context.tr("language_arabic"),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  title,
                   style: TextStyle(
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                     color: theme.textTheme.bodyLarge?.color,
                   ),
                 ),
-                value: 'ar',
-                groupValue: locale,
-                activeColor: theme.colorScheme.primary,
-                onChanged: (value) {
-                  if (value != null) {
-                    context.read<LanguageCubit>().changeLanguage(value);
-                  }
-                },
               ),
-              Divider(color: theme.dividerColor),
-              RadioListTile<String>(
-                title: Text(
-                  context.tr("system_default"),
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: theme.textTheme.bodyLarge?.color,
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                width: 22,
+                height: 22,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: isSelected
+                      ? theme.colorScheme.primary
+                      : Colors.transparent,
+                  border: Border.all(
+                    color: isSelected
+                        ? theme.colorScheme.primary
+                        : theme.dividerColor,
                   ),
                 ),
-                value: 'system',
-                groupValue: locale,
-                activeColor: theme.colorScheme.primary,
-                onChanged: (value) {
-                  if (value != null) {
-                    context.read<LanguageCubit>().changeLanguage(value);
-                  }
-                },
+                child: isSelected
+                    ? Icon(
+                  Icons.check_rounded,
+                  size: 14,
+                  color: theme.colorScheme.onPrimary,
+                )
+                    : null,
               ),
             ],
-          );
-        },
+          ),
+        ),
       ),
     );
   }

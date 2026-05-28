@@ -2,41 +2,83 @@ import 'package:flutter/material.dart';
 import 'package:qudra_0/core/Styles/AppColors.dart';
 
 class PersonalInfoAvatar extends StatelessWidget {
-  const PersonalInfoAvatar({super.key});
+  final String displayName;
+
+  const PersonalInfoAvatar({
+    super.key,
+    required this.displayName,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final initials = _extractInitials(displayName);
 
     return Column(
       children: [
-        Stack(
-          alignment: Alignment.bottomRight,
-          children: [
-            CircleAvatar(
-              radius: 44,
-              backgroundColor: theme.colorScheme.primary,
-              child: CircleAvatar(
-                radius: 42,
-                backgroundColor: theme.cardColor,
-                backgroundImage:
-                const AssetImage('assets/images/avatar_placeholder.png'),
-              ),
+        Container(
+          width: 96,
+          height: 96,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Appcolors.cardBlue.withOpacity(0.92),
+                Appcolors.cardTeal,
+              ],
             ),
-            Container(
-              width: 26,
-              height: 26,
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Appcolors.cardTeal.withOpacity(
+                  theme.brightness == Brightness.dark ? 0.28 : 0.16,
+                ),
+                blurRadius: 18,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: Center(
+            child: Container(
+              width: 84,
+              height: 84,
               decoration: BoxDecoration(
-                color: Appcolors.cardBlue,
+                color: theme.cardColor,
                 shape: BoxShape.circle,
-                border: Border.all(color: theme.cardColor, width: 2),
               ),
-              child: const Icon(Icons.edit, size: 14, color: Colors.white),
+              alignment: Alignment.center,
+              child: Text(
+                initials,
+                style: TextStyle(
+                  color: theme.textTheme.titleLarge?.color,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 0.4,
+                ),
+              ),
             ),
-          ],
+          ),
         ),
-        const SizedBox(height: 10),
       ],
     );
+  }
+
+  static String _extractInitials(String value) {
+    final parts = value
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((part) => part.isNotEmpty)
+        .toList();
+
+    if (parts.isEmpty) {
+      return '?';
+    }
+
+    if (parts.length == 1) {
+      return parts.first.substring(0, 1).toUpperCase();
+    }
+
+    return '${parts.first.substring(0, 1).toUpperCase()}${parts.last.substring(0, 1).toUpperCase()}';
   }
 }

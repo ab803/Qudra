@@ -34,37 +34,56 @@ class LabeledReadonlyField extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Container(
-          height: 48,
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
           decoration: BoxDecoration(
-            color: theme.cardColor,
-            borderRadius: BorderRadius.circular(12),
+            color: theme.scaffoldBackgroundColor,
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(color: theme.dividerColor),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
-                prefixIcon,
-                color: theme.textTheme.bodyMedium?.color,
-                size: 20,
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: theme.cardColor,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: theme.dividerColor),
+                ),
+                alignment: Alignment.center,
+                child: Icon(
+                  prefixIcon,
+                  color: theme.textTheme.bodyMedium?.color,
+                  size: 18,
+                ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 10),
               Expanded(
-                child: Text(
-                  hint,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.body.copyWith(
-                    color: theme.textTheme.bodyLarge?.color,
-                    fontSize: 13.5,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Text(
+                    hint,
+                    style: AppTextStyles.body.copyWith(
+                      color: theme.textTheme.bodyLarge?.color,
+                      fontSize: 13.5,
+                      height: 1.35,
+                    ),
                   ),
                 ),
               ),
-              if (trailingIcon != null)
-                Icon(
-                  trailingIcon,
-                  color: theme.textTheme.bodyMedium?.color,
-                  size: 20,
+              if (trailingIcon != null) ...[
+                const SizedBox(width: 8),
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Icon(
+                    trailingIcon,
+                    color: theme.textTheme.bodyMedium?.color,
+                    size: 18,
+                  ),
                 ),
+              ],
             ],
           ),
         ),
