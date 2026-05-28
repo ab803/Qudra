@@ -15,7 +15,7 @@ class InstitutionFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const filterLabels = ['All', 'Mobility', 'Vision', 'Hearing'];
+    const filterLabels = ['All', 'Mobility', 'Vision', 'Hearing', 'Cognitive'];
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -52,6 +52,8 @@ class InstitutionFilterBar extends StatelessWidget {
         return context.tr("filter_vision");
       case 'Hearing':
         return context.tr("filter_hearing");
+      case 'Cognitive':
+        return context.tr("filter_cognitive");
       default:
         return context.tr("filter_all");
     }
@@ -74,6 +76,11 @@ class InstitutionFilterBar extends StatelessWidget {
         return const _ChipVisualData(
           icon: Icons.hearing_rounded,
           accentColor: Appcolors.cardTeal,
+        );
+      case 'Cognitive':
+        return const _ChipVisualData(
+          icon: Icons.psychology_alt_rounded,
+          accentColor: Appcolors.cardPurple,
         );
       default:
         return _ChipVisualData(
@@ -109,25 +116,20 @@ class _InstitutionFilterChip extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
     final isAllChip = label == 'All';
 
-    final Color backgroundColor = isSelected
-        ? (isAllChip ? accentColor : accentColor)
-        : theme.cardColor;
+    final Color backgroundColor =
+    isSelected ? (isAllChip ? accentColor : accentColor) : theme.cardColor;
 
-    final Color textColor = isSelected
-        ? (isAllChip ? colorScheme.onPrimary : colorScheme.onPrimary)
-        : colorScheme.onSurface;
+    final Color textColor =
+    isSelected ? (isAllChip ? colorScheme.onPrimary : colorScheme.onPrimary) : colorScheme.onSurface;
 
-    final Color iconColor = isSelected
-        ? (isAllChip ? colorScheme.onPrimary : colorScheme.onPrimary)
-        : accentColor;
+    final Color iconColor =
+    isSelected ? (isAllChip ? colorScheme.onPrimary : colorScheme.onPrimary) : accentColor;
 
-    final Color borderColor = isSelected
-        ? (isAllChip ? theme.dividerColor : accentColor)
-        : theme.dividerColor;
+    final Color borderColor =
+    isSelected ? (isAllChip ? theme.dividerColor : accentColor) : theme.dividerColor;
 
-    final Color shadowColor = isSelected
-        ? (isAllChip ? Colors.black : accentColor)
-        : theme.shadowColor;
+    final Color shadowColor =
+    isSelected ? (isAllChip ? Colors.black : accentColor) : theme.shadowColor;
 
     return AnimatedScale(
       scale: isSelected ? 1.02 : 1.0,

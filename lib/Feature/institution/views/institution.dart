@@ -12,15 +12,16 @@ import 'package:qudra_0/Feature/institution/widgets/institution_filter_bar.dart'
 import 'package:qudra_0/Feature/institution/widgets/institution_results_summary.dart';
 import 'package:qudra_0/Feature/institution/widgets/institution_search_bar.dart';
 import 'package:qudra_0/Feature/institution/widgets/institution_sticky_filter_delegate.dart';
-
 import '../../../core/Services/voiceAssistant/VoiceFab.dart';
 
 class InstitutionView extends StatefulWidget {
   final String initialQuery;
+  final String initialFilter;
 
   const InstitutionView({
     Key? key,
     this.initialQuery = '',
+    this.initialFilter = 'All',
   }) : super(key: key);
 
   @override
@@ -35,6 +36,19 @@ class _InstitutionViewState extends State<InstitutionView> {
   void _onSearchChanged() {
     if (!mounted) return;
     setState(() {});
+  }
+
+  // This method ensures only valid incoming filter labels are used on screen load.
+  String _normalizeInitialFilter(String value) {
+    switch (value) {
+      case 'Mobility':
+      case 'Vision':
+      case 'Hearing':
+      case 'Cognitive':
+        return value;
+      default:
+        return 'All';
+    }
   }
 
   // This method applies local text filtering on the loaded institutions list.
@@ -67,6 +81,8 @@ class _InstitutionViewState extends State<InstitutionView> {
         return 'Visual';
       case 'Hearing':
         return 'Hearing';
+      case 'Cognitive':
+        return 'Cognitive';
       default:
         return 'All';
     }
@@ -78,6 +94,7 @@ class _InstitutionViewState extends State<InstitutionView> {
       Map<String, List<String>> supportedDisabilitiesByInstitution,
       ) {
     final mappedFilter = _mapChipToDisabilityValue(_selectedDisabilityFilter);
+
     if (mappedFilter == 'All') {
       return institutions;
     }
@@ -85,6 +102,7 @@ class _InstitutionViewState extends State<InstitutionView> {
     return institutions.where((institution) {
       final supportedDisabilities =
           supportedDisabilitiesByInstitution[institution.id] ?? const [];
+
       return supportedDisabilities.any(
             (item) => item.toLowerCase() == mappedFilter.toLowerCase(),
       );
@@ -97,6 +115,7 @@ class _InstitutionViewState extends State<InstitutionView> {
       Map<String, List<String>> supportedDisabilitiesByInstitution,
       ) {
     final searchFilteredInstitutions = _applySearchFilter(institutions);
+
     return _applyDisabilityFilter(
       searchFilteredInstitutions,
       supportedDisabilitiesByInstitution,
@@ -107,8 +126,10 @@ class _InstitutionViewState extends State<InstitutionView> {
   void initState() {
     super.initState();
 
-    // This block fills the institutions search field with the incoming home query.
+    // This block fills the incoming initial query and filter from navigation.
     _searchController.text = widget.initialQuery;
+    _selectedDisabilityFilter = _normalizeInitialFilter(widget.initialFilter);
+
     _searchController.addListener(_onSearchChanged);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -188,6 +209,7 @@ class _InstitutionViewState extends State<InstitutionView> {
                       selectedFilter: _selectedDisabilityFilter,
                     );
                   }
+
                   return const SizedBox.shrink();
                 },
               ),
@@ -240,6 +262,7 @@ class _InstitutionViewState extends State<InstitutionView> {
                       delegate: SliverChildBuilderDelegate(
                             (context, index) {
                           final institution = filteredInstitutions[index];
+
                           return Padding(
                             padding: const EdgeInsets.only(bottom: 16.0),
                             child: InstitutionCard(

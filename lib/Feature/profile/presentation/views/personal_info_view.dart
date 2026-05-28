@@ -90,6 +90,24 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
     );
   }
 
+  String _localizedBasicTitle(BuildContext context) {
+    return Localizations.localeOf(context).languageCode == 'ar'
+        ? 'البيانات الأساسية'
+        : 'Basic Information';
+  }
+
+  String _localizedContactTitle(BuildContext context) {
+    return Localizations.localeOf(context).languageCode == 'ar'
+        ? 'بيانات التواصل'
+        : 'Contact Details';
+  }
+
+  String _localizedAccessibilityTitle(BuildContext context) {
+    return Localizations.localeOf(context).languageCode == 'ar'
+        ? 'بيانات إمكانية الوصول'
+        : 'Accessibility Details';
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -167,133 +185,160 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
             return Form(
               key: _formKey,
               child: ListView(
-                padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 20),
                 children: [
-                  const PersonalInfoAvatar(),
-                  const SizedBox(height: 12),
-                  _NameAndMeta(
-                    name: _fullNameController.text.isEmpty
-                        ? user.fullName
-                        : _fullNameController.text,
-                    subtitle: user.email,
+                  _ProfileSummaryCard(
+                    child: Column(
+                      children: [
+                        PersonalInfoAvatar(displayName: user.fullName),
+                        const SizedBox(height: 14),
+                        _NameAndMeta(
+                          name: _fullNameController.text.isEmpty
+                              ? user.fullName
+                              : _fullNameController.text,
+                          subtitle: user.email,
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 18),
-                  CustomTextField(
-                    controller: _fullNameController,
-                    label: context.tr("full_name"),
-                    hint: context.tr("full_name_hint"),
-                    keyboardType: TextInputType.name,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return '${context.tr("full_name")} ${context.tr("required")}';
-                      }
-                      return null;
-                    },
-                    prefixIcon: const Icon(Icons.person_outline),
-                  ),
-                  const SizedBox(height: 12),
-                  LabeledReadonlyField(
-                    label: context.tr("email_address"),
-                    hint: user.email,
-                    prefixIcon: Icons.mail_outline,
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  const SizedBox(height: 12),
-                  CustomTextField(
-                    controller: _phoneController,
-                    label: context.tr("phone_number"),
-                    hint: context.tr("phone_hint"),
-                    keyboardType: TextInputType.phone,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return '${context.tr("phone_number")} ${context.tr("required")}';
-                      }
-                      return null;
-                    },
-                    prefixIcon: const Icon(Icons.phone_outlined),
-                  ),
-                  const SizedBox(height: 12),
-                  CustomTextField(
-                    controller: _ageController,
-                    label: context.tr("age"),
-                    hint: context.tr("age_hint"),
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return '${context.tr("age")} ${context.tr("required")}';
-                      }
-                      if (int.tryParse(value.trim()) == null) {
-                        return context.tr("invalid_age");
-                      }
-                      return null;
-                    },
-                    prefixIcon: const Icon(Icons.cake_outlined),
-                  ),
-                  const SizedBox(height: 12),
-                  CustomDropdown(
-                    label: context.tr("gender"),
-                    hint: context.tr("select_gender"),
-                    value: _selectedGender,
-                    items: _genderOptions,
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedGender = value;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 12),
-                  CustomTextField(
-                    controller: _responsibleController,
-                    label: context.tr("responsible_person"),
-                    hint: context.tr("responsible_hint"),
-                    keyboardType: TextInputType.name,
-                    validator: (value) {
-                      if (value == null || value.trim().isEmpty) {
-                        return '${context.tr("responsible_person")} ${context.tr("required")}';
-                      }
-                      return null;
-                    },
-                    prefixIcon: const Icon(Icons.people_outline),
-                  ),
-                  const SizedBox(height: 12),
-                  CustomDropdown(
-                    label: context.tr("disability_type"),
-                    hint: context.tr("select_disability_type"),
-                    value: _selectedDisabilityType,
-                    items: _disabilityOptions,
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedDisabilityType = value;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 54,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                  _InfoSectionCard(
+                    title: _localizedBasicTitle(context),
+                    child: Column(
+                      children: [
+                        CustomTextField(
+                          controller: _fullNameController,
+                          label: context.tr("full_name"),
+                          hint: context.tr("full_name_hint"),
+                          keyboardType: TextInputType.name,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return '${context.tr("full_name")} ${context.tr("required")}';
+                            }
+                            return null;
+                          },
+                          prefixIcon: const Icon(Icons.person_outline),
                         ),
-                        elevation: 0,
-                      ),
-                      onPressed: isLoading ? null : () => _saveChanges(authCubit),
-                      child: isLoading
-                          ? SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(
-                          color: theme.colorScheme.onPrimary,
-                          strokeWidth: 2.4,
+                        const SizedBox(height: 12),
+                        LabeledReadonlyField(
+                          label: context.tr("email_address"),
+                          hint: user.email,
+                          prefixIcon: Icons.mail_outline,
+                          keyboardType: TextInputType.emailAddress,
                         ),
-                      )
-                          : Text(
-                        context.tr("save_changes"),
-                        style: AppTextStyles.button.copyWith(
-                          color: theme.colorScheme.onPrimary,
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _InfoSectionCard(
+                    title: _localizedContactTitle(context),
+                    child: Column(
+                      children: [
+                        CustomTextField(
+                          controller: _phoneController,
+                          label: context.tr("phone_number"),
+                          hint: context.tr("phone_hint"),
+                          keyboardType: TextInputType.phone,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return '${context.tr("phone_number")} ${context.tr("required")}';
+                            }
+                            return null;
+                          },
+                          prefixIcon: const Icon(Icons.phone_outlined),
                         ),
-                      ),
+                        const SizedBox(height: 12),
+                        CustomTextField(
+                          controller: _ageController,
+                          label: context.tr("age"),
+                          hint: context.tr("age_hint"),
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return '${context.tr("age")} ${context.tr("required")}';
+                            }
+                            if (int.tryParse(value.trim()) == null) {
+                              return context.tr("invalid_age");
+                            }
+                            return null;
+                          },
+                          prefixIcon: const Icon(Icons.cake_outlined),
+                        ),
+                        const SizedBox(height: 12),
+                        CustomDropdown(
+                          label: context.tr("gender"),
+                          hint: context.tr("select_gender"),
+                          value: _selectedGender,
+                          items: _genderOptions,
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedGender = value;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        CustomTextField(
+                          controller: _responsibleController,
+                          label: context.tr("responsible_person"),
+                          hint: context.tr("responsible_hint"),
+                          keyboardType: TextInputType.name,
+                          validator: (value) {
+                            if (value == null || value.trim().isEmpty) {
+                              return '${context.tr("responsible_person")} ${context.tr("required")}';
+                            }
+                            return null;
+                          },
+                          prefixIcon: const Icon(Icons.people_outline),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _InfoSectionCard(
+                    title: _localizedAccessibilityTitle(context),
+                    child: Column(
+                      children: [
+                        CustomDropdown(
+                          label: context.tr("disability_type"),
+                          hint: context.tr("select_disability_type"),
+                          value: _selectedDisabilityType,
+                          items: _disabilityOptions,
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedDisabilityType = value;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 54,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              elevation: 0,
+                            ),
+                            onPressed: isLoading ? null : () => _saveChanges(authCubit),
+                            child: isLoading
+                                ? SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(
+                                color: theme.colorScheme.onPrimary,
+                                strokeWidth: 2.4,
+                              ),
+                            )
+                                : Text(
+                              context.tr("save_changes"),
+                              style: AppTextStyles.button.copyWith(
+                                color: theme.colorScheme.onPrimary,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -301,6 +346,83 @@ class _PersonalInfoViewState extends State<PersonalInfoView> {
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+class _ProfileSummaryCard extends StatelessWidget {
+  final Widget child;
+
+  const _ProfileSummaryCard({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: theme.dividerColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(
+              theme.brightness == Brightness.dark ? 0.14 : 0.04,
+            ),
+            blurRadius: 14,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+}
+
+class _InfoSectionCard extends StatelessWidget {
+  final String title;
+  final Widget child;
+
+  const _InfoSectionCard({
+    required this.title,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: theme.dividerColor),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(
+              theme.brightness == Brightness.dark ? 0.12 : 0.03,
+            ),
+            blurRadius: 12,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: AppTextStyles.subtitle.copyWith(
+              color: theme.textTheme.titleLarge?.color,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: 16),
+          child,
+        ],
       ),
     );
   }
@@ -323,6 +445,7 @@ class _NameAndMeta extends StatelessWidget {
       children: [
         Text(
           name,
+          textAlign: TextAlign.center,
           style: AppTextStyles.subtitle.copyWith(
             color: theme.textTheme.titleLarge?.color,
             fontWeight: FontWeight.w800,
@@ -332,10 +455,11 @@ class _NameAndMeta extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           subtitle,
+          textAlign: TextAlign.center,
           style: AppTextStyles.body.copyWith(
-            fontSize: 12,
+            fontSize: 12.5,
             color: theme.textTheme.bodyMedium?.color,
-            height: 1.0,
+            height: 1.1,
           ),
         ),
       ],
