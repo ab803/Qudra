@@ -3,62 +3,282 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 class VoiceCommandRouter {
-  static void handle(String command, BuildContext context) {
-    // --- Bottom Nav (ShellRoute) ---
-    if (command.contains('home') || command.contains('الرئيسية')) {
+  static bool handle(String command, BuildContext context) {
+    final normalizedCommand = _normalize(command);
+
+    // --- Bottom Nav / Shell routes ---
+    if (_containsAny(normalizedCommand, [
+      'home',
+      'main',
+      'الرئيسيه',
+      'الصفحه الرئيسيه',
+      'الصفحة الرئيسية',
+      'الرئيسية',
+      'البيت',
+      'الهوم',
+    ])) {
       context.go('/home');
+      return true;
+    }
 
-    } else if (command.contains('institution') || command.contains('مؤسس') || command.contains('مؤسسات')) {
+    if (_containsAny(normalizedCommand, [
+      'institution',
+      'institutions',
+      'organization',
+      'organizations',
+      'مؤسسه',
+      'مؤسسات',
+      'المؤسسات',
+      'المنظمات',
+      'منظمات',
+      'مكان',
+      'اماكن',
+      'الأماكن',
+      'الاماكن',
+    ])) {
       context.go('/institution');
+      return true;
+    }
 
-    } else if (command.contains('reminder') || command.contains('تذكير') || command.contains('دواء')) {
-      context.go('/reminders');
+    if (_containsAny(normalizedCommand, [
+      'reminder',
+      'reminders',
+      'medicine',
+      'medical reminder',
+      'medical reminders',
+      'تذكير',
+      'تذكيرات',
+      'دواء',
+      'ادويه',
+      'أدوية',
+      'العلاج',
+      'مواعيد الدواء',
+    ])) {
+      context.push('/reminders');
+      return true;
+    }
 
-    } else if (command.contains('community') || command.contains('مجتمع')) {
-      context.go('/community');
+    if (_containsAny(normalizedCommand, [
+      'community',
+      'مجتمع',
+      'الكوميونيتي',
+      'المجتمع',
+      'منشورات',
+      'بوستات',
+    ])) {
+      context.push('/community');
+      return true;
+    }
 
-    } else if (command.contains('profile') || command.contains('الملف') || command.contains('حسابي')) {
-      context.go('/profile');
+    if (_containsAny(normalizedCommand, [
+      'profile',
+      'account',
+      'my account',
+      'الملف',
+      'الملف الشخصي',
+      'حسابي',
+      'الحساب',
+      'البروفايل',
+    ])) {
+      context.push('/profile');
+      return true;
+    }
 
-      // --- Top-level Push Routes ---
-    } else if (command.contains('chat') || command.contains('مساعد') || command.contains('شات')) {
+    // --- Top-level routes ---
+    if (_containsAny(normalizedCommand, [
+      'chat',
+      'bot',
+      'assistant',
+      'ai',
+      'ai assistant',
+      'مساعد',
+      'المساعد',
+      'المساعد الذكي',
+      'شات',
+      'دردشه',
+      'دردشة',
+      'اسال',
+      'إسأل',
+      'اسأل',
+    ])) {
       context.push('/chat');
+      return true;
+    }
 
-    } else if (command.contains('emergency') || command.contains('طوارئ')) {
+    if (_containsAny(normalizedCommand, [
+      'emergency',
+      'help',
+      'sos',
+      'طوارئ',
+      'الطوارئ',
+      'نجده',
+      'نجدة',
+      'ساعدني',
+      'مساعده',
+      'مساعدة',
+    ])) {
       context.push('/emergency-entry');
+      return true;
+    }
 
-    } else if (command.contains('accessibility') || command.contains('إمكانية الوصول') || command.contains('حقوق')) {
+    if (_containsAny(normalizedCommand, [
+      'accessibility',
+      'accessibility hub',
+      'accessibility help',
+      'rights',
+      'tips',
+      'accessability',
+      'accessability hub',
+      'rigths',
+      'rigths and tips',
+      'rights and tips',
+      'امكانيه الوصول',
+      'إمكانية الوصول',
+      'امكانية الوصول',
+      'النصائح',
+      'نصائح',
+      'الحقوق',
+      'حقوق',
+      'حق',
+    ])) {
       context.push('/accessibility');
+      return true;
+    }
 
-    } else if (command.contains('feedback') || command.contains('تقييم') || command.contains('ملاحظات')) {
+    if (_containsAny(normalizedCommand, [
+      'feedback',
+      'review',
+      'rate',
+      'rating',
+      'تقييم',
+      'قيمني',
+      'قيم',
+      'ملاحظات',
+      'ملاحظه',
+      'ملاحظة',
+      'فيدباك',
+    ])) {
       context.push('/feedback');
+      return true;
+    }
 
-    } else if (command.contains('booking') || command.contains('حجز') || command.contains('حجوزاتي')) {
+    if (_containsAny(normalizedCommand, [
+      'booking',
+      'bookings',
+      'my bookings',
+      'reservation',
+      'reservations',
+      'appointment',
+      'appointments',
+      'حجز',
+      'حجوزات',
+      'حجوزاتي',
+      'مواعيدي',
+      'ميعاد',
+      'المواعيد',
+    ])) {
       context.push('/my-bookings');
+      return true;
+    }
 
-    } else if (command.contains('personal') || command.contains('بيانات') || command.contains('معلومات شخصية')) {
+    if (_containsAny(normalizedCommand, [
+      'personal',
+      'personal info',
+      'personal information',
+      'my information',
+      'بيانات',
+      'بياناتي',
+      'معلومات',
+      'معلوماتي',
+      'معلومات شخصية',
+      'المعلومات الشخصية',
+    ])) {
       context.push('/personal');
+      return true;
+    }
 
-    } else if (command.contains('guidelines') || command.contains('تعليمات') || command.contains('دليل')) {
+    if (_containsAny(normalizedCommand, [
+      'guidelines',
+      'guide',
+      'app guidelines',
+      'instructions',
+      'تعليمات',
+      'ارشادات',
+      'إرشادات',
+      'ارشادات التطبيق',
+      'إرشادات التطبيق',
+      'دليل',
+      'دليل التطبيق',
+    ])) {
       context.push('/AppGuidelines');
-
-      // --- Auth (only reachable when logged out, router handles guard) ---
-    } else if (command.contains('login') || command.contains('تسجيل دخول')) {
-      context.go('/login');
-
-    } else if (command.contains('sign up') || command.contains('تسجيل')) {
-      context.go('/signUp');
+      return true;
     }
-    else if (command.contains('Accessability hub') || command.contains('النصائح')|| command.contains('الحقوق') || command.contains('rigths&tips')) {
-      context.go('/accessibility');
-    }else if (command.contains('App Guidelines') || command.contains('ارشادات التطببق')) {
-      context.go('/AppGuidelines');
-    }else if (command.contains('personal info') || command.contains('معلوماتي')) {
-      context.go('/personal');
-    }else if (command.contains('sign up') || command.contains('تسجيل')) {
-      context.go('/signUp');
+
+    if (_containsAny(normalizedCommand, [
+      'map',
+      'smart map',
+      'accessible map',
+      'خريطه',
+      'خريطة',
+      'الخريطه',
+      'الخريطة',
+      'الماب',
+      'اماكن قريبه',
+      'أماكن قريبة',
+    ])) {
+      context.push('/smart-map');
+      return true;
     }
+
+    // --- Auth routes ---
+    if (_containsAny(normalizedCommand, [
+      'login',
+      'log in',
+      'sign in',
+      'تسجيل دخول',
+      'دخول',
+      'سجل دخول',
+    ])) {
+      context.push('/login');
+      return true;
+    }
+
+    if (_containsAny(normalizedCommand, [
+      'signup',
+      'sign up',
+      'register',
+      'create account',
+      'تسجيل',
+      'انشاء حساب',
+      'إنشاء حساب',
+      'اعمل حساب',
+    ])) {
+      context.push('/signUp');
+      return true;
+    }
+
     // Booking sub-routes (/booking/checkout, /booking/card, etc.) are intentionally
-    // excluded — they require typed `extra` args that can't come from voice alone.
+    // excluded because they require typed `extra` args that cannot come from voice alone.
+    return false;
+  }
+
+  static bool _containsAny(String command, List<String> keywords) {
+    return keywords.any((keyword) => command.contains(_normalize(keyword)));
+  }
+
+  static String _normalize(String value) {
+    return value
+        .toLowerCase()
+        .trim()
+        .replaceAll(RegExp(r'[\u064B-\u065F]'), '')
+        .replaceAll('أ', 'ا')
+        .replaceAll('إ', 'ا')
+        .replaceAll('آ', 'ا')
+        .replaceAll('ة', 'ه')
+        .replaceAll('ى', 'ي')
+        .replaceAll('ؤ', 'و')
+        .replaceAll('ئ', 'ي')
+        .replaceAll(RegExp(r'[^\w\s\u0600-\u06FF]'), ' ')
+        .replaceAll(RegExp(r'\s+'), ' ');
   }
 }
