@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:qudra_0/core/Services/Localization/translation_extension.dart';
@@ -13,20 +12,34 @@ class QuickAccessSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
+    // This block localizes the AI card naming while keeping the original quick card style.
+    final aiCardTitle = isArabic ? 'قدرة AI' : 'Qudra AI';
+    final aiCardSubtitle = isArabic ? 'مساعد' : 'Assistant';
+
+    // This block introduces Care Plans as the upgraded medical reminders entry point.
+    final carePlansTitle = isArabic ? 'الرعاية' : 'Care';
+    final carePlansSubtitle = isArabic ? 'أهداف' : 'Plans';
+
+    // This block introduces Smart Accessible Map as a quick access entry point.
+    final smartMapTitle = isArabic ? 'الخريطة' : 'Map';
+    final smartMapSubtitle = isArabic ? 'قريب' : 'Nearby';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Section title
+        // This block renders the Quick Access section title.
         Text(
           context.tr("quick_access"),
           style: AppTextStyles.title.copyWith(
             color: theme.textTheme.titleLarge?.color,
           ),
         ),
+
         const SizedBox(height: 16),
 
-        // Emergency card
+        // This block renders the emergency access card.
         GestureDetector(
           onTap: () => context.push('/emergency-entry'),
           child: Container(
@@ -49,7 +62,7 @@ class QuickAccessSection extends StatelessWidget {
             ),
             child: Row(
               children: [
-                // Emergency icon
+                // This block renders the emergency icon.
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
@@ -61,28 +74,38 @@ class QuickAccessSection extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
+
                 const SizedBox(width: 16),
 
-                // Text info
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      context.tr("emergency_call"),
-                      style: AppTextStyles.subtitle.copyWith(
-                        color: Colors.white,
+                // This block renders the emergency title and subtitle.
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        context.tr("emergency_call"),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.subtitle.copyWith(
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      context.tr("emergency_subtitle"),
-                      style: AppTextStyles.body.copyWith(
-                        color: Colors.white.withOpacity(0.92),
+                      const SizedBox(height: 4),
+                      Text(
+                        context.tr("emergency_subtitle"),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.body.copyWith(
+                          color: Colors.white.withOpacity(0.92),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                const Spacer(),
+
+                const SizedBox(width: 12),
+
+                // This block renders the navigation arrow for the emergency card.
                 const Icon(
                   Icons.arrow_forward_ios,
                   color: Colors.white,
@@ -95,35 +118,51 @@ class QuickAccessSection extends StatelessWidget {
 
         const SizedBox(height: 16),
 
-        // Two quick cards row
+        // This block renders Qudra AI, Care Plans, and Smart Map in one horizontal row using the same QuickAccessCard style.
         Row(
           children: [
             Expanded(
               child: GestureDetector(
                 onTap: () {
-                  // GoRouter
-                  context.push('/chat'); // أو context.go('/chat') حسب اللي تحبه
+                  context.push('/chat');
                 },
                 child: QuickAccessCard(
-                  title: context.tr("intelligent"),
-                  subtitle: context.tr("assistant"),
+                  title: aiCardTitle,
+                  subtitle: aiCardSubtitle,
                   icon: Symbols.robot_2,
                   color: Appcolors.cardTeal,
                 ),
               ),
             ),
-            const SizedBox(width: 16),
+
+            const SizedBox(width: 8),
+
             Expanded(
               child: GestureDetector(
                 onTap: () {
-                  // GoRouter
-                  context.push('/reminders'); //
+                  context.push('/reminders');
                 },
                 child: QuickAccessCard(
-                  title: context.tr("medical"),
-                  subtitle: context.tr("reminders"),
-                  icon: Icons.medication,
+                  title: carePlansTitle,
+                  subtitle: carePlansSubtitle,
+                  icon: Icons.event_available_rounded,
                   color: Appcolors.cardGreen,
+                ),
+              ),
+            ),
+
+            const SizedBox(width: 8),
+
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                  context.push('/smart-map');
+                },
+                child: QuickAccessCard(
+                  title: smartMapTitle,
+                  subtitle: smartMapSubtitle,
+                  icon: Icons.map_outlined,
+                  color: Appcolors.cardBlue,
                 ),
               ),
             ),
@@ -132,7 +171,7 @@ class QuickAccessSection extends StatelessWidget {
 
         const SizedBox(height: 16),
 
-        // Accessibility card
+        // This block renders the Accessibility Hub quick access card.
         GestureDetector(
           onTap: () => context.push('/accessibility'),
           child: Container(
@@ -144,43 +183,58 @@ class QuickAccessSection extends StatelessWidget {
             ),
             child: Row(
               children: [
-                // Icon
+                // This block renders the accessibility icon.
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: Appcolors.rateColor.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.menu_book, color: Appcolors.rateColor),
+                  child: const Icon(
+                    Icons.menu_book,
+                    color: Appcolors.rateColor,
+                  ),
                 ),
+
                 const SizedBox(width: 16),
 
-                // Text info
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      context.tr("accessibility"),
-                      style: AppTextStyles.subtitle.copyWith(
-                        color: theme.textTheme.titleMedium?.color,
+                // This block renders the accessibility title, subtitle, and description.
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        context.tr("accessibility"),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.subtitle.copyWith(
+                          color: theme.textTheme.titleMedium?.color,
+                        ),
                       ),
-                    ),
-                    Text(
-                      context.tr("guidelines"),
-                      style: AppTextStyles.body.copyWith(
-                        color: theme.textTheme.bodyLarge?.color,
+                      Text(
+                        context.tr("guidelines"),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.body.copyWith(
+                          color: theme.textTheme.bodyLarge?.color,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      context.tr("learn_rights"),
-                      style: AppTextStyles.body.copyWith(
-                        color: theme.textTheme.bodyMedium?.color,
+                      const SizedBox(height: 4),
+                      Text(
+                        context.tr("learn_rights"),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.body.copyWith(
+                          color: theme.textTheme.bodyMedium?.color,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                const Spacer(),
+
+                const SizedBox(width: 12),
+
+                // This block renders the navigation arrow for the accessibility card.
                 Icon(
                   Icons.arrow_forward_ios,
                   size: 16,

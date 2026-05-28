@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class QuickAccessCard extends StatelessWidget {
@@ -21,8 +20,8 @@ class QuickAccessCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      height: 140,
-      padding: const EdgeInsets.all(20),
+      height: 110,
+      padding: const EdgeInsets.all(14),
 
       // Colored card with shadow
       decoration: BoxDecoration(
@@ -38,6 +37,7 @@ class QuickAccessCard extends StatelessWidget {
           ),
         ],
       ),
+
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -48,27 +48,40 @@ class QuickAccessCard extends StatelessWidget {
               color: Colors.white.withOpacity(0.2),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: Colors.white),
+            child: Icon(
+              icon,
+              color: Colors.white,
+              size: 21,
+            ),
           ),
+
           const Spacer(),
 
           // Title
           Text(
             title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 16,
+              fontSize: 14,
               fontWeight: FontWeight.bold,
+              height: 1.05,
             ),
           ),
+
           const SizedBox(height: 4),
 
           // Subtitle
           Text(
             subtitle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 12,
+              fontSize: 11.5,
+              fontWeight: FontWeight.w500,
+              height: 1.05,
             ),
           ),
         ],
